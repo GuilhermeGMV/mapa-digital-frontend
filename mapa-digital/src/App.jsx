@@ -2,16 +2,10 @@ import { ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import { RouterProvider } from 'react-router-dom'
 import { router } from './router'
-import './App.css'
+import { themeColors } from './styles/colors'
+import './styles/App.css'
 
-const theme = createTheme({
-  palette: {
-    mode: 'light',
-    primary: {
-      main: '#1976d2',
-    },
-  },
-})
+const theme = createTheme(themeColors)
 
 function App() {
   return (

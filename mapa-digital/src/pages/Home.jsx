@@ -1,5 +1,6 @@
-import { Box, Typography, Button } from '@mui/material'
+import { Box, Typography, Button, Stack } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import PaletteIcon from '@mui/icons-material/Palette'
 
 function Home() {
   const navigate = useNavigate()
@@ -23,13 +24,15 @@ function Home() {
         Página Inicial
       </Typography>
 
-      <Button
-        variant="contained"
-        size="large"
-        onClick={() => navigate('/dashboard')}
-      >
-        Ir para Dashboard
-      </Button>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+        <Button
+          variant="contained"
+          size="large"
+          onClick={() => navigate('/dashboard')}
+        >
+          Ir para Dashboard
+        </Button>
+      </Stack>
     </Box>
   )
 }
