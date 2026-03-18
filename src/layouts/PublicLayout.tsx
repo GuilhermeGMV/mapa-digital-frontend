@@ -1,6 +1,6 @@
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined'
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined'
-import { Box, Container, IconButton, Stack } from '@mui/material'
+import { Box, Container, IconButton, Stack, Typography } from '@mui/material'
 import { Link as RouterLink, Outlet } from 'react-router-dom'
 import AppButton from '@/components/ui/AppButton'
 import AppTopbar from '@/components/ui/AppTopbar'
@@ -20,6 +20,14 @@ function PublicLayout() {
   return (
     <Box className="min-h-screen">
       <AppTopbar
+        leading={
+          <Box>
+            <Typography variant="h6">{APP_CONFIG.name}</Typography>
+            <Typography variant="body2" color="text.secondary">
+              Acesso, autorização e navegação base do frontend.
+            </Typography>
+          </Box>
+        }
         actions={
           <Stack className="flex-row items-center gap-1">
             {isAuthenticated ? (
@@ -49,8 +57,6 @@ function PublicLayout() {
             </IconButton>
           </Stack>
         }
-        subtitle="Acesso, autorização e navegação base do frontend."
-        title={APP_CONFIG.name}
       />
 
       <Container className="py-4 md:py-6" maxWidth="lg">
