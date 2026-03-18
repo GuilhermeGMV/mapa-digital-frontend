@@ -1,6 +1,6 @@
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined'
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined'
-import { Box, Container, IconButton, Stack, Typography } from '@mui/material'
+import { Box, Container, IconButton, Stack } from '@mui/material'
 import { Link as RouterLink, Outlet } from 'react-router-dom'
 import AppButton from '@/components/ui/AppButton'
 import AppTopbar from '@/components/ui/AppTopbar'
@@ -18,10 +18,10 @@ function PublicLayout() {
     : APP_ROUTES.auth.login
 
   return (
-    <Box sx={{ minHeight: '100vh' }}>
+    <Box className="min-h-screen">
       <AppTopbar
         actions={
-          <Stack alignItems="center" direction="row" spacing={1}>
+          <Stack className="flex-row items-center gap-1">
             {isAuthenticated ? (
               <>
                 <AppButton
@@ -53,7 +53,7 @@ function PublicLayout() {
         title={APP_CONFIG.name}
       />
 
-      <Container maxWidth="lg" sx={{ py: { md: 6, xs: 4 } }}>
+      <Container className="py-4 md:py-6" maxWidth="lg">
         <Outlet />
       </Container>
     </Box>
