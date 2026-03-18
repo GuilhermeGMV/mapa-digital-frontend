@@ -21,6 +21,7 @@ Projeto React + Vite + TypeScript + Material-UI (MUI)
 - [npm](https://www.npmjs.com/) v9 ou superior (já incluído com o Node.js)
 
 Verifique se já possui as versões corretas instaladas:
+
 ```bash
 node -v
 npm -v
@@ -29,28 +30,31 @@ npm -v
 ### Instalação
 
 1. Clone o repositório:
+
 ```bash
 git clone https://github.com/Mapa-Digital-Ages/frontend.git
 cd frontend
 ```
 
 2. Instale as dependências:
+
 ```bash
 npm i
 ```
 
 3. Copie o arquivo de variáveis de ambiente:
+
 ```bash
 cp .env.example .env
 ```
 
 ### Rodando em Desenvolvimento
+
 ```bash
 npm run dev
 ```
 
 A aplicação estará disponível em `http://localhost:5173`
-
 
 ## 🐳 Rodando com Docker
 
@@ -62,17 +66,20 @@ A aplicação estará disponível em `http://localhost:5173`
 ### Passos
 
 1. Clone o repositório:
+
 ```bash
 git clone https://github.com/Mapa-Digital-Ages/frontend.git
 cd frontend
 ```
 
 2. Copie o arquivo de variáveis de ambiente:
+
 ```bash
 cp .env.example .env
 ```
 
 3. Suba a aplicação:
+
 ```bash
 docker compose up -d
 ```
@@ -80,6 +87,7 @@ docker compose up -d
 A aplicação estará disponível em `http://localhost:5173`
 
 ### Outros comandos úteis
+
 ```bash
 docker compose logs -f           # Acompanhar logs em tempo real
 docker compose down              # Parar e remover os containers
@@ -89,6 +97,7 @@ docker compose down -v           # Parar e remover containers e volumes
 ## 🛠️ Scripts Disponíveis
 
 ### Build de Produção
+
 ```bash
 npm run build
 ```
@@ -96,6 +105,7 @@ npm run build
 Cria a versão otimizada para produção na pasta `dist/`
 
 ### Typecheck
+
 ```bash
 npm run typecheck
 ```
@@ -103,6 +113,7 @@ npm run typecheck
 Executa a validação de tipos com TypeScript
 
 ### Preview da Build
+
 ```bash
 npm run preview
 ```
@@ -110,18 +121,21 @@ npm run preview
 Visualiza a build de produção localmente
 
 ### Lint
+
 ```bash
 npm run lint          # Verifica problemas no código
 npm run lint:fix      # Corrige problemas automaticamente
 ```
 
 ### Formatação
+
 ```bash
 npm run format        # Formata o código com Prettier
 npm run format:check  # Verifica se o código está formatado
 ```
 
 ### Validação Completa
+
 ```bash
 npm run validate      # Executa lint, format:check e typecheck
 ```
@@ -136,6 +150,7 @@ npm run validate      # Executa lint, format:check e typecheck
 - Componentes específicos de domínio ficam em `src/pages/<dominio>/components`
 
 ## 📁 Estrutura do Projeto
+
 ```
 .
 ├── .github/           # GitHub Actions
@@ -163,6 +178,7 @@ npm run validate      # Executa lint, format:check e typecheck
 ## 🎨 Material-UI
 
 O projeto está configurado com Material-UI. Exemplo de uso:
+
 ```tsx
 import { Button, Typography } from '@mui/material'
 
@@ -179,11 +195,13 @@ function MyComponent() {
 ## 🌿 Padrão de Nome de Branch
 
 As branches devem ter uma breve descrição da tarefa em inglês, em kebab-case:
+
 ```
 short-task-description
 ```
 
 Exemplos:
+
 ```
 user-authentication
 login-redirect-fix
