@@ -19,7 +19,7 @@ Projeto React + Vite + TypeScript + Material-UI (MUI)
 npm install
 ```
 
-Opcional:
+Opcional
 
 ```bash
 cp .env.example .env
