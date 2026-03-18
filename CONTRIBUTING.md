@@ -5,6 +5,24 @@
 - Node.js `24.14.0` (LTS) (ver `.nvmrc`)
 - npm
 
+## Padrão de Nome de Branch
+
+As branches devem ter uma breve descrição da tarefa em inglês, em kebab-case:
+
+```
+short-task-description
+```
+
+Exemplos:
+
+```
+user-authentication
+login-redirect-fix
+update-eslint-config
+api-service-layer
+update-readme-docker
+```
+
 ## Fluxo recomendado
 
 1. Trabalhe na raiz do repositório.
@@ -35,4 +53,3 @@ npm run build
 ## Repositórios
 
 - GitHub é o repositório principal.
-- GitLab CI e mirror estão `skipped` e pendentes para setup futuro.
