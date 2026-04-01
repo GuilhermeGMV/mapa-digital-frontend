@@ -57,6 +57,7 @@ export default function AppCalendar() {
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DateCalendar
+          reduceAnimations={false}
           value={selectedDate}
           onChange={handleDaySelect}
           slots={{ day: CustomDay }}
