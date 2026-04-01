@@ -1,59 +1,75 @@
-import { Chip }  from '@mui/material'
+import React from 'react'
+import { Box, Chip } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
+import type { SubjectContext } from '../../types/common'
+import {
+  getSubjectChipTone,
+  type SubjectChipSize,
+} from '../../utils/subjectThemes'
 
 type SubjectsTags = {
-    label: string;
-    color: string;
-};
-
-export function SubjectChip({ label, color }: SubjectsTags) {
-    return (
-    <Chip
-      label={label}
-      variant="outlined"
-      sx={{
-        borderRadius: "20px",
-        borderColor: `${color}60`,
-        color: color,
-        backgroundColor: `${color}20`,
-        fontWeight: 500,
-        paddingX: 1,
-      }}
-    />
-  );
+  color: string
+  label: string
+  size?: SubjectChipSize
 }
 
-export const SUBJECTS = {
-  ciencias: {
-    label: "Ciências",
-    color: "#00D2ED",
-  },
-  matematica: {
-    label: "Matemática",
-    color: "#AD44F8",
-  },
-   portugues: {
-    label: "Portugês",
-    color: "#0571F7",
-  },
-  historia: {
-    label: "História",
-    color: "#FFBA00",
-  },
-   geografia: {
-    label: "Geografia",
-    color: "#00D46A",
-  },
-     ingles: {
-    label: "Inglês",
-    color: "#FE33A3",
-  },
-};
+type AppSubjectTagProps = {
+  size?: SubjectChipSize
+  subject: SubjectContext
+}
 
-export default function AppSubjectsChip() {
+type AppSubjectsTagsProps = {
+  size?: SubjectChipSize
+  subjects: SubjectContext[]
+}
+
+export function SubjectChip({ color, label, size = 'md' }: SubjectsTags) {
+  const theme = useTheme()
+  const chipClassName = `app-subject-chip app-subject-chip--${size}`
+  const chipTone = getSubjectChipTone(color, { mode: theme.palette.mode })
+
   return (
-    <div style={{ display: "flex", gap: "10px" }}>
-      <SubjectChip {...SUBJECTS.ciencias} />
-      <SubjectChip {...SUBJECTS.matematica} />
-    </div>
-  );
+    <Chip
+      className={chipClassName}
+      label={label}
+      slotProps={{
+        label: {
+          className: 'app-subject-chip__label',
+        },
+      }}
+      variant="outlined"
+      sx={{
+        backgroundColor: chipTone.backgroundColor,
+        borderColor: chipTone.borderColor,
+        color: chipTone.color,
+      }}
+    />
+  )
+}
+
+export function AppSubjectTag({ size = 'md', subject }: AppSubjectTagProps) {
+  return (
+    <SubjectChip
+      color={subject.color ?? 'rgba(100, 116, 139, 1)'}
+      label={subject.label}
+      size={size}
+    />
+  )
+}
+
+export default function AppSubjectsTags({
+  size = 'md',
+  subjects,
+}: AppSubjectsTagsProps) {
+  return (
+    <Box className="flex flex-wrap gap-2.5">
+      {subjects.map(subject => (
+        <AppSubjectTag
+          key={subject.id ?? subject.label}
+          size={size}
+          subject={subject}
+        />
+      ))}
+    </Box>
+  )
 }
