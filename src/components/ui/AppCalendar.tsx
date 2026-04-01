@@ -91,7 +91,10 @@ export default function AppCalendar() {
             '& .MuiPickersDay-root': {
               width: 84,
               height: 60,
-              fontSize: '0.95rem',
+              fontSize: '1.2rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             },
             '& .MuiDayCalendar-weekDayLabel': {
               width: 80,
