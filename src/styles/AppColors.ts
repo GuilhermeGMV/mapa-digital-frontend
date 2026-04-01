@@ -17,7 +17,7 @@ export class AppColors {
   } as const
 
   static readonly light = {
-    primary: '#1F4B99',
+    primary: '#1D4ED8',
     primaryDark: '#14356D',
     primaryLight: '#4C74BD',
     secondary: '#117C74',
@@ -28,6 +28,7 @@ export class AppColors {
     error: '#C14953',
     info: '#3E7CB1',
     backgroundDefault: '#F4F7FB',
+    backgroundHover: '#E9EEF4',
     backgroundPaper: '#FFFFFF',
     textPrimary: '#102A43',
     textSecondary: '#52606D',
@@ -45,6 +46,7 @@ export class AppColors {
     error: '#F08B94',
     info: '#80B7F0',
     backgroundDefault: '#0D1626',
+    backgroundHover: '#132238',
     backgroundPaper: '#132238',
     textPrimary: '#F4F7FB',
     textSecondary: '#B6C2CF',
