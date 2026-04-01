@@ -3,7 +3,10 @@ import dayjs, { type Dayjs } from 'dayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'
-import { PickersDay, type PickersDayProps } from '@mui/x-date-pickers/PickersDay'
+import {
+  PickersDay,
+  type PickersDayProps,
+} from '@mui/x-date-pickers/PickersDay'
 import DayDetailModal from './DayDetailModal'
 
 function CustomDay(props: PickersDayProps<Dayjs>) {

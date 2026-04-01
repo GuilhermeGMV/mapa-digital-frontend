@@ -8,7 +8,11 @@ interface DayDetailModalProps {
   onClose: () => void
 }
 
-export default function DayDetailModal({ open, date, onClose }: DayDetailModalProps) {
+export default function DayDetailModal({
+  open,
+  date,
+  onClose,
+}: DayDetailModalProps) {
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle sx={{ pr: 6 }}>
@@ -21,9 +25,7 @@ export default function DayDetailModal({ open, date, onClose }: DayDetailModalPr
           <CloseIcon fontSize="small" />
         </IconButton>
       </DialogTitle>
-      <DialogContent>
-        TODO: Modal de detalhes do dia 
-      </DialogContent>
+      <DialogContent>TODO: Modal de detalhes do dia</DialogContent>
     </Dialog>
   )
 }

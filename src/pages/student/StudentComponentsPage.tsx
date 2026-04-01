@@ -15,8 +15,7 @@ function StudentComponentsPage() {
             <AppCalendar />
           </Box>
 
-          <Box className="flex-1">
-          </Box>
+          <Box className="flex-1"></Box>
         </Box>
       </Box>
     </AppPageContainer>
