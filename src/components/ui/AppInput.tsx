@@ -2,6 +2,9 @@ import React from 'react'
 import TextField, { type TextFieldProps } from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import IconButton from 'node_modules/@mui/material/esm/IconButton/IconButton'
+import EmailIcon from '@mui/icons-material/Email'
+import LockIcon from '@mui/icons-material/Lock'
+import SearchIcon from '@mui/icons-material/Search'
 import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
 
@@ -47,7 +50,24 @@ export default function AppInput({
         height: customHeight,
       }),
     }, 
-}
+  }
+
+  const getDefaultIcon = () => {
+    if (icon) return icon
+
+    switch (type) {
+      case 'email':
+        return <EmailIcon />
+      case 'password':
+        return <LockIcon />
+      case 'search':
+        return <SearchIcon />
+      default:
+        return null
+    }
+  }
+
+  const startIcon = getDefaultIcon()
 
   return (
     <TextField
@@ -59,8 +79,8 @@ export default function AppInput({
       className={['w-full', className].filter(Boolean).join(' ')}
       InputProps={{
         ...InputProps,
-        startAdornment: icon ? (
-          <InputAdornment position="start">{icon}</InputAdornment>
+        startAdornment: startIcon ? (
+          <InputAdornment position="start">{startIcon}</InputAdornment>
         ) : null,
 
         endAdornment: isPasswordField ? (
@@ -80,6 +100,7 @@ export default function AppInput({
           backgroundColor: '#F9FAFB',
         },
         ...(sizeStyles as object),
+        ...sx,
       }}
     />
   )
