@@ -46,7 +46,7 @@ export default function AppInput({
           borderRadius: 5,
           backgroundColor: '#F9FAFB',
         },
-        ...sizeStyles,
+        ...(sizeStyles as object),
       }}
     />
   )
