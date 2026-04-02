@@ -1,15 +1,10 @@
+import React from 'react'
 import TextField, { type TextFieldProps } from '@mui/material/TextField'
+import InputAdornment from '@mui/material/InputAdornment'
 
-function AppInput({ className, ...props }: TextFieldProps) {
-  return (
-    <TextField
-      {...props}
-      className={['w-full', className].filter(Boolean).join(' ')}
-      fullWidth
-      size="medium"
-      variant="outlined"
-    />
-  )
+type InputSize = 'small' | 'medium' | 'large'
+
+type AppInputProps = TextFieldProps & {
+  inputSize?: InputSize
+  icon?: React.ReactNode
 }
-
-export default AppInput
