@@ -27,3 +27,18 @@ export default function AppInput({
           },
         }
       : {}
+
+  return (
+    <TextField
+      {...props}
+      size={muiSize}
+      fullWidth
+      variant="outlined"
+      className={['w-full', className].filter(Boolean).join(' ')}
+      InputProps={{
+        ...InputProps,
+        startAdornment: icon ? (
+          <InputAdornment position="start">{icon}</InputAdornment>
+        ) : null,
+      }}
+      
