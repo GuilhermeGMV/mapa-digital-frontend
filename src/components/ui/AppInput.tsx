@@ -41,4 +41,13 @@ export default function AppInput({
           <InputAdornment position="start">{icon}</InputAdornment>
         ) : null,
       }}
-      
+      sx={{
+        '& .MuiOutlinedInput-root': {
+          borderRadius: 5,
+          backgroundColor: '#F9FAFB',
+        },
+        ...sizeStyles,
+      }}
+    />
+  )
+}
