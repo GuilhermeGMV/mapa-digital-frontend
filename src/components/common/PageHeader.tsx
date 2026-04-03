@@ -14,3 +14,12 @@ interface PageHeaderProps {
   actions?: ReactNode
   variant?: HeaderVariant
 }
+ 
+const variantStyles: Record<HeaderVariant, string> = {
+  student: 'bg-[#359CDF] text-white',
+  guardians: 'bg-[#DE4512] text-white',
+  school: 'bg-[#249E75] text-white',
+  company: 'bg-[#6132BD] text-white',
+  admin: 'bg-[#BF2260] text-white',
+  enterpriseSchool: 'bg-[#5A642B] text-white'
+}
