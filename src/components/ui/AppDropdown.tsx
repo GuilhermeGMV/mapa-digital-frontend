@@ -1,11 +1,9 @@
-import React from 'react'
 import {
   Select,
   MenuItem,
   ListItemIcon,
   ListItemText,
   FormControl,
-  SelectChangeEvent,
   Checkbox,
   SelectProps,
 } from '@mui/material'
@@ -27,7 +25,6 @@ export interface AppDropdownProps extends Omit<
   placeholder?: string
   dropdownPlacement?: 'bottom' | 'top'
   width?: string | number
-  backgroundColor?: string
   borderRadius?: string | number
 }
 
@@ -38,7 +35,6 @@ function AppDropdown({
   placeholder = 'Selecione uma opção',
   dropdownPlacement = 'bottom',
   width = 240,
-  backgroundColor = 'var(--dropdown-modal-background)',
   borderRadius = 'var(--dropdown-radius)',
   ...props
 }: AppDropdownProps) {
