@@ -16,7 +16,6 @@ export interface DropdownOption {
   value: string | number
 }
 
-
 export interface AppDropdownProps {
   options: DropdownOption[]
   value: string | number | Array<string | number>
@@ -47,7 +46,6 @@ function AppDropdown({
   backgroundColor = 'var(--dropdown-modal-background)',
   borderRadius = 'var(--dropdown-radius)',
 }: AppDropdownProps) {
-  
   const renderValue = (selected: unknown) => {
     if (!selected || (Array.isArray(selected) && selected.length === 0)) {
       return <span className="text-gray-500">{placeholder}</span>
@@ -60,7 +58,10 @@ function AppDropdown({
       return selectedLabels.join(', ')
     }
 
-    if (!multiple && (typeof selected === 'string' || typeof selected === 'number')) {
+    if (
+      !multiple &&
+      (typeof selected === 'string' || typeof selected === 'number')
+    ) {
       const found = options.find(opt => opt.value === selected)
       return found ? found.label : String(selected)
     }
