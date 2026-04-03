@@ -16,6 +16,7 @@ export interface DropdownOption {
   value: string | number
 }
 
+
 export interface AppDropdownProps {
   options: DropdownOption[]
   value: string | number | Array<string | number>
@@ -25,10 +26,12 @@ export interface AppDropdownProps {
   ) => void
   multiple?: boolean
   placeholder?: string
-  customText?: string
   className?: string
   dropdownPlacement?: 'bottom' | 'top'
   width?: string | number
+  disabled?: boolean
+  backgroundColor?: string
+  borderRadius?: string | number
 }
 
 function AppDropdown({
@@ -37,16 +40,15 @@ function AppDropdown({
   onChange,
   multiple = false,
   placeholder = 'Selecione uma opção',
-  customText,
   className = '',
   dropdownPlacement = 'bottom',
   width = 240,
+  disabled = false,
+  backgroundColor = 'var(--dropdown-modal-background)',
+  borderRadius = 'var(--dropdown-radius)',
 }: AppDropdownProps) {
-  // Função para definir a renderização do texto no botão fechado
+  
   const renderValue = (selected: unknown) => {
-    // Se o usuário passou um texto forçado, ele tem prioridade
-    if (customText) return customText
-
     if (!selected || (Array.isArray(selected) && selected.length === 0)) {
       return <span className="text-gray-500">{placeholder}</span>
     }
@@ -58,12 +60,9 @@ function AppDropdown({
       return selectedLabels.join(', ')
     }
 
-    if (
-      !multiple &&
-      (typeof selected === 'string' || typeof selected === 'number')
-    ) {
+    if (!multiple && (typeof selected === 'string' || typeof selected === 'number')) {
       const found = options.find(opt => opt.value === selected)
-      return found ? found.label : selected
+      return found ? found.label : String(selected)
     }
 
     return ''
@@ -71,7 +70,8 @@ function AppDropdown({
   return (
     <FormControl
       className={className}
-      style={{ minWidth: width, maxWidth: width, width }}
+      style={{ minWidth: width, maxWidth: width, width, borderRadius }}
+      disabled={disabled}
     >
       <Select
         multiple={multiple}
@@ -80,6 +80,12 @@ function AppDropdown({
         displayEmpty
         renderValue={renderValue}
         IconComponent={ExpandMoreIcon}
+        disabled={disabled}
+        className="outline-none ring-0! border-slate-300 aria-expanded:border-blue-700 aria-expanded:ring-2 aria-expanded:ring-blue-700 focus:border-slate-300 focus-visible:border-slate-300 active:border-slate-300"
+        sx={{
+          background: backgroundColor,
+          borderRadius: borderRadius,
+        }}
         MenuProps={{
           anchorOrigin:
             dropdownPlacement === 'top'
@@ -92,19 +98,18 @@ function AppDropdown({
           PaperProps: {
             className: 'shadow-lg mt-1 border border-slate-100',
             sx: {
-              background: 'var(--dropdown-modal-background)',
-              borderRadius: 'var(--dropdown-radius)',
+              background: backgroundColor,
+              borderRadius: borderRadius,
               minWidth: width,
               '& .MuiList-root': {
                 padding: '8px',
-                borderRadius: 'var(--dropdown-radius)',
+                borderRadius: borderRadius,
               },
             },
           },
         }}
       >
         {options.map(option => {
-          // Verifica se a opção atual está selecionada
           const isSelected = multiple
             ? Array.isArray(value) && value.includes(option.value)
             : value === option.value
@@ -113,7 +118,6 @@ function AppDropdown({
             <MenuItem
               key={option.value}
               value={option.value}
-              // Tailwind classes para o hover e estado selecionado
               className={`transition-colors duration-200 ${
                 multiple
                   ? 'text-slate-700 hover:bg-slate-100'
@@ -172,7 +176,7 @@ function AppDropdown({
               </ListItemIcon>
               <ListItemText
                 primary={option.label}
-                className={`${!isSelected && multiple ? 'ml-8' : ''}`}
+                className={multiple ? 'ml-2' : ''}
               />
             </MenuItem>
           )

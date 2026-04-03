@@ -32,7 +32,7 @@ function StudentComponentsPage() {
           Área para testar componentes
         </Typography>
 
-        <div className="w-full flex flex-col gap-6">
+        <div className="flex flex-row gap-4 w-full">
           <div>
             <AppDropdown
               options={dropdownOptions}
@@ -46,6 +46,7 @@ function StudentComponentsPage() {
               }
               placeholder="Selecione o ano"
               width="auto"
+              dropdownPlacement="bottom"
             />
           </div>
           <div>
@@ -58,8 +59,17 @@ function StudentComponentsPage() {
                 setMultiValue(Array.isArray(v) ? v : [v])
               }}
               placeholder="Selecione os anos"
+              dropdownPlacement="bottom"
             />
           </div>
+            <AppDropdown
+              options={dropdownOptions}
+              value={singleValue}
+              onChange={() => {}}
+              placeholder="Desabilitado"
+              disabled
+              width={120}
+            />
         </div>
       </Box>
     </AppPageContainer>
