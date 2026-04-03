@@ -12,7 +12,7 @@ function StudentComponentsPage() {
       <Box className="flex min-h-[80vh] flex-col items-center justify-center rounded-2xl bg-white p-8">
         <Typography className="text-lg text-slate-400"></Typography>
 
-        {/* Usando nome da cor normal */}
+        {}
         <ComponentButton
           tamanho="small"
           cor="red"
@@ -20,16 +20,16 @@ function StudentComponentsPage() {
           raioBorda={0}
         />
 
-        {/* Usando Hexadecimal */}
+        {}
         <ComponentButton
           tamanho="medium"
-          cor="#FF4500" // OrangeRed
+          cor="#FF4500" //
           texto="Sou medio e laranja"
           raioBorda="8px"
           posicaoIcone="esquerda"
         />
 
-        {/* Usando cor por numero */}
+        {}
         <ComponentButton
           tamanho="large"
           cor="rgb(34, 139, 34)"
