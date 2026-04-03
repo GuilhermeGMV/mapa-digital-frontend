@@ -5,7 +5,9 @@ import AppDropdown, { DropdownOption } from '@/components/ui/AppDropdown'
 import { useState } from 'react'
 import StudentComponentsShowcase from './components/StudentComponentsShowcase'
 import AppCalendar from '@/components/ui/AppCalendar'
+import WorkspacePremiumRoundedIcon from '@mui/icons-material/WorkspacePremiumRounded'
 import AppInput from '@/components/ui/AppInput'
+import MetricsCard from '@/components/ui/MetricsCard'
 
 const dropdownOptions: DropdownOption[] = [
   { label: '5º Ano', value: '5' },
@@ -113,6 +115,15 @@ function StudentComponentsPage() {
                 fontSize: '18px',
                 padding: '0 20px',
               }}
+            />
+
+            <MetricsCard
+              contentClassName="p-5"
+              title="Métricas"
+              value="123"
+              icon={<WorkspacePremiumRoundedIcon />}
+              iconBackground="rgba(219, 234, 254, 1)"
+              iconColor="rgba(37, 99, 235, 1)"
             />
           </Stack>
         </Box>
