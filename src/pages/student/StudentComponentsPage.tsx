@@ -62,14 +62,14 @@ function StudentComponentsPage() {
               dropdownPlacement="bottom"
             />
           </div>
-            <AppDropdown
-              options={dropdownOptions}
-              value={singleValue}
-              onChange={() => {}}
-              placeholder="Desabilitado"
-              disabled
-              width={120}
-            />
+          <AppDropdown
+            options={dropdownOptions}
+            value={singleValue}
+            onChange={() => {}}
+            placeholder="Desabilitado"
+            disabled
+            width={120}
+          />
         </div>
       </Box>
     </AppPageContainer>
