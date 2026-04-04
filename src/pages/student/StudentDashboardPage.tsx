@@ -88,8 +88,7 @@ function StudentDashboardPage() {
       value: '7º Ano',
       helper: '',
       icon: <WorkspacePremiumRoundedIcon />,
-      iconBackground: 'rgba(219, 234, 254, 1)',
-      iconColor: 'rgba(37, 99, 235, 1)',
+      iconVariant: 'blue' as const,
     },
     {
       id: 'study',
@@ -97,8 +96,7 @@ function StudentDashboardPage() {
       value: keyMetric ? `${keyMetric.value}` : '340 min',
       helper: keyMetric?.helperText ?? '+12% vs semana anterior',
       icon: <BoltRoundedIcon />,
-      iconBackground: 'rgba(224, 242, 254, 1)',
-      iconColor: 'rgba(2, 132, 199, 1)',
+      iconVariant: 'cyan' as const,
     },
     {
       id: 'trail',
@@ -106,8 +104,7 @@ function StudentDashboardPage() {
       value: engagementMetric ? `${engagementMetric.value}` : '62%',
       helper: '',
       icon: <TrackChangesRoundedIcon />,
-      iconBackground: 'rgba(237, 233, 254, 1)',
-      iconColor: 'rgba(124, 58, 237, 1)',
+      iconVariant: 'purple' as const,
     },
     {
       id: 'streak',
@@ -115,8 +112,7 @@ function StudentDashboardPage() {
       value: '5 dias',
       helper: '',
       icon: <TrendingUpRoundedIcon />,
-      iconBackground: 'rgba(220, 252, 231, 1)',
-      iconColor: 'rgba(5, 150, 105, 1)',
+      iconVariant: 'green' as const,
     },
   ]
 

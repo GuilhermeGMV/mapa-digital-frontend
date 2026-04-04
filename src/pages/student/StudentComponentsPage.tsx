@@ -37,7 +37,7 @@ function StudentComponentsPage() {
       <Box
         className="flex min-h-[80vh] rounded-2xl bg-white p-8 space-x-8"
         sx={{
-          backgroundColor: 'background.paper',
+          backgroundColor: 'background.default',
           border: `1px solid ${theme.palette.divider}`,
         }}
       >
@@ -122,8 +122,9 @@ function StudentComponentsPage() {
               title="Métricas"
               value="123"
               icon={<WorkspacePremiumRoundedIcon />}
-              iconBackground="rgba(219, 234, 254, 1)"
-              iconColor="rgba(37, 99, 235, 1)"
+              iconVariant="blue"
+              warningText="+25 este mês"
+              warningColor="success.main"
             />
           </Stack>
         </Box>
