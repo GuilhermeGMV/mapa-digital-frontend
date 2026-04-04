@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, LinearProgress, Stack, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { getSubjectTheme } from '../../utils/subjectThemes'
@@ -26,9 +27,19 @@ function ProgressBar({
   const subjectTheme = getSubjectTheme(subject, { mode: theme.palette.mode })
   const normalizedValue = Math.max(0, Math.min(100, value))
   const resolvedValueLabel = valueLabel ?? `${Math.round(normalizedValue)}%`
+  const isSoftValueLabel = valueLabelVariant === 'soft'
 
   return (
-    <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center' }}>
+    <Stack
+      direction={{ sm: 'row', xs: isSoftValueLabel ? 'column' : 'row' }}
+      spacing={1.25}
+      sx={{
+        alignItems: {
+          sm: 'center',
+          xs: isSoftValueLabel ? 'stretch' : 'center',
+        },
+      }}
+    >
       <Box sx={{ flex: 1 }}>
         {label ? (
           <Typography
@@ -60,17 +71,25 @@ function ProgressBar({
       {showValueLabel ? (
         <Typography
           sx={{
-            backgroundColor: 'transparent',
-            border: valueLabelVariant === 'soft' ? 'none' : 'none',
-            borderRadius: valueLabelVariant === 'soft' ? 999 : 0,
+            alignSelf: {
+              sm: 'auto',
+              xs: isSoftValueLabel ? 'flex-start' : 'auto',
+            },
+            backgroundColor: isSoftValueLabel
+              ? subjectTheme.softSurface.backgroundColor
+              : 'transparent',
+            borderRadius: isSoftValueLabel ? 'var(--app-radius-pill)' : 0,
             color:
-              valueLabelVariant === 'soft' ? '#FFF' : subjectTheme.text.color,
+              valueLabelVariant === 'soft'
+                ? subjectTheme.color
+                : subjectTheme.text.color,
             fontSize: valueLabelVariant === 'soft' ? 12 : 14,
             fontWeight: 700,
-            minWidth: valueLabelVariant === 'soft' ? 'fit-content' : 32,
-            px: valueLabelVariant === 'soft' ? 1.25 : 0,
-            py: valueLabelVariant === 'soft' ? 0.375 : 0,
-            textAlign: 'right',
+            maxWidth: '100%',
+            minWidth: isSoftValueLabel ? 'fit-content' : 32,
+            px: isSoftValueLabel ? 1.25 : 0,
+            py: isSoftValueLabel ? 0.375 : 0,
+            textAlign: { sm: 'right', xs: isSoftValueLabel ? 'left' : 'right' },
           }}
         >
           {resolvedValueLabel}

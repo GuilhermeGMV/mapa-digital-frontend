@@ -11,7 +11,8 @@ import {
   Typography,
 } from '@mui/material'
 import { alpha, useTheme } from '@mui/material/styles'
-import React, { type ReactNode } from 'react'
+import React from 'react'
+import type { ReactNode } from 'react'
 import { AppSubjectTag } from './AppSubjectsTags'
 import { getSubjectTheme, type SubjectTheme } from '../../utils/subjectThemes'
 import type { SubjectContext } from '../../types/common'
@@ -84,12 +85,18 @@ function OnboardingQuestionCard({
       sx={{
         backgroundColor: theme.palette.background.paper,
         border: `1px solid ${subjectTheme.border.borderColor}`,
-        borderRadius: '20px',
+        borderRadius: 'var(--app-radius-card)',
         boxShadow: '0 12px 30px rgba(16, 24, 40, 0.04)',
         maxWidth: 768,
       }}
     >
-      <CardContent sx={{ display: 'grid', gap: 3, p: 4 }}>
+      <CardContent
+        sx={{
+          display: 'grid',
+          gap: { md: 3, xs: 2.5 },
+          p: { md: 4, xs: 2.5 },
+        }}
+      >
         <Box>
           <Button
             {...backButtonProps}
@@ -98,7 +105,7 @@ function OnboardingQuestionCard({
             startIcon={<ArrowBackIosNewRoundedIcon sx={{ fontSize: 14 }} />}
             sx={{
               borderColor: subjectTheme.border.borderColor,
-              borderRadius: 9999,
+              borderRadius: 'var(--app-radius-pill)',
               color: subjectTheme.mutedText.color,
             }}
             variant="outlined"
@@ -111,14 +118,18 @@ function OnboardingQuestionCard({
           <Typography
             sx={{
               color: subjectTheme.text.color,
-              fontSize: 24,
+              fontSize: { md: 24, xs: 20 },
               fontWeight: 700,
               lineHeight: 1.2,
             }}
           >
             {title}
           </Typography>
-          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+          <Stack
+            direction={{ sm: 'row', xs: 'column' }}
+            spacing={1}
+            sx={{ alignItems: { sm: 'center', xs: 'flex-start' } }}
+          >
             <Typography
               sx={{ color: subjectTheme.mutedText.color, fontSize: 13 }}
             >
@@ -132,11 +143,11 @@ function OnboardingQuestionCard({
           sx={{
             backgroundColor: theme.palette.background.paper,
             border: `1px solid ${subjectTheme.border.borderColor}`,
-            borderRadius: '12px',
+            borderRadius: 'var(--app-radius-control)',
             display: 'grid',
             gap: 1,
-            px: 2.25,
-            py: 1.75,
+            px: { md: 2.25, xs: 1.5 },
+            py: { md: 1.75, xs: 1.5 },
           }}
         >
           <ProgressBar
@@ -156,16 +167,20 @@ function OnboardingQuestionCard({
             borderRadius: '16px',
             display: 'grid',
             gap: 2,
-            p: 3,
+            p: { md: 3, xs: 2 },
           }}
         >
-          <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
+          <Stack
+            direction={{ sm: 'row', xs: 'column' }}
+            spacing={{ sm: 2, xs: 1.5 }}
+            sx={{ justifyContent: 'space-between' }}
+          >
             <Stack spacing={1}>
               <Box sx={{ alignSelf: 'flex-start' }}>{subjectBadge}</Box>
               <Typography
                 sx={{
                   color: subjectTheme.text.color,
-                  fontSize: 22,
+                  fontSize: { md: 22, xs: 18 },
                   fontWeight: 700,
                   lineHeight: 1.2,
                 }}
@@ -180,9 +195,9 @@ function OnboardingQuestionCard({
                     ? alpha(theme.palette.background.paper, 0.72)
                     : subjectTheme.badge.backgroundColor,
                 border: `1px solid ${alpha(subjectTheme.color, theme.palette.mode === 'dark' ? 0.4 : 0.28)}`,
-                borderRadius: 9999,
+                borderRadius: 'var(--app-radius-pill)',
                 color: subjectTheme.color,
-                fontSize: 17,
+                fontSize: { md: 17, xs: 14 },
                 fontWeight: 700,
                 height: 'fit-content',
                 lineHeight: 1,
@@ -210,14 +225,15 @@ function OnboardingQuestionCard({
                     borderColor: isSelected
                       ? subjectTheme.optionSelected.borderColor
                       : subjectTheme.option.borderColor,
-                    borderRadius: '12px',
+                    borderRadius: 'var(--app-radius-control)',
                     color: isSelected
                       ? subjectTheme.optionSelected.color
                       : subjectTheme.option.color,
                     justifyContent: 'flex-start',
-                    minHeight: 46,
+                    minHeight: 48,
                     px: 2,
                     py: 1.25,
+                    textAlign: 'left',
                     textTransform: 'none',
                     '&:hover': {
                       backgroundColor:
@@ -234,7 +250,13 @@ function OnboardingQuestionCard({
           </Stack>
         </Box>
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Box
+          sx={{
+            display: 'grid',
+            gap: 1.25,
+            gridTemplateColumns: { sm: 'repeat(2, minmax(0, 1fr))', xs: '1fr' },
+          }}
+        >
           <Button
             {...previousQuestionButtonProps}
             disabled={disablePreviousQuestion}
@@ -242,11 +264,12 @@ function OnboardingQuestionCard({
             startIcon={<ArrowBackRoundedIcon />}
             sx={{
               borderColor: subjectTheme.border.borderColor,
-              borderRadius: 9999,
+              borderRadius: 'var(--app-radius-pill)',
               color: subjectTheme.mutedText.color,
               fontWeight: 700,
-              minWidth: 168,
+              minHeight: 44,
               px: 3,
+              width: '100%',
             }}
             variant="outlined"
           >
@@ -259,13 +282,13 @@ function OnboardingQuestionCard({
             onClick={onNext}
             sx={{
               backgroundColor: subjectTheme.solidSurface.backgroundColor,
-              borderRadius: 999,
+              borderRadius: 'var(--app-radius-pill)',
               color: subjectTheme.solidSurface.color,
               boxShadow: 'none',
               fontWeight: 700,
               minHeight: 42,
-              minWidth: 168,
               px: 3,
+              width: '100%',
               '&:hover': {
                 backgroundColor: subjectTheme.solidSurface.backgroundColor,
                 opacity: 0.92,

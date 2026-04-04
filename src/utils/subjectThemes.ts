@@ -55,7 +55,15 @@ const SUBJECT_CATALOG = {
 } as const
 
 export type SubjectId = keyof typeof SUBJECT_CATALOG
+export const ALL_SUBJECT_TAG_CONTEXTS: SubjectContext[] = (
+  Object.keys(SUBJECT_CATALOG) as SubjectId[]
+).map(id => ({
+  id: SUBJECT_CATALOG[id].id,
+  label: SUBJECT_CATALOG[id].label,
+  color: SUBJECT_CATALOG[id].color,
+}))
 export type SubjectChipSize = 'sm' | 'md' | 'lg'
+export const SUBJECT_TAG_SIZES: SubjectChipSize[] = ['sm', 'md', 'lg']
 
 type SubjectStyleSlot = {
   backgroundColor?: string

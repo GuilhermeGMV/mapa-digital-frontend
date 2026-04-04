@@ -62,7 +62,7 @@ export default function AppSubjectsTags({
   subjects,
 }: AppSubjectsTagsProps) {
   return (
-    <Box className="flex flex-wrap gap-2.5">
+    <Box className="flex flex-wrap gap-2">
       {subjects.map(subject => (
         <AppSubjectTag
           key={subject.id ?? subject.label}

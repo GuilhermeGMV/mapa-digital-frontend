@@ -33,8 +33,15 @@ function AppCard({
   return (
     <Card
       {...cardProps}
+      sx={{
+        backgroundColor: 'background.paper',
+        border: '1px solid',
+        borderColor: 'background.border',
+        borderRadius: 'var(--app-radius-card)',
+        boxShadow: 'none',
+      }}
       className={[
-        'rounded-3xl solid 1px border border-md border-var(--app-border-strong) bg-var(--app-surface) shadow-var(--app-card-shadow) text-var(--app-foreground)',
+        'rounded-3xl solid 1px border border-md border-background-border bg-background-paper shadow-var(--app-card-shadow) text-var(--app-foreground)',
         className,
       ]
         .filter(Boolean)
