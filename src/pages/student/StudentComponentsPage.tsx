@@ -38,7 +38,7 @@ function StudentComponentsPage() {
       <Box
         className="flex min-h-[80vh] rounded-2xl bg-white p-8 space-x-8"
         sx={{
-          backgroundColor: 'background.default',
+          backgroundColor: 'background.paper',
           border: `1px solid ${theme.palette.divider}`,
         }}
       >
@@ -131,7 +131,7 @@ function StudentComponentsPage() {
           {}
           <AppButton
             size="small"
-            color="primary"
+            backgroundColor="primary.main"
             label="Sou pequeno e padrao"
             borderRadius={0}
           />
@@ -139,17 +139,18 @@ function StudentComponentsPage() {
           {}
           <AppButton
             size="medium"
-            color="secondary"
+            backgroundColor="background.default"
             label="Sou qual cor?"
             hasBorder={true}
             borderRadius="8px"
             iconPosition="left"
+            textColor="text.primary"
           />
 
           {}
           <AppButton
             size="large"
-            color="error"
+            backgroundColor="error.main"
             label="Sou grande e laranja"
             borderRadius="50%"
             iconPosition="right"
@@ -159,11 +160,15 @@ function StudentComponentsPage() {
             iconPosition="left"
             hasBorder={true}
             borderRadius="50px"
-            color="primary"
+            backgroundColor="background.paper"
+            textColor="text.primary"
           />
-          <AppButton label="Confirmar" color="warning" />
+          <AppButton label="Confirmar" backgroundColor="warning.main" />
           <AppButton label="Botao padrao conforme solicitado" />
-          <AppButton color="info" label="Botao com cor info"></AppButton>
+          <AppButton
+            backgroundColor="info.main"
+            label="Botao com cor info"
+          ></AppButton>
         </Box>
       </Box>
       <StudentComponentsShowcase />
