@@ -69,7 +69,7 @@ function ProgressBar({
             borderRadius: valueLabelVariant === 'soft' ? 999 : 0,
             color:
               valueLabelVariant === 'soft'
-                ? subjectTheme.color
+                ? theme.palette.primary.contrastText
                 : subjectTheme.text.color,
             fontSize: valueLabelVariant === 'soft' ? 12 : 14,
             fontWeight: 700,
