@@ -1,8 +1,6 @@
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded'
 import BoltRoundedIcon from '@mui/icons-material/BoltRounded'
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded'
-import PersonRoundedIcon from '@mui/icons-material/PersonRounded'
-import NearMeRoundedIcon from '@mui/icons-material/NearMeRounded'
 import TrackChangesRoundedIcon from '@mui/icons-material/TrackChangesRounded'
 import TrendingUpRoundedIcon from '@mui/icons-material/TrendingUpRounded'
 import WorkspacePremiumRoundedIcon from '@mui/icons-material/WorkspacePremiumRounded'
@@ -10,13 +8,11 @@ import { Box, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { useEffect, useState } from 'react'
 import LoadingScreen from '@/components/common/LoadingScreen'
-import AppButton from '@/components/ui/AppButton'
 import AppCard from '@/components/ui/AppCard'
 import AppPageContainer from '@/components/ui/AppPageContainer'
 import { AppSubjectTag } from '@/components/ui/AppSubjectsTags'
 import ProgressBar from '@/components/ui/ProgressBar'
 import { studentService } from '@/services/student.service'
-import { AppColors } from '@/styles/AppColors'
 import { getSubjectTheme, SUBJECTS } from '@/utils/subjectThemes'
 import type { StudentTask, SummaryMetric } from '@/types/common'
 import MetricsCard from '@/components/ui/MetricsCard'
@@ -116,35 +112,14 @@ function StudentDashboardPage() {
 
   return (
     <AppPageContainer className="gap-4 md:gap-5">
-      <Box className="flex flex-col gap-4 rounded-3xl text-white md:flex-row md:items-center md:justify-between">
-        {/* <Box>
-          <Box className="flex items-center gap-2 text-white/90">
-            <PersonRoundedIcon fontSize="small" />
-            <Typography className="text-base md:text-lg">Olá, Lucas</Typography>
-          </Box>
-          <Typography className="mt-1 text-2xl font-bold leading-tight md:text-4xl">
-            Continue sua jornada
-          </Typography>
-          <Typography className="mt-2 text-sm text-white/90 md:text-lg">
-            Você tem {tasks.length} atividades pendentes na sua trilha
-          </Typography>
-        </Box>
-        <AppButton
-          className="rounded-2xl border-none bg-white/20 px-4 text-white hover:bg-white/30 md:px-5"
-          startIcon={<NearMeRoundedIcon />}
-          variant="contained"
-        >
-          Ir para Trilha
-        </AppButton> */}
-        <PageHeader
-          variant="student"
-          eyebrow="Olá, Lucas!"
-          title="Continue sua jornada no Mapa"
-          subtitle="Progresso até o próximo nível:"
-          tag="7º Ano"
-          progress={85}
-        />
-      </Box>
+      <PageHeader
+        variant="student"
+        eyebrow="Olá, Lucas!"
+        title="Continue sua jornada no Mapa"
+        subtitle="Progresso até o próximo nível:"
+        tag="7º Ano"
+        progress={85}
+      />
 
       <Box className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-4">
         {cards.map(card => (

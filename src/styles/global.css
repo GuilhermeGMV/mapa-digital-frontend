@@ -1,3 +1,12 @@
+@font-face {
+  font-display: swap;
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 300 700;
+  src: url('/fonts/space-grotesk/SpaceGrotesk-VariableFont_wght.ttf')
+    format('truetype-variations');
+}
+
 @layer theme, base, components, utilities;
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
@@ -47,6 +56,10 @@
   --dropdown-modal-background: #ffffff;
   --dropdown-radius: 10px;
   --dropdown-option-gap: 2px;
+  --app-radius-control: 12px;
+  --app-radius-card: 20px;
+  --app-radius-page: 24px;
+  --app-radius-pill: 9999px;
 }
 
 .dark {
@@ -130,6 +143,7 @@ a {
 .app-subject-chip {
   display: inline-flex;
   max-width: 100%;
+  min-width: 0;
   align-items: center;
   border-radius: 9999px;
 }
@@ -138,7 +152,9 @@ a {
   display: flex;
   min-height: 100%;
   align-items: center;
-  overflow: visible;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
   font-weight: 700;
   padding-top: 0;

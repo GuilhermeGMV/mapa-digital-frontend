@@ -1,15 +1,26 @@
+import CalculateRoundedIcon from '@mui/icons-material/CalculateRounded'
+import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded'
+import PublicRoundedIcon from '@mui/icons-material/PublicRounded'
+import WorkspacePremiumRoundedIcon from '@mui/icons-material/WorkspacePremiumRounded'
 import { Box, Stack, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import AppPageContainer from '@/components/ui/AppPageContainer'
-import AppDropdown, { DropdownOption } from '@/components/ui/AppDropdown'
 import { useState } from 'react'
-import StudentComponentsShowcase from './components/StudentComponentsShowcase'
-import AppCalendar from '@/components/ui/AppCalendar'
-import WorkspacePremiumRoundedIcon from '@mui/icons-material/WorkspacePremiumRounded'
-import AppInput from '@/components/ui/AppInput'
-import MetricsCard from '@/components/ui/MetricsCard'
 import PageHeader from '@/components/common/PageHeader'
 import AppButton from '@/components/ui/AppButton'
+import AppCalendar from '@/components/ui/AppCalendar'
+import AppCard from '@/components/ui/AppCard'
+import AppDropdown, { DropdownOption } from '@/components/ui/AppDropdown'
+import AppInput from '@/components/ui/AppInput'
+import AppPageContainer from '@/components/ui/AppPageContainer'
+import AppSubjectsTags from '@/components/ui/AppSubjectsTags'
+import MetricsCard from '@/components/ui/MetricsCard'
+import SubjectBaseCard from '@/components/ui/SubjectBaseCard'
+import {
+  ALL_SUBJECT_TAG_CONTEXTS,
+  SUBJECT_TAG_SIZES,
+  SUBJECTS,
+} from '@/utils/subjectThemes'
+import StudentComponentsShowcase from './components/StudentComponentsShowcase'
 
 const dropdownOptions: DropdownOption[] = [
   { label: '5º Ano', value: '5' },
@@ -49,7 +60,7 @@ function StudentComponentsPage() {
       />
 
       <Box
-        className="flex min-h-[80vh] rounded-2xl bg-white p-8 space-x-8"
+        className="grid grid-cols-1 md:grid-cols-2 gap-8 min-h-[80vh] rounded-2xl bg-white p-8 space-x-8"
         sx={{
           backgroundColor: 'background.paper',
           border: `1px solid ${theme.palette.divider}`,
@@ -182,6 +193,57 @@ function StudentComponentsPage() {
             backgroundColor="info.main"
             label="Botao com cor info"
           ></AppButton>
+        </Box>
+        <Box className="flex-1 space-y-4">
+          <Typography variant="h6">Disciplinas</Typography>
+          <Box className="grid grid-cols-1 gap-3">
+            <SubjectBaseCard
+              icon={<MenuBookRoundedIcon fontSize="medium" />}
+              progress={78}
+              subject={SUBJECTS.portugues}
+              title="Português"
+            />
+            <SubjectBaseCard
+              icon={<CalculateRoundedIcon fontSize="medium" />}
+              progress={55}
+              subject={SUBJECTS.matematica}
+              title="Matemática"
+            />
+            <SubjectBaseCard
+              icon={<PublicRoundedIcon fontSize="medium" />}
+              progress={20}
+              subject={SUBJECTS.geografia}
+              title="Geografia"
+            />
+          </Box>
+        </Box>
+        <Box>
+          <Typography
+            sx={{
+              color: 'text.secondary',
+              fontSize: 14,
+              fontWeight: 600,
+              mb: 2,
+            }}
+          >
+            Catálogo completo de tags de disciplina
+          </Typography>
+          <AppSubjectsTags
+            size="sm"
+            subjects={ALL_SUBJECT_TAG_CONTEXTS}
+          />
+          <Box sx={{ mt: 2 }}>
+            <AppSubjectsTags
+              size="md"
+              subjects={ALL_SUBJECT_TAG_CONTEXTS}
+            />
+          </Box>
+          <Box sx={{ mt: 2 }}>
+            <AppSubjectsTags
+              size="lg"
+              subjects={ALL_SUBJECT_TAG_CONTEXTS}
+            />
+          </Box>
         </Box>
       </Box>
       <StudentComponentsShowcase />

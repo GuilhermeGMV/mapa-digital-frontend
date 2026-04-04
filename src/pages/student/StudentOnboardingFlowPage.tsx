@@ -4,6 +4,10 @@ import { useLocation } from 'react-router-dom'
 import AppPageContainer from '@/components/ui/AppPageContainer'
 import OnboardingQuestionCard from '@/components/ui/OnboardingQuestionCard'
 import type { SubjectContext } from '@/types/common'
+import type {
+  StudentOnboardingFlowActionInput,
+  StudentOnboardingFlowLoaderData,
+} from '@/types/student'
 import { getSubjectContext } from '@/utils/subjectThemes'
 import {
   type OnboardingFlowAnswerMap,
@@ -15,14 +19,12 @@ import {
 } from './components/onboardingQuestionFlow'
 
 type StudentOnboardingFlowRouteState = {
-  // Backend can inject the onboarding attempt identifier through route state
-  // until we switch this flow to a dedicated route loader.
-  assessmentId?: string
-  // Backend can hydrate previously saved answers here when the user resumes the flow.
-  initialAnswersByQuestionId?: OnboardingFlowAnswerMap
+  assessmentId?: StudentOnboardingFlowLoaderData['assessmentId']
+  initialAnswersByQuestionId?: StudentOnboardingFlowLoaderData['initialAnswersByQuestionId']
   initialSubject?: SubjectContext
-  // Backend can inject the questionnaire payload through route state or loader data.
-  questions?: OnboardingFlowQuestion[]
+  questions?:
+    | StudentOnboardingFlowLoaderData['questions']
+    | OnboardingFlowQuestion[]
 }
 
 function StudentOnboardingFlowPage() {
@@ -50,18 +52,22 @@ function StudentOnboardingFlowPage() {
   const isFirstQuestion = currentQuestionIndex === 0
   const isLastQuestion = currentQuestionIndex === questions.length - 1
 
-  // TODO: Replace this local-only flow with a mutation/service call when the API is ready.
-  // Example:
-  // await onboardingService.saveAnswer({
-  //   assessmentId: routeState.assessmentId,
-  //   questionId: currentQuestion.id,
-  //   optionId,
-  // })
+  function saveAnswer(optionId: string): StudentOnboardingFlowActionInput {
+    return {
+      assessmentId: routeState.assessmentId ?? 'local-assessment',
+      currentQuestionIndex,
+      isCompleted: isLastQuestion,
+      optionId,
+      questionId: currentQuestion.id,
+    }
+  }
 
   function handleSelectOption(optionId: string) {
+    const nextAnswer = saveAnswer(optionId)
+
     setAnswersByQuestionId(currentAnswers => ({
       ...currentAnswers,
-      [currentQuestion.id]: optionId,
+      [nextAnswer.questionId]: nextAnswer.optionId,
     }))
   }
 

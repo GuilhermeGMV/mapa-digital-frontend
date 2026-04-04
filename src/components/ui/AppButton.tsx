@@ -46,7 +46,7 @@ function AppButton<C extends ElementType = 'button'>({
   label,
   size = 'medium',
   backgroundColor = 'primary.main',
-  borderRadius = '12px',
+  borderRadius = 'var(--app-radius-control)',
   iconPosition,
   hasBorder = false,
   textColor = 'primary.contrastText',
@@ -71,7 +71,7 @@ function AppButton<C extends ElementType = 'button'>({
       }
       className={['whitespace-nowrap', className].filter(Boolean).join(' ')}
       sx={{
-        borderRadius: borderRadius,
+        borderRadius,
         textTransform: 'none',
         transition: '0.2s',
         fontWeight: 500,
