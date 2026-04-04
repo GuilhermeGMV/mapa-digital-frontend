@@ -45,7 +45,8 @@ function MetricsCard({
       className={className}
       sx={{
         backgroundColor: 'background.paper',
-        border: `1px solid 'background.border'`,
+        border: '1px solid',
+        borderColor: 'background.border',
         borderRadius: '12px',
         boxShadow: 'none',
         ...cardProps.sx,

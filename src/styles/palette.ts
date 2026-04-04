@@ -19,6 +19,7 @@ declare module '@mui/material/styles' {
   interface TypeBackground {
     hover: string
     border: string
+    hoverBorder: string
   }
 
   interface Palette {
@@ -60,6 +61,7 @@ const lightPalette: ThemeOptions['palette'] = {
     paper: AppColors.light.backgroundPaper,
     hover: AppColors.light.backgroundHover,
     border: AppColors.light.border,
+    hoverBorder: AppColors.light.hoverBorder,
   },
   text: {
     primary: AppColors.light.textPrimary,
@@ -98,6 +100,7 @@ const darkPalette: ThemeOptions['palette'] = {
     paper: AppColors.dark.backgroundPaper,
     hover: AppColors.dark.backgroundHover,
     border: AppColors.dark.border,
+    hoverBorder: AppColors.dark.hoverBorder,
   },
   text: {
     primary: AppColors.dark.textPrimary,

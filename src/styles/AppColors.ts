@@ -30,7 +30,8 @@ export class AppColors {
     backgroundDefault: 'rgba(244, 247, 251, 1)',
     backgroundPaper: 'rgba(255, 255, 255, 1)',
     backgroundHover: 'rgba(233, 238, 244, 1)',
-    border: 'rgba(217, 222, 231, 1)',
+    border: 'rgba(223, 227, 231, 1)',
+    hoverBorder: 'rgba(189, 197, 209, 1)',
     textPrimary: 'rgba(16, 42, 67, 1)',
     textSecondary: 'rgba(82, 96, 109, 1)',
   } as const
@@ -50,6 +51,7 @@ export class AppColors {
     backgroundPaper: 'rgba(19, 34, 56, 1)',
     backgroundHover: 'rgba(25, 50, 72, 1)',
     border: 'rgba(55, 77, 112, 1)',
+    hoverBorder: 'rgba(75, 97, 132, 1)',
     textPrimary: 'rgba(244, 247, 251, 1)',
     textSecondary: 'rgba(182, 194, 207, 1)',
   } as const
