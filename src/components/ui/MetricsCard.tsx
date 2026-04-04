@@ -91,6 +91,7 @@ function MetricsCard({
                   color: warningColor ?? 'success.main',
                   fontWeight: 500,
                   lineHeight: 1.25,
+                  fontSize: 14,
                 }}
               >
                 {warningText}
