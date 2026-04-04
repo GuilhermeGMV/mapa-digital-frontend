@@ -80,7 +80,7 @@
 }
 
 @theme inline {
-  --font-sans: 'Segoe UI Variable', 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --font-sans: 'Space Grotesk', sans-serif;
   --radius-4xl: 1.125rem;
   --radius-5xl: 1.25rem;
   --color-background: var(--app-background);
