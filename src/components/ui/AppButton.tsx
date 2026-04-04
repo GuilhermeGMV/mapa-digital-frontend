@@ -13,14 +13,17 @@ type AppButtonProps<C extends ElementType = 'button'> = MuiButtonProps<
     borderRadius?: string | number
     iconPosition?: 'left' | 'right'
     hasBorder?: boolean
-    color?:
-      | 'inherit'
-      | 'primary'
-      | 'secondary'
-      | 'success'
-      | 'error'
-      | 'info'
-      | 'warning'
+    textColor?: string
+    hoverBackgroundColor?: string
+    backgroundColor?:
+      | 'primary.main'
+      | 'secondary.main'
+      | 'error.main'
+      | 'warning.main'
+      | 'info.main'
+      | 'success.main'
+      | 'background.default'
+      | 'background.paper'
   }
 >
 
@@ -28,18 +31,23 @@ function AppButton<C extends ElementType = 'button'>({
   className,
   label,
   size = 'medium',
-  color = 'primary',
+  backgroundColor = 'primary.main',
   borderRadius = '12px',
   iconPosition,
   hasBorder = false,
+  textColor = 'primary.contrastText',
   ...props
 }: AppButtonProps<C>) {
+  const hoverBackground = backgroundColor.endsWith('.main')
+    ? backgroundColor.replace('.main', '.hover')
+    : backgroundColor.startsWith('background')
+      ? 'background.hover'
+      : undefined
   return (
     <Button
       {...props}
       size={size}
-      color={color}
-      variant={hasBorder ? 'outlined' : (props.variant ?? 'contained')}
+      variant={props.variant ?? 'contained'}
       startIcon={
         iconPosition === 'left' ? (
           <ArrowBackIosIcon sx={{ fontSize: '12px' }} />
@@ -56,6 +64,13 @@ function AppButton<C extends ElementType = 'button'>({
         textTransform: 'none',
         transition: '0.2s',
         fontWeight: 500,
+        color: textColor,
+        backgroundColor: backgroundColor,
+        '&:hover': {
+          backgroundColor: hoverBackground,
+          filter: 'brightness(0.9)',
+          borderColor: 'background.hoverBorder',
+        },
 
         padding:
           size === 'small'
@@ -65,13 +80,8 @@ function AppButton<C extends ElementType = 'button'>({
               : '16px 40px',
 
         ...(hasBorder && {
-          borderColor: 'divider',
-          color: 'text.secondary',
-          '&:hover': {
-            borderColor: 'primary.main',
-            backgroundColor: 'transparent',
-            filter: 'brightness(0.95)',
-          },
+          border: '1px solid',
+          borderColor: 'background.border',
         }),
 
         ...props.sx,
