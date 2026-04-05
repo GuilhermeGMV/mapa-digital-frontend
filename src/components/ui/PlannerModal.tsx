@@ -1,10 +1,11 @@
 import dayjs from 'dayjs'
 import { Box, Typography } from '@mui/material'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import PendingIcon from '@mui/icons-material/Pending'
+import CheckIcon from '@mui/icons-material/Check';
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import AppSubjectsTags from './AppSubjectsTags'
 import type { SubjectContext } from '@/types/common'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import { alpha } from '@mui/material/styles'
 
 type Status = 'done' | 'pending' | 'adjust'
 
@@ -31,10 +32,42 @@ const dayMap: Record<string, string> = {
 }
 
 function getTaskIcon(status: Task['status']) {
-  if (status === 'done') {
-    return <CheckCircleIcon sx={{ fontSize: 50 }}/>
+  const config = {
+    done: {
+      icon: <CheckIcon sx={{ fontSize: 25 }} />,
+      color: '#22c55e',
+      bg: 'rgba(34,197,94,0.15)',
+    },
+    adjust: {
+      icon: <FitnessCenterIcon sx={{ fontSize: 25 }} />,
+      color: '#eab308',
+      bg: 'rgba(234,179,8,0.15)',
+    },
+    pending: {
+      icon: <FitnessCenterIcon sx={{ fontSize: 25 }} />,
+      color: '#9ca3af',
+      bg: 'rgba(156,163,175,0.15)',
+    },
   }
-  return <PendingIcon sx={{ fontSize: 50 }}/>
+
+  const current = config[status] || config.pending
+
+  return (
+    <Box
+      sx={{
+        width: 44,
+        height: 44,
+        borderRadius: '9999px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: current.bg,
+        color: current.color,
+      }}
+    >
+      {current.icon}
+    </Box>
+  )
 }
 
 function PlannerModal({ tasks }: PlannerProps) {
@@ -75,21 +108,13 @@ function PlannerModal({ tasks }: PlannerProps) {
         const day = dayMap[dayEN]
 
         return (
-            <Box key={task.id} sx={{ mb: 2, border: '1px solid', borderColor: task.subject.color || 'divider', borderRadius: '12px', p: 2, 
+            <Box key={task.id} sx={{ mb: 2, border: '1px solid', borderColor: alpha(task.subject.color || '#ccc', 0.35), borderRadius: '12px', p: 2, 
                                    backgroundColor: 'transparent'}}>
             
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                     <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                        <Box
-                        sx={{
-                            color:
-                                task.status === 'done' ? 'success.main'
-                                : task.status === 'adjust' ? 'warning.main'
-                                : 'text.disabled',
-                        }}
-                        >
-                            {getTaskIcon(task.status)}
-                        </Box>
+                        
+                        {getTaskIcon(task.status)}
                         
                         <Box>
                             <Typography sx={{ fontWeight: 700, fontSize: '1.125rem', mb: 0.5 }}>
