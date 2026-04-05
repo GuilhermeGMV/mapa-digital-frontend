@@ -3,40 +3,38 @@ import { Box, Typography } from '@mui/material'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import PendingIcon from '@mui/icons-material/Pending'
 import AppSubjectsTags from './AppSubjectsTags'
+import type { SubjectContext } from '@/types/common'
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 type Status = 'done' | 'pending' | 'adjust'
 
-type Task = {
+export type Task = {
   id: string
   date: string
   title: string
   status: Status
-  subject: {
-    id: string
-    label: string
-    color: string
-  }
+  subject: SubjectContext
 }
 
 interface PlannerProps {
   tasks: Task[]
 }
 
-const weekOrder = [
-  'segunda-feira',
-  'terça-feira',
-  'quarta-feira',
-  'quinta-feira',
-  'sexta-feira',
-  'sábado',
-  'domingo',
-]
+const dayMap: Record<string, string> = {
+  Monday: 'Segunda',
+  Tuesday: 'Terça',
+  Wednesday: 'Quarta',
+  Thursday: 'Quinta',
+  Friday: 'Sexta',
+  Saturday: 'Sábado',
+  Sunday: 'Domingo',
+}
 
 function getTaskIcon(status: Task['status']) {
   if (status === 'done') {
-    return <CheckCircleIcon fontSize="small" />
+    return <CheckCircleIcon sx={{ fontSize: 50 }}/>
   }
-  return <PendingIcon fontSize="small" />
+  return <PendingIcon sx={{ fontSize: 50 }}/>
 }
 
 function PlannerModal({ tasks }: PlannerProps) {
@@ -52,17 +50,8 @@ function PlannerModal({ tasks }: PlannerProps) {
     )
   })
 
-  const groupedTasks: Record<string, Task[]> = {}
-
-  for (const task of tasksThisWeek) {
-    const dayKey = dayjs(task.date).format('dddd')
-
-    if (!groupedTasks[dayKey]) {
-      groupedTasks[dayKey] = []
-    }
-
-    groupedTasks[dayKey].push(task)
-  }
+   const sortedTasks = [...tasksThisWeek].sort((a, b) =>
+   dayjs(a.date).valueOf() - dayjs(b.date).valueOf())
 
   return (
     <Box
@@ -74,77 +63,58 @@ function PlannerModal({ tasks }: PlannerProps) {
         backgroundColor: 'background.paper',
       }}
     >
-      <Typography variant="h6" sx={{ mb: 2 }}>
-        Planner da Semana
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+        <CalendarMonthIcon sx={{ color: '#319BDD', fontSize: 25}} />
+        <Typography variant="h5">
+            Planner da Semana
+        </Typography>
+      </Box>
 
-      {weekOrder.map(day => {
-        const tasks = groupedTasks[day] || []
+      {sortedTasks.map(task => {
+        const dayEN = dayjs(task.date).format('dddd')
+        const day = dayMap[dayEN]
 
         return (
-          <Box key={day} sx={{ mb: 2.5 }}>
-            <Typography sx={{ fontWeight: 600, mb: 1, fontSize: '0.9rem' }}>
-              {day}
-            </Typography>
+            <Box key={task.id} sx={{ mb: 2, border: '1px solid', borderColor: task.subject.color || 'divider', borderRadius: '12px', p: 2, 
+                                   backgroundColor: 'transparent'}}>
+            
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                        <Box
+                        sx={{
+                            color:
+                                task.status === 'done' ? 'success.main'
+                                : task.status === 'adjust' ? 'warning.main'
+                                : 'text.disabled',
+                        }}
+                        >
+                            {getTaskIcon(task.status)}
+                        </Box>
+                        
+                        <Box>
+                            <Typography sx={{ fontWeight: 700, fontSize: '1.125rem', mb: 0.5 }}>
+                                {day}
+                            </Typography>
 
-            {tasks.length === 0 ? (
-              <Typography variant="caption" color="text.secondary">
-                Nenhuma tarefa
-              </Typography>
-            ) : (
-              tasks.map(task => (
-                <Box
-                  key={task.id}
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    borderRadius: '12px',
-                    p: 1.5,
-                    mb: 1,
-                    backgroundColor: 'background.default',
-                  }}
-                >
-                  <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
-                    <Box
-                      sx={{
-                        color:
-                          task.status === 'done' ? 'success.main'
-                            : task.status === 'adjust' ? 'warning.main'
-                            : 'text.disabled',
-                      }}
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1}}>
+                            <AppSubjectsTags subjects={[task.subject]} size="sm" />
+
+                            <Typography variant="body1">
+                                {task.title}
+                            </Typography>
+                            </Box>
+                        </Box>
+                    </Box>
+                    <Typography
+                        variant="body1"
+                        sx={{ color: 'text.secondary', minWidth: 80, textAlign: 'right'}}
                     >
-                      {getTaskIcon(task.status)}
-                    </Box>
-                    <Box>
-                      <AppSubjectsTags subjects={[task.subject]} size="sm" />
-
-                      <Typography variant="body2" sx={{ mt: 0.3 }}>
-                        {task.title}
-                      </Typography>
-                    </Box>
-                  </Box>
-
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color:
-                        task.status === 'done' ? 'success.main'
-                          : task.status === 'adjust' ? 'warning.main'
-                          : 'text.secondary',
-                      fontWeight: 500,
-                    }}
-                  >
-                    {task.status === 'done' ? 'concluído'
-                      : task.status === 'adjust' ? 'ajustar'
-                      : 'pendente'}
-                  </Typography>
-                </Box>
-              ))
-            )}
-          </Box>
+                        {task.status === 'done' ? 'concluído'
+                        : task.status === 'adjust' ? 'ajustar'
+                        : 'pendente'}
+                    </Typography>
+                </Box> 
+            </Box>
         )
       })}
     </Box>

@@ -21,6 +21,34 @@ import {
   SUBJECTS,
 } from '@/utils/subjectThemes'
 import StudentComponentsShowcase from './components/StudentComponentsShowcase'
+import PlannerModal, { Task } from '@/components/ui/PlannerModal'
+import dayjs from 'dayjs'
+
+const mockTasks: Task[] = [
+  { id: '1', date: dayjs().day(1).format('YYYY-MM-DD'), title: 'Revisão de equações', status: 'done', 
+    subject: SUBJECTS.matematica
+  },
+
+  { id: '2', date: dayjs().day(1).format('YYYY-MM-DD'), title: 'Teste de Proficiência em Inglês - TOEFL', status: 'pending',
+    subject: SUBJECTS.ingles,
+  },
+  
+  { id: '3', date: dayjs().day(2).format('YYYY-MM-DD'), title: 'Leitura e interpretação', status: 'done',
+    subject: SUBJECTS.portugues,
+  },
+
+  { id: '4', date: dayjs().day(3).format('YYYY-MM-DD'), title: 'Resumo de ecossistemas', status: 'adjust',
+    subject: SUBJECTS.ciencias,
+  },
+
+  { id: '5', date: dayjs().day(4).format('YYYY-MM-DD'), title: 'Exercícios de Brasil Colônia', status: 'done',
+    subject: SUBJECTS.historia,
+  },
+
+  { id: '6', date: dayjs().day(5).format('YYYY-MM-DD'), title: 'Simulado curto', status: 'pending',
+    subject:SUBJECTS.matematica,
+  }
+]
 
 const dropdownOptions: DropdownOption[] = [
   { label: '5º Ano', value: '5' },
@@ -237,6 +265,7 @@ function StudentComponentsPage() {
           </Box>
         </Box>
       </Box>
+      <PlannerModal tasks={mockTasks} />
       <StudentComponentsShowcase />
     </AppPageContainer>
   )
