@@ -21,6 +21,7 @@ import {
   SUBJECTS,
 } from '@/utils/subjectThemes'
 import StudentComponentsShowcase from './components/StudentComponentsShowcase'
+import AppLink from '@/components/ui/AppLink'
 
 const dropdownOptions: DropdownOption[] = [
   { label: '5º Ano', value: '5' },
@@ -238,6 +239,8 @@ function StudentComponentsPage() {
         </Box>
       </Box>
       <StudentComponentsShowcase />
+      <AppLink to="/student/dashboard">Ir para dashboard</AppLink>
+      <AppLink href="https://google.com">Ir para o Google</AppLink>
     </AppPageContainer>
   )
 }
