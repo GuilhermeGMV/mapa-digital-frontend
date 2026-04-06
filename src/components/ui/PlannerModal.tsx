@@ -1,11 +1,20 @@
 import dayjs from 'dayjs'
-import { Box, Typography } from '@mui/material'
-import CheckIcon from '@mui/icons-material/Check';
-import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import {
+  Box,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  List,
+} from '@mui/material'
+import CheckIcon from '@mui/icons-material/Check'
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
 import AppSubjectsTags from './AppSubjectsTags'
 import type { SubjectContext } from '@/types/common'
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import { alpha } from '@mui/material/styles'
+import { useState } from 'react'
+import ListIcon from '@mui/icons-material/List'
 
 type Status = 'done' | 'pending' | 'adjust'
 
@@ -31,6 +40,32 @@ const dayMap: Record<string, string> = {
   Sunday: 'Domingo',
 }
 
+function renderIconBox(icon: React.ReactNode, color: string, bg: string) {
+  return (
+    <Box
+      sx={{
+        width: 44,
+        height: 44,
+        borderRadius: '9999px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: bg,
+        color: color,
+      }}
+    >
+      {icon}
+    </Box>
+  )
+}
+
+function getMoreThanOneTaskDayIcon() {
+  return renderIconBox(
+    <ListIcon sx={{ fontSize: 25 }} />,
+    '#6132BD',
+    'rgba(97,50,189,0.15)'
+  )
+}
 function getTaskIcon(status: Task['status']) {
   const config = {
     done: {
@@ -52,25 +87,11 @@ function getTaskIcon(status: Task['status']) {
 
   const current = config[status] || config.pending
 
-  return (
-    <Box
-      sx={{
-        width: 44,
-        height: 44,
-        borderRadius: '9999px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: current.bg,
-        color: current.color,
-      }}
-    >
-      {current.icon}
-    </Box>
-  )
+  return renderIconBox(current.icon, current.color, current.bg)
 }
 
 function PlannerModal({ tasks }: PlannerProps) {
+  const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const startOfWeek = dayjs().startOf('week').add(1, 'day')
   const endOfWeek = dayjs().endOf('week').add(1, 'day')
 
@@ -83,8 +104,16 @@ function PlannerModal({ tasks }: PlannerProps) {
     )
   })
 
-   const sortedTasks = [...tasksThisWeek].sort((a, b) =>
-   dayjs(a.date).valueOf() - dayjs(b.date).valueOf())
+  const groupedTasks: Record<string, Task[]> = {}
+  for (const task of tasksThisWeek) {
+    const dayEN = dayjs(task.date).format('dddd')
+    const day = dayMap[dayEN]
+
+    if (!groupedTasks[day]) {
+      groupedTasks[day] = []
+    }
+    groupedTasks[day].push(task)
+  }
 
   return (
     <Box
@@ -97,51 +126,164 @@ function PlannerModal({ tasks }: PlannerProps) {
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-        <CalendarMonthIcon sx={{ color: '#319BDD', fontSize: 25}} />
-        <Typography variant="h5">
-            Planner da Semana
-        </Typography>
+        <CalendarMonthIcon sx={{ color: '#319BDD', fontSize: 25 }} />
+        <Typography variant="h5">Planner da Semana</Typography>
       </Box>
 
-      {sortedTasks.map(task => {
-        const dayEN = dayjs(task.date).format('dddd')
-        const day = dayMap[dayEN]
+      {Object.entries(groupedTasks).map(([day, dayTasks]) => (
+        <Box
+          key={day}
+          onClick={() => setSelectedDay(day)}
+          sx={{
+            mb: 2,
+            border: '1px solid',
+            borderColor:
+              dayTasks.length === 1
+                ? alpha(dayTasks[0].subject.color || '#ccc', 0.5)
+                : 'divider',
+            borderRadius: '12px',
+            p: 2,
+            cursor: 'pointer',
+            transition: '0.2s',
+            '&:hover': { backgroundColor: 'action.hover' },
+          }}
+        >
+          {dayTasks.length === 1 ? (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                {getTaskIcon(dayTasks[0].status)}
+                <Box>
+                  <Typography sx={{ fontWeight: 700, fontSize: '1.1rem' }}>
+                    {day}
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <AppSubjectsTags
+                      subjects={[dayTasks[0].subject]}
+                      size="sm"
+                    />
+                    <Typography>{dayTasks[0].title}</Typography>
+                  </Box>
+                </Box>
+              </Box>
 
-        return (
-            <Box key={task.id} sx={{ mb: 2, border: '1px solid', borderColor: alpha(task.subject.color || '#ccc', 0.35), borderRadius: '12px', p: 2, 
-                                   backgroundColor: 'transparent'}}>
-            
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                        
-                        {getTaskIcon(task.status)}
-                        
-                        <Box>
-                            <Typography sx={{ fontWeight: 700, fontSize: '1.125rem', mb: 0.5 }}>
-                                {day}
-                            </Typography>
-
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1}}>
-                            <AppSubjectsTags subjects={[task.subject]} size="sm" />
-
-                            <Typography variant="body1">
-                                {task.title}
-                            </Typography>
-                            </Box>
-                        </Box>
-                    </Box>
-                    <Typography
-                        variant="body1"
-                        sx={{ color: 'text.secondary', minWidth: 80, textAlign: 'right'}}
-                    >
-                        {task.status === 'done' ? 'concluído'
-                        : task.status === 'adjust' ? 'ajustar'
-                        : 'pendente'}
-                    </Typography>
-                </Box> 
+              <Typography
+                sx={{
+                  color: 'text.secondary',
+                  minWidth: 90,
+                  textAlign: 'right',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                {dayTasks[0].status === 'done'
+                  ? 'Concluído'
+                  : dayTasks[0].status === 'adjust'
+                    ? 'Ajustar'
+                    : 'Pendente'}
+              </Typography>
             </Box>
-        )
-      })}
+          ) : (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'stretch',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                {getMoreThanOneTaskDayIcon()}
+
+                <Box>
+                  <Typography sx={{ fontWeight: 700, fontSize: '1.1rem' }}>
+                    {day}
+                  </Typography>
+
+                  <Typography color="text.secondary">
+                    {dayTasks.length} tarefas
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Typography
+                sx={{
+                  color: 'text.secondary',
+                  width: 110,
+                  textAlign: 'right',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  flexShrink: 0,
+                  fontWeight: 500,
+                }}
+              >
+                Ver tarefas →
+              </Typography>
+            </Box>
+          )}
+        </Box>
+      ))}
+
+      <Dialog
+        open={!!selectedDay}
+        onClose={() => setSelectedDay(null)}
+        fullWidth
+      >
+        <DialogTitle sx={{ fontWeight: 700, fontSize: '1.1rem' }}>
+          {selectedDay}
+        </DialogTitle>
+
+        <DialogContent>
+          {selectedDay &&
+            groupedTasks[selectedDay]?.map(task => (
+              <Box
+                key={task.id}
+                sx={{
+                  mb: 2,
+                  p: 1.5,
+                  border: '1px solid',
+                  borderColor: alpha(task.subject.color || '#ccc', 0.5),
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  {getTaskIcon(task.status)}
+
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <AppSubjectsTags subjects={[task.subject]} size="sm" />
+                    <Typography>{task.title}</Typography>
+                  </Box>
+                </Box>
+
+                <Typography
+                  sx={{
+                    color: 'text.secondary',
+                    minWidth: 90,
+                    textAlign: 'right',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                  }}
+                >
+                  {task.status === 'done'
+                    ? 'Concluído'
+                    : task.status === 'adjust'
+                      ? 'Ajustar'
+                      : 'Pendente'}
+                </Typography>
+              </Box>
+            ))}
+        </DialogContent>
+      </Dialog>
     </Box>
   )
 }
