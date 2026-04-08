@@ -92,35 +92,28 @@ function AppSidebar({
               selected={selected}
               sx={{
                 borderRadius: '18px',
-                backgroundColor: AppColors.role[currentRole].soft,
                 '& .MuiListItemText-primary': {
                   backgroundColor: 'transparent',
-                  color: AppColors.role[currentRole].primary,
+                  color: AppColors.neutral.mutedText,
                   transition: 'transform 180ms ease',
                 },
                 '& .MuiListItemIcon-root': {
-                  color: AppColors.role[currentRole].primary,
+                  color: AppColors.neutral.mutedText,
                 },
                 '&.Mui-selected': {
                   backgroundColor: AppColors.role[currentRole].soft,
                 },
-                '&.MuiButtonBase-root': {
+                '&.Mui-selected .MuiListItemIcon-root, &.Mui-selected .MuiListItemText-primary': {
                   color: AppColors.role[currentRole].primary,
                 },
                 '&:hover': {
-                    backgroundColor: AppColors.role[currentRole].soft,
+                  backgroundColor: AppColors.role[currentRole].soft,
                 },
-                '&.Mui-selected .MuiListItemIcon-root, &.Mui-selected .MuiListItemText-primary':
-                  {
-                    color: AppColors.role[currentRole].primary,
-                  },
-                '&:hover .MuiListItemIcon-root, &:hover .MuiListItemText-primary':
-                  {
-                    color: AppColors.role[currentRole].primary,
-                  },
+                '&:hover .MuiListItemIcon-root, &:hover .MuiListItemText-primary': {
+                  color: AppColors.role[currentRole].primary,
+                },
                 '&:hover .MuiListItemText-primary': {
-                    color: AppColors.role[currentRole].primary,
-                    fontWeight: 600,
+                  fontWeight: 600,
                 },
               }}
             >
