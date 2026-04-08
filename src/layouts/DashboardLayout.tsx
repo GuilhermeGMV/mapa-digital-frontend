@@ -1,5 +1,6 @@
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded'
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded'
+import FactCheckRoundedIcon from '@mui/icons-material/FactCheckRounded'
 import WidgetsRoundedIcon from '@mui/icons-material/WidgetsRounded'
 import { Box, IconButton, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
@@ -48,6 +49,11 @@ const NAVIGATION_BY_ROLE: Record<UserRole, SidebarItem[]> = {
       label: 'Dashboard',
       path: APP_ROUTES.admin.dashboard,
       icon: <DashboardRoundedIcon />,
+    },
+    {
+      label: 'Aprovações',
+      path: APP_ROUTES.admin.approvals,
+      icon: <FactCheckRoundedIcon />,
     },
   ],
 }

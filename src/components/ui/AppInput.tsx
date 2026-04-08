@@ -112,9 +112,9 @@ export default function AppInput({
         variant="outlined"
         InputProps={{
           ...InputProps,
-          startAdornment: startIcon ? (
+          startAdornment: InputProps?.startAdornment ?? (startIcon ? (
             <InputAdornment position="start">{startIcon}</InputAdornment>
-          ) : null,
+          ) : null),
           endAdornment: isPasswordField ? (
             <InputAdornment position="end">
               <IconButton
@@ -124,7 +124,7 @@ export default function AppInput({
                 {showPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>
-          ) : null,
+          ) : (InputProps?.endAdornment ?? null),
         }}
         sx={{
           '& .MuiOutlinedInput-notchedOutline': {

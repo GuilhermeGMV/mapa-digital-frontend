@@ -14,6 +14,7 @@ export const APP_ROUTES = {
     dashboard: '/parent/dashboard',
   },
   admin: {
+    approvals: '/admin/approvals',
     dashboard: '/admin/dashboard',
   },
   common: {
