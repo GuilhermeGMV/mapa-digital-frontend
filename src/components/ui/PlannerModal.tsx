@@ -15,6 +15,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import { alpha } from '@mui/material/styles'
 import { useState } from 'react'
 import ListIcon from '@mui/icons-material/List'
+import { SxProps, Theme } from '@mui/material'
 
 type Status = 'done' | 'pending' | 'adjust'
 
@@ -28,6 +29,7 @@ export type Task = {
 
 interface PlannerProps {
   tasks: Task[]
+  sx?: SxProps<Theme>
 }
 
 const dayMap: Record<string, string> = {
@@ -90,7 +92,7 @@ function getTaskIcon(status: Task['status']) {
   return renderIconBox(current.icon, current.color, current.bg)
 }
 
-function PlannerModal({ tasks }: PlannerProps) {
+function PlannerModal({ tasks, sx }: PlannerProps) {
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const startOfWeek = dayjs().startOf('week').add(1, 'day')
   const endOfWeek = dayjs().endOf('week').add(1, 'day')
@@ -123,6 +125,7 @@ function PlannerModal({ tasks }: PlannerProps) {
         borderRadius: '16px',
         p: 2,
         backgroundColor: 'background.paper',
+        ...sx,
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
@@ -133,7 +136,9 @@ function PlannerModal({ tasks }: PlannerProps) {
       {Object.entries(groupedTasks).map(([day, dayTasks]) => (
         <Box
           key={day}
-          onClick={() => setSelectedDay(day)}
+          onClick={() => {
+            if(dayTasks.length > 1) { setSelectedDay(day)}}
+          } 
           sx={{
             mb: 2,
             border: '1px solid',
@@ -143,7 +148,7 @@ function PlannerModal({ tasks }: PlannerProps) {
                 : 'divider',
             borderRadius: '12px',
             p: 2,
-            cursor: 'pointer',
+            cursor: dayTasks.length > 1 ? 'pointer' : 'default',
             transition: '0.2s',
             '&:hover': { backgroundColor: 'action.hover' },
           }}
