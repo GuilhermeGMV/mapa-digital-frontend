@@ -22,6 +22,7 @@ import {
 } from '@/utils/subjectThemes'
 import StudentComponentsShowcase from './components/StudentComponentsShowcase'
 import AppLink from '@/components/ui/AppLink'
+import EmotionalContainer from '@/components/ui/EmotionalContainer'
 
 const dropdownOptions: DropdownOption[] = [
   { label: '5º Ano', value: '5' },
@@ -67,6 +68,7 @@ function StudentComponentsPage() {
           border: `1px solid ${theme.palette.divider}`,
         }}
       >
+        <EmotionalContainer />
         <Stack spacing={3}>
           <Box className="flex-1">
             <AppCalendar />
@@ -236,6 +238,7 @@ function StudentComponentsPage() {
           <Box sx={{ mt: 2 }}>
             <AppSubjectsTags size="lg" subjects={ALL_SUBJECT_TAG_CONTEXTS} />
           </Box>
+          
         </Box>
       </Box>
       <StudentComponentsShowcase />
