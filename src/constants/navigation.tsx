@@ -1,7 +1,7 @@
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined';
 import RouteRoundedIcon from '@mui/icons-material/RouteRounded';
-import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded'
+import UploadFileOutlinedIcon from '@mui/icons-material/UploadFileOutlined';
 import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded'
 import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineRounded'
 import type { SidebarItem } from '@/types/common'
@@ -27,8 +27,8 @@ export const NAVIGATION_BY_ROLE: Record<UserRole, SidebarItem[]> = {
     },
     {
       label: 'Upload de Avaliações',
-      path: APP_ROUTES.student.uploads,
-      icon: <DescriptionRoundedIcon fontSize="medium" />,
+      path: APP_ROUTES.student.uploads, 
+      icon: <UploadFileOutlinedIcon fontSize="medium" />,
     },
     {
       label: 'Rotina & Bem-estar',

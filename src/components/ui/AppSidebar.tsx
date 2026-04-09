@@ -101,13 +101,14 @@ function AppSidebar({
                   color: AppColors.neutral.mutedText,
                 },
                 '&.Mui-selected': {
-                  backgroundColor: AppColors.role[currentRole].soft,
+                  color: 'rgba(31, 75, 153, 0.08)',
                 },
                 '&.Mui-selected .MuiListItemIcon-root, &.Mui-selected .MuiListItemText-primary': {
                   color: AppColors.role[currentRole].primary,
+                  fontWeight: 600,
                 },
                 '&:hover': {
-                  backgroundColor: AppColors.role[currentRole].soft,
+                  backgroundColor: 'rgba(31, 75, 153, 0.08)',
                 },
                 '&:hover .MuiListItemIcon-root, &:hover .MuiListItemText-primary': {
                   color: AppColors.role[currentRole].primary,
@@ -128,10 +129,12 @@ function AppSidebar({
         <Box className="mt-auto pt-3">
           <Divider sx={{ borderColor: 'var(--app-border)', mb: 1.5 }} />
           <ListItemButton
-            className="rounded-2xl px-2 py-1.5 transition-all duration-200 ease-out"
+            className="rounded-full px-2 py-1.5 transition-all duration-200 ease-out"
             data-testid="logout-button"
             onClick={onLogout}
             sx={{
+              borderRadius: '18px',
+              transition: 'all 0.2s ease',
               '& .MuiListItemText-primary': {
                 color: AppColors.neutral.mutedText,
                 fontWeight: 600,
@@ -140,7 +143,8 @@ function AppSidebar({
                 color:AppColors.neutral.mutedText,
               },
               '&:hover': {
-                bgcolor: AppColors.role[currentRole].soft,
+                backgroundColor: 'rgba(31, 75, 153, 0.08)',
+                borderRadius: '18px',
               },
             }}
           >
