@@ -46,8 +46,8 @@ function renderIconBox(icon: React.ReactNode, color: string, bg: string) {
   return (
     <Box
       sx={{
-        width: 44,
-        height: 44,
+        width: 40,
+        height: 40,
         borderRadius: '9999px',
         display: 'flex',
         alignItems: 'center',
@@ -63,7 +63,7 @@ function renderIconBox(icon: React.ReactNode, color: string, bg: string) {
 
 function getMoreThanOneTaskDayIcon() {
   return renderIconBox(
-    <ListIcon sx={{ fontSize: 25 }} />,
+    <ListIcon sx={{ fontSize: 22 }} />,
     '#6132BD',
     'rgba(97,50,189,0.15)'
   )
@@ -128,7 +128,7 @@ function PlannerModal({ tasks, sx }: PlannerProps) {
         ...sx,
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'flex-start', sm: 'center' }, gap: 1, mb: 2, flexWrap: 'wrap', minWidth: 0 }}>
         <CalendarMonthIcon sx={{ color: '#319BDD', fontSize: 25 }} />
         <Typography variant="h5">Planner da Semana</Typography>
       </Box>
@@ -142,14 +142,16 @@ function PlannerModal({ tasks, sx }: PlannerProps) {
             }
           }}
           sx={{
-            mb: 2,
+            mb: 1,
+            flex: 1,
+            minWidth: 0,
             border: '1px solid',
             borderColor:
               dayTasks.length === 1
-                ? alpha(dayTasks[0].subject.color || '#ccc', 0.5)
+                ? alpha(dayTasks[0].subject.color || '#ccc', 0.25)
                 : 'divider',
             borderRadius: '12px',
-            p: 2,
+            p: 1.5,
             cursor: dayTasks.length > 1 ? 'pointer' : 'default',
             transition: '0.2s',
             '&:hover': { backgroundColor: 'action.hover' },
@@ -161,20 +163,25 @@ function PlannerModal({ tasks, sx }: PlannerProps) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                minWidth: 0,
+                gap: 1,
               }}
             >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, minWidth: 0, flex: '1 1 200px' }}>
                 {getTaskIcon(dayTasks[0].status)}
-                <Box>
-                  <Typography sx={{ fontWeight: 700, fontSize: '1.1rem' }}>
+                <Box sx={{ minWidth: 0, flex: '1 1 auto'}}>
+                  <Typography sx={{ fontWeight: 700, fontSize: '1rem' }}>
                     {day}
                   </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
                     <AppSubjectsTags
                       subjects={[dayTasks[0].subject]}
                       size="sm"
                     />
-                    <Typography>{dayTasks[0].title}</Typography>
+                    <Typography sx= {{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0, flex: 1}}>
+                      {dayTasks[0].title}
+                    </Typography>
                   </Box>
                 </Box>
               </Box>
@@ -182,11 +189,18 @@ function PlannerModal({ tasks, sx }: PlannerProps) {
               <Typography
                 sx={{
                   color: 'text.secondary',
-                  minWidth: 90,
+                  minWidth: 0,
+                  maxWidth: 100,
+                  flexShrink: 1,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
                   textAlign: 'right',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'flex-end',
+                  mt: { xs: 1, sm: 0 },
+                  width: { xs: '100%', sm: 'auto' },
                 }}
               >
                 {dayTasks[0].status === 'done'
@@ -202,13 +216,16 @@ function PlannerModal({ tasks, sx }: PlannerProps) {
                 display: 'flex',
                 alignItems: 'stretch',
                 justifyContent: 'space-between',
+                minWidth: 0,
+                gap: 1,
+                flexWrap: 'wrap',
               }}
             >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, minWidth: 0, flex: '1 1 200px' }}>
                 {getMoreThanOneTaskDayIcon()}
 
-                <Box>
-                  <Typography sx={{ fontWeight: 700, fontSize: '1.1rem' }}>
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography sx={{ fontWeight: 700, fontSize: '1rem' }}>
                     {day}
                   </Typography>
 
@@ -221,13 +238,19 @@ function PlannerModal({ tasks, sx }: PlannerProps) {
               <Typography
                 sx={{
                   color: 'text.secondary',
-                  width: 110,
+                  minWidth: 0,
+                  maxWidth: 110,
                   textAlign: 'right',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'flex-end',
-                  flexShrink: 0,
+                  flexShrink: 1,
                   fontWeight: 500,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  width: { xs: '100%', sm: 'auto' },
+                  mt: { xs: 1, sm: 0 },
                 }}
               >
                 Ver tarefas →
@@ -255,7 +278,7 @@ function PlannerModal({ tasks, sx }: PlannerProps) {
                   mb: 2,
                   p: 1.5,
                   border: '1px solid',
-                  borderColor: alpha(task.subject.color || '#ccc', 0.5),
+                  borderColor: alpha(task.subject.color || '#ccc', 0.25),
                   borderRadius: '10px',
                   display: 'flex',
                   alignItems: 'center',
@@ -276,7 +299,7 @@ function PlannerModal({ tasks, sx }: PlannerProps) {
                     color: 'text.secondary',
                     minWidth: 90,
                     textAlign: 'right',
-                    display: 'flex',
+                    display: { xs: 'none', sm: 'flex' },
                     alignItems: 'center',
                     justifyContent: 'flex-end',
                   }}
