@@ -95,7 +95,9 @@ function LoginForm({ isSubmitting = false, onSubmit }: LoginFormProps) {
         <Button
           className={[
             'rounded-md text-base font-semibold transition !min-h-0 !h-8',
-            mode === 'register' ? '!bg-[#359CDF] !text-white' : '!text-slate-500',
+            mode === 'register'
+              ? '!bg-[#359CDF] !text-white'
+              : '!text-slate-500',
           ].join(' ')}
           onClick={() => setMode('register')}
           type="button"
@@ -174,13 +176,14 @@ function LoginForm({ isSubmitting = false, onSubmit }: LoginFormProps) {
             backgroundColor="background.default"
           />
 
-          <AppLink to="/forgot-password" className="text-sx self-end ml-auto mt-1">
+          <AppLink
+            to="/forgot-password"
+            className="text-sx self-end ml-auto mt-1"
+          >
             Esqueci minha senha
           </AppLink>
         </Box>
-        
       )}
-
 
       <AppButton
         className="mt-1"

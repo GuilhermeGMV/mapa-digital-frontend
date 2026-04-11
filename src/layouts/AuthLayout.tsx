@@ -34,28 +34,28 @@ function AuthLayout() {
             sx={{
               width: '534px',
               height: '431px',
-              background: '#359CDF'
+              background: '#359CDF',
             }}
           >
-
             <Box className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-semibold">
               <SecurityRoundedIcon fontSize="small" />
               Acesso seguro à plataforma
             </Box>
 
-            <Typography className="max-w-xl leading-tight " sx={{ fontSize: '30px', fontWeight: 700 }}>
+            <Typography
+              className="max-w-xl leading-tight "
+              sx={{ fontSize: '30px', fontWeight: 700 }}
+            >
               Entre no Mapa Digital
             </Typography>
-            <Typography className="mt-4 max-w-xl text-white/90" sx={{ fontSize: '16px' }}>
+            <Typography
+              className="mt-4 max-w-xl text-white/90"
+              sx={{ fontSize: '16px' }}
+            >
               Bem-vindo de volta! Continue sua jornada de conquistas.
             </Typography>
 
-            <img
-              src={logo}
-              alt="Mapa"
-              className="w-32 mt-14 block mx-auto"
-            />
-
+            <img src={logo} alt="Mapa" className="w-32 mt-14 block mx-auto" />
           </Box>
 
           <Outlet />
