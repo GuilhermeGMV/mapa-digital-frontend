@@ -15,6 +15,7 @@ import AppPageContainer from '@/components/ui/AppPageContainer'
 import AppSubjectsTags from '@/components/ui/AppSubjectsTags'
 import MetricsCard from '@/components/ui/MetricsCard'
 import SubjectBaseCard from '@/components/ui/SubjectBaseCard'
+import EmotionalContainer from '@/components/ui/EmotionalContainer'
 import {
   ALL_SUBJECT_TAG_CONTEXTS,
   SUBJECT_TAG_SIZES,
@@ -22,7 +23,6 @@ import {
 } from '@/utils/subjectThemes'
 import StudentComponentsShowcase from './components/StudentComponentsShowcase'
 import AppLink from '@/components/ui/AppLink'
-import EmotionalContainer from '@/components/ui/EmotionalContainer'
 
 const dropdownOptions: DropdownOption[] = [
   { label: '5º Ano', value: '5' },
@@ -38,7 +38,9 @@ function StudentComponentsPage() {
   const theme = useTheme()
 
   return (
+    
     <AppPageContainer className="gap-4 md:gap-5">
+      <EmotionalContainer/>
       <PageHeader
         variant="student"
         eyebrow="Olá, Lucas!"
@@ -68,7 +70,6 @@ function StudentComponentsPage() {
           border: `1px solid ${theme.palette.divider}`,
         }}
       >
-        <EmotionalContainer />
         <Stack spacing={3}>
           <Box className="flex-1">
             <AppCalendar />
@@ -238,13 +239,16 @@ function StudentComponentsPage() {
           <Box sx={{ mt: 2 }}>
             <AppSubjectsTags size="lg" subjects={ALL_SUBJECT_TAG_CONTEXTS} />
           </Box>
-          
         </Box>
+        
       </Box>
       <StudentComponentsShowcase />
       <AppLink to="/student/dashboard">Ir para dashboard</AppLink>
       <AppLink href="https://google.com">Ir para o Google</AppLink>
+      
+      
     </AppPageContainer>
+    
   )
 }
 

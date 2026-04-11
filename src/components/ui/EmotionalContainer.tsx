@@ -1,25 +1,36 @@
-import { Box, Typography, Stack, Icon } from '@mui/material'
+import { Box, Typography, Stack, Dialog, DialogTitle, DialogContent, IconButton } from '@mui/material'
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 import { ReactNode } from 'react';
+import CloseIcon from '@mui/icons-material/Close';
+import { useState } from 'react';
 
 interface EmotionButtonProps {
   icon: ReactNode;
   label: string;
-  color: 'success' | 'warning' | 'error';
+  color: 'success' | 'warning' | 'error' | 'info' | 'primary' | 'secondary' | 'text' | 'background' | 'light';
   onClick: () => void;
   testId: string;
   width?: string;
   height?: string;
 }
+
 function EmotionButton({ icon, label, color, onClick, testId, width, height }: EmotionButtonProps) {
+  
+  const hoverBackgrounds: Record<string, string> = {
+    success: 'rgba(184, 246, 181, 0.8)',
+    warning: 'rgba(244, 253, 177, 0.8)',
+    error: 'rgba(253, 194, 200, 0.8)',
+  };
+
   return (
     <Box 
       component="button"
       onClick={onClick}
       data-testid={testId}
       sx={{ 
+        justifyContent: 'center',
         width: width || '163.33px',
         height: height || '92px',
         flexDirection: 'column',
@@ -33,9 +44,9 @@ function EmotionButton({ icon, label, color, onClick, testId, width, height }: E
         gap: 1,
         transition: 'all 0.2s ease-in-out',
         '&:hover': {
-          backgroundColor: `${color}.light`, 
-          opacity: 0.76,
-          }
+          backgroundColor: hoverBackgrounds[color],
+          opacity: 0.90,
+        }
       }}
     >
       {icon}
@@ -44,12 +55,25 @@ function EmotionButton({ icon, label, color, onClick, testId, width, height }: E
   );
 }
 
+
 export default function EmotionalContainer() {
+  
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedEmotion, setSelectedEmotion] = useState('');
+
+  function handleEmotionSelect(emotionLabel: string) {
+    setSelectedEmotion(emotionLabel);
+    setModalOpen(true);              
+  }
+
+  function handleModalClose() {
+    setModalOpen(false);
+  }
   return (
     <Box
       data-testid="card-checkin-emocional"
       sx={{
-        backgroundColor: 'light.main',
+        backgroundColor: 'white',
         border: '1px solid #E2E8F0', 
         borderRadius: '16px',
         padding: '24px',
@@ -58,17 +82,17 @@ export default function EmotionalContainer() {
         maxHeight: '258px',
       }}
     >
-      <Typography variant="h6" sx={{mb: 3 , fontWeight: 'bold' }}>
+      <Typography variant="h6" sx={{mb: 3 , fontWeight: 'bold', color: 'black' }}>
         Check-in emocional
       </Typography>
 
-      <Stack direction="row" spacing={2} sx={{ mb: 4 }}>
+      <Stack direction="row" spacing={2} sx={{ mb: 4}}>
         <EmotionButton 
           testId="emotion-button-good"
           label="Bem"
           color="success"
           icon={<SentimentSatisfiedAltIcon sx={{ fontSize: 28 }} />}
-          onClick={() => alert("Humor: Bem")}
+          onClick={() => handleEmotionSelect("Bem")}
         />
 
         <EmotionButton 
@@ -76,7 +100,7 @@ export default function EmotionalContainer() {
           label="Regular"
           color="warning"
           icon={<SentimentNeutralIcon sx={{ fontSize: 28 }} />}
-          onClick={() => alert("Humor: Regular")}
+          onClick={() => handleEmotionSelect("Regular")}
         />
 
         <EmotionButton 
@@ -84,14 +108,38 @@ export default function EmotionalContainer() {
           label="Mal"
           color="error"
           icon={<SentimentVeryDissatisfiedIcon sx={{ fontSize: 28 }} />}
-          onClick={() => alert("Humor: Mal")}
+          onClick={() => handleEmotionSelect("Mal")}
         />
       </Stack>
         
-      <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+      <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'black' }}>
           Humor da Semana
       </Typography>
-      {/* Relatório dos dias da semana aqui  */}
+      <Dialog 
+        open={modalOpen} 
+        onClose={handleModalClose}
+        PaperProps={{
+          sx: { borderRadius: '16px', padding: '16px' }
+        }
+        }
+      >
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
+          <Typography fontWeight="bold">Confirmação</Typography>
+          {}
+          <IconButton onClick={handleModalClose} size="small">
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
+        <DialogContent>
+          <Typography>
+            Você registrou seu humor hoje como: {selectedEmotion}
+          </Typography>
+        </DialogContent>
+      </Dialog>
+      {
+        
+    }
     </Box>
   )
 }
