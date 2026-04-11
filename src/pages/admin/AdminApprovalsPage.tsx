@@ -43,6 +43,7 @@ import {
   CONTENT_APPROVAL_CARD_STATUS,
   GUARDIAN_APPROVAL_CARD_STATUS,
 } from '@/utils/themes'
+import { AuthCredentials } from '@/types/auth'
 
 const DEFAULT_PAGE_INDEX = 1
 const DEFAULT_REQUESTED_AT = '09/04/2026'
@@ -120,6 +121,9 @@ function buildResultsSummary(count: number): ApprovalResultsSummary {
 function getDefaultFormValues(): ApprovalActionFormValues {
   return {
     childName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
     correctionFeedback: '',
     correctionOutcome: 'completed',
     requestedAt: DEFAULT_REQUESTED_AT,
@@ -191,6 +195,9 @@ function AdminApprovalsPage() {
     setModalValues({
       childName:
         nextMode.item?.kind === 'guardian' ? nextMode.item.childName : '',
+      email: '',
+      password: '',
+      confirmPassword: '',
       correctionFeedback: '',
       correctionOutcome: 'completed',
       requestedAt: nextMode.item?.requestedAt ?? DEFAULT_REQUESTED_AT,
@@ -419,6 +426,28 @@ function AdminApprovalsPage() {
     resetModal()
   }, [getSubjectById, modalState, modalValues, resetModal])
 
+  const handleModalSubmit = useCallback(async () => {
+    if (!modalState) {
+      return
+    }
+
+    if (modalState.type === 'content') {
+      await adminApprovalService.createLocalContentDraft({
+        requestedAt: new Date().toLocaleDateString('pt-BR'),
+        resourceType: 'task',
+        subject: getSubjectById(modalValues.subjectId),
+        title: modalValues.title || 'Novo conteúdo',
+      })
+    } else if (modalState.type === 'guardian') {
+      await adminApprovalService.createLocalGuardianDraft({
+        childName: modalValues.childName,
+        requestedAt: modalValues.requestedAt,
+        roleLabel: 'Responsável',
+        title: modalValues.title || 'Novo responsável',
+      })
+    }
+  }, [getSubjectById, modalState, modalValues])
+
   useEffect(() => {
     let isActive = true
 
@@ -562,7 +591,7 @@ function AdminApprovalsPage() {
           resultsSummary={contentResultsSummary}
           searchPlaceholder="Pesquisar tarefas e provas..."
           selectedStatus={contentQuery.status}
-          title="Cadastro e Aprovação de tarefas e provas"
+          title="Cadastro e Aprovação de atividades"
           totalPages={contentQueue.totalPages}
         />
 
@@ -627,15 +656,12 @@ function AdminApprovalsPage() {
         mode={modalState}
         onChange={handleModalChange}
         onClose={resetModal}
-        onConfirm={() => {
-          void handleModalConfirm()
-        }}
+        onConfirm={handleModalConfirm}
         open={modalState !== null}
         resourceTypeOptions={[...resourceTypeOptions]}
         role="admin"
         subjectOptions={subjectOptions}
-        values={modalValues}
-      />
+        values={modalValues} onSubmit={handleModalSubmit}      />
     </AppPageContainer>
   )
 }

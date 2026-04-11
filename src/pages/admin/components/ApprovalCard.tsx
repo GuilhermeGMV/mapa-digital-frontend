@@ -54,14 +54,6 @@ function ApprovalCard({ actions, item, status, type }: ApprovalCardProps) {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null)
   const badgeTags =
     type === 'content' ? approvalBadgesToTagContexts(item.badges, theme.palette) : []
-  const requestDateTag =
-    type === 'guardian' && item.requestedAt
-      ? {
-          color: theme.palette.text.secondary,
-          id: `${item.id}-requested-at`,
-          label: `Solicitação em ${item.requestedAt}`,
-        }
-      : null
   const subjectTag =
     type === 'content' && item.kind === 'content' ? item.subject : null
   const primaryActions = actions.filter(action => action.priority !== 'secondary')
@@ -76,163 +68,182 @@ function ApprovalCard({ actions, item, status, type }: ApprovalCardProps) {
     setMenuAnchorEl(null)
   }
 
+  const primaryActionButtons = primaryActions.map(action => (
+    <Tooltip key={action.id} title={action.tooltip ?? action.label}>
+      <span>
+        <IconButton
+          aria-label={action.label}
+          disabled={action.disabled}
+          onClick={action.onClick}
+          size="small"
+          sx={{
+            border: '1px solid',
+            borderColor: 'background.border',
+            borderRadius: 'var(--app-radius-control)',
+            color: action.accentColor ?? 'text.primary',
+            height: 32,
+            width: 32,
+            '& .MuiSvgIcon-root': {
+              fontSize: 16,
+            },
+            '&:hover': {
+              backgroundColor: alpha(
+                colorForAlpha(action.accentColor, theme.palette),
+                0.1
+              ),
+              borderColor: alpha(
+                colorForAlpha(action.accentColor, theme.palette),
+                0.2
+              ),
+            },
+          }}
+        >
+          {action.icon}
+        </IconButton>
+      </span>
+    </Tooltip>
+  ))
+
+  const overflowMenu =
+    secondaryActions.length > 0 ? (
+      <>
+        <Tooltip title="Mais ações">
+          <span>
+            <IconButton
+              aria-label={`Mais ações para ${item.title}`}
+              onClick={handleMenuOpen}
+              size="small"
+              sx={{
+                border: '1px solid',
+                borderColor: 'background.border',
+                borderRadius: 'var(--app-radius-control)',
+                color: 'text.primary',
+                height: 32,
+                width: 32,
+                '& .MuiSvgIcon-root': {
+                  fontSize: 16,
+                },
+                '&:hover': {
+                  backgroundColor: alpha(theme.palette.text.primary, 0.08),
+                  borderColor: alpha(theme.palette.text.primary, 0.12),
+                },
+              }}
+            >
+              <MoreHorizRoundedIcon />
+            </IconButton>
+          </span>
+        </Tooltip>
+        <Menu
+          anchorEl={menuAnchorEl}
+          onClose={handleMenuClose}
+          open={isMenuOpen}
+          slotProps={{
+            paper: {
+              sx: {
+                border: '1px solid',
+                borderColor: 'background.border',
+                borderRadius: '16px',
+                minWidth: 220,
+                mt: 1,
+              },
+            },
+          }}
+        >
+          {secondaryActions.map(action => (
+            <MenuItem
+              disabled={action.disabled}
+              key={action.id}
+              onClick={() => {
+                handleMenuClose()
+                action.onClick()
+              }}
+              sx={{
+                color: action.accentColor ?? 'text.primary',
+                display: 'flex',
+                gap: 1.25,
+                py: 1.1,
+              }}
+            >
+              <Box
+                sx={{
+                  alignItems: 'center',
+                  display: 'inline-flex',
+                  '& .MuiSvgIcon-root': {
+                    fontSize: 18,
+                  },
+                }}
+              >
+                {action.icon}
+              </Box>
+              <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
+                {action.label}
+              </Typography>
+            </MenuItem>
+          ))}
+        </Menu>
+      </>
+    ) : null
+
+  const statusRow = <AppTags size="sm" tags={[statusChip]} />
+
   return (
     <AppCard>
       <Box
         sx={{
-          alignItems: { sm: 'flex-start', xs: 'stretch' },
-          display: 'flex',
-          flexDirection: { sm: 'row', xs: 'column' },
-          gap: 2,
+          alignItems: { sm: 'flex-start', xs: 'center' },
+          columnGap: 2,
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1fr) auto',
+          gridTemplateRows: { sm: 'auto', xs: 'auto auto' },
           justifyContent: 'space-between',
+          rowGap: { sm: 0, xs: 1.5 },
         }}
       >
-        <Box className="min-w-0 space-y-2">
-          <Box
-            sx={{
-              alignItems: { sm: 'center', xs: 'flex-start' },
-              display: 'flex',
-              flexDirection: { sm: 'row', xs: 'column' },
-              gap: 1.5,
-            }}
-          >
-            <Typography
-              sx={{
-                color: 'text.primary',
-                fontSize: { md: 18, xs: 16 },
-                fontWeight: 700,
-              }}
-            >
-              {item.title}
-            </Typography>
-          </Box>
+        <Box
+          sx={{
+            display: { sm: 'none', xs: 'block' },
+            gridColumn: 1,
+            gridRow: 1,
+            minWidth: 0,
+            overflow: 'hidden',
+          }}
+        >
+          {statusRow}
         </Box>
 
         <Box
           sx={{
+            alignItems: 'center',
             display: 'flex',
             flexShrink: 0,
             flexWrap: 'wrap',
             gap: 1,
-            justifyContent: { sm: 'flex-end', xs: 'flex-start' },
-            width: { sm: 'auto', xs: '100%' },
+            gridColumn: 2,
+            gridRow: 1,
+            justifyContent: 'flex-end',
           }}
         >
-          <AppTags size="sm" tags={[statusChip]} />
-          {primaryActions.map(action => (
-            <Tooltip key={action.id} title={action.tooltip ?? action.label}>
-              <span>
-                <IconButton
-                  aria-label={action.label}
-                  disabled={action.disabled}
-                  onClick={action.onClick}
-                  size="small"
-                  sx={{
-                    border: '1px solid',
-                    borderColor: 'background.border',
-                    borderRadius: 'var(--app-radius-control)',
-                    color: action.accentColor ?? 'text.primary',
-                    height: 32,
-                    width: 32,
-                    '& .MuiSvgIcon-root': {
-                      fontSize: 16,
-                    },
-                    '&:hover': {
-                      backgroundColor: alpha(
-                        colorForAlpha(action.accentColor, theme.palette),
-                        0.1
-                      ),
-                      borderColor: alpha(
-                        colorForAlpha(action.accentColor, theme.palette),
-                        0.2
-                      ),
-                    },
-                  }}
-                >
-                  {action.icon}
-                </IconButton>
-              </span>
-            </Tooltip>
-          ))}
-          {secondaryActions.length > 0 ? (
-            <>
-              <Tooltip title="Mais ações">
-                <span>
-                  <IconButton
-                    aria-label={`Mais ações para ${item.title}`}
-                    onClick={handleMenuOpen}
-                    size="small"
-                    sx={{
-                      border: '1px solid',
-                      borderColor: 'background.border',
-                      borderRadius: 'var(--app-radius-control)',
-                      color: 'text.primary',
-                      height: 32,
-                      width: 32,
-                      '& .MuiSvgIcon-root': {
-                        fontSize: 16,
-                      },
-                      '&:hover': {
-                        backgroundColor: alpha(theme.palette.text.primary, 0.08),
-                        borderColor: alpha(theme.palette.text.primary, 0.12),
-                      },
-                    }}
-                  >
-                    <MoreHorizRoundedIcon />
-                  </IconButton>
-                </span>
-              </Tooltip>
-              <Menu
-                anchorEl={menuAnchorEl}
-                onClose={handleMenuClose}
-                open={isMenuOpen}
-                slotProps={{
-                  paper: {
-                    sx: {
-                      border: '1px solid',
-                      borderColor: 'background.border',
-                      borderRadius: '16px',
-                      minWidth: 220,
-                      mt: 1,
-                    },
-                  },
-                }}
-              >
-                {secondaryActions.map(action => (
-                  <MenuItem
-                    disabled={action.disabled}
-                    key={action.id}
-                    onClick={() => {
-                      handleMenuClose()
-                      action.onClick()
-                    }}
-                    sx={{
-                      color: action.accentColor ?? 'text.primary',
-                      display: 'flex',
-                      gap: 1.25,
-                      py: 1.1,
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        alignItems: 'center',
-                        display: 'inline-flex',
-                        '& .MuiSvgIcon-root': {
-                          fontSize: 18,
-                        },
-                      }}
-                    >
-                      {action.icon}
-                    </Box>
-                    <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
-                      {action.label}
-                    </Typography>
-                  </MenuItem>
-                ))}
-              </Menu>
-            </>
-          ) : null}
+          <Box sx={{ display: { sm: 'block', xs: 'none' } }}>{statusRow}</Box>
+          {primaryActionButtons}
+          {overflowMenu}
         </Box>
+
+        <Typography
+          sx={{
+            color: 'text.primary',
+            fontSize: { md: 18, xs: 16 },
+            fontWeight: 700,
+            gridColumn: { sm: 1, xs: '1 / -1' },
+            gridRow: { sm: 1, xs: 2 },
+            minWidth: 0,
+            overflow: { sm: 'visible', xs: 'hidden' },
+            textOverflow: { sm: 'clip', xs: 'ellipsis' },
+            whiteSpace: { sm: 'normal', xs: 'nowrap' },
+          }}
+          title={item.title}
+        >
+          {item.title}
+        </Typography>
       </Box>
 
       <Box
@@ -254,7 +265,6 @@ function ApprovalCard({ actions, item, status, type }: ApprovalCardProps) {
 
         <Box className="flex flex-wrap gap-2">
           {subjectTag ? <AppTag size="sm" tag={subjectTag} /> : null}
-          {requestDateTag ? <AppTag size="sm" tag={requestDateTag} /> : null}
           {badgeTags.length > 0 ? <AppTags size="sm" tags={badgeTags} /> : null}
         </Box>
       </Box>

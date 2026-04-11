@@ -2,7 +2,8 @@ import SearchRoundedIcon from '@mui/icons-material/SearchRounded'
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
 import InputAdornment from '@mui/material/InputAdornment'
 import Typography from '@mui/material/Typography'
-import { Box } from '@mui/material'
+import { Box, useMediaQuery } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
 import type { SxProps, Theme } from '@mui/material/styles'
 import type { DropdownOption } from '@/components/ui/AppDropdown'
 import type { ApprovalResultsSummary } from '@/types/admin'
@@ -60,15 +61,17 @@ export function SearchBarAndFilter({
   searchPlaceholder,
   selectedStatus,
 }: SearchBarAndFilterProps) {
+  const theme = useTheme()
+  const isMobileLayout = useMediaQuery(theme.breakpoints.down('md'))
   const resultLabel = getResultsLabel(resultsSummary)
 
   return (
     <Box
       sx={{
-        alignItems: { md: 'stretch', xs: 'stretch' },
+        alignItems: 'stretch',
         display: 'grid',
         gap: 1.5,
-        gridTemplateColumns: { md: 'minmax(0, 1fr) auto', xs: '1fr' },
+        gridTemplateColumns: 'minmax(0, 1fr) auto',
       }}
     >
       <AppInput
@@ -113,10 +116,19 @@ export function SearchBarAndFilter({
       <AppDropdown
         borderRadius="12px"
         displayLabel="Filtros"
-        fullWidth
+        fullWidth={false}
+        hideLabel={isMobileLayout}
+        inputProps={
+          isMobileLayout
+            ? { 'aria-label': 'Filtrar resultados' }
+            : undefined
+        }
         leadingIcon={
           <FilterAltOutlinedIcon
-            sx={{ color: 'text.secondary', fontSize: 20 }}
+            sx={{
+              color: 'text.secondary',
+              fontSize: 20,
+            }}
           />
         }
         MenuProps={{
@@ -130,9 +142,23 @@ export function SearchBarAndFilter({
         onChange={event => onStatusChange(String(event.target.value))}
         options={filterOptions}
         sx={{
+          ...(isMobileLayout && {
+            '& .MuiInputBase-input': {
+              padding: '0 !important',
+            },
+            '& .MuiOutlinedInput-input': {
+              padding: '0 !important',
+            },
+          }),
           '& .MuiOutlinedInput-root': {
+            alignItems: 'center',
+            display: 'flex',
             height: 44,
             minHeight: 44,
+            ...(isMobileLayout && {
+              justifyContent: 'center',
+              padding: 0,
+            }),
           },
           '& .MuiSelect-icon': {
             color: 'text.secondary',
@@ -140,17 +166,27 @@ export function SearchBarAndFilter({
           },
           '& .MuiSelect-select': {
             alignItems: 'center',
-            gap: 1,
-            paddingBlock: '10px',
-            paddingInline: '14px',
+            ...(isMobileLayout
+              ? {
+                  gap: 0,
+                  justifyContent: 'center',
+                  padding: '0 !important',
+                  paddingRight: '0 !important',
+                }
+              : {
+                  gap: 1,
+                  paddingBlock: '10px',
+                  paddingInline: '14px',
+                }),
           },
+          alignSelf: 'stretch',
           backgroundColor: 'background.paper',
           minHeight: 44,
           ...outlineFieldBorderSx,
         }}
         triggerVariant="ghost"
         value={selectedStatus}
-        width="auto"
+        width={isMobileLayout ? 44 : 'auto'}
       />
     </Box>
   )

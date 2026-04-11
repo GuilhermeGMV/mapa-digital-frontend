@@ -74,61 +74,67 @@ function ApprovalComponent<TItem extends { id: string }>({
         minWidth: 0,
       }}
     >
-      <Box
-        sx={{
-          alignItems: { sm: 'flex-start', xs: 'stretch' },
-          display: 'flex',
-          flexDirection: { sm: 'row', xs: 'column' },
-          gap: 1.5,
-          justifyContent: 'space-between',
-        }}
-      >
-        <Box className="space-y-1">
+      <Box className="flex min-w-0 flex-col gap-2">
+        <Box
+          sx={{
+            alignItems: 'flex-start',
+            display: 'flex',
+            gap: 1.5,
+            justifyContent: 'space-between',
+            minWidth: 0,
+          }}
+        >
           <Typography
             sx={{
               color: 'text.primary',
+              flex: '1 1 auto',
               fontSize: { md: 20, xs: 18 },
               fontWeight: 700,
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
             }}
+            title={title}
           >
             {title}
           </Typography>
-          <Typography
+          <IconButton
+            aria-label="Adicionar"
+            onClick={onCreate}
             sx={{
-              color: 'text.secondary',
-              fontSize: { md: 15, xs: 14 },
-              maxWidth: 720,
+              backgroundColor: 'background.paper',
+              border: '1px solid',
+              borderColor: 'background.border',
+              borderRadius: 'var(--app-radius-control)',
+              color: 'text.primary',
+              flexShrink: 0,
+              height: 32,
+              width: 32,
+              '&:hover': {
+                backgroundColor: alpha(
+                  accentColor,
+                  theme.palette.mode === 'dark' ? 0.08 : 0.12
+                ),
+                borderColor: alpha(
+                  accentColor,
+                  theme.palette.mode === 'dark' ? 0.24 : 0.16
+                ),
+              },
             }}
           >
-            {description}
-          </Typography>
+            <AddRoundedIcon fontSize="small" />
+          </IconButton>
         </Box>
-
-        <IconButton
-          onClick={onCreate}
+        <Typography
           sx={{
-            backgroundColor: 'background.paper',
-            border: '1px solid',
-            borderColor: 'background.border',
-            borderRadius: 'var(--app-radius-control)',
-            color: 'text.primary',
-            flexShrink: 0,
-            height: 32,
-            width: 32,
-            '&:hover': {
-              backgroundColor: alpha(
-                accentColor,
-                theme.palette.mode === 'dark' ? 0.08 : 0.12
-              ),
-              borderColor: alpha(
-                accentColor,
-                theme.palette.mode === 'dark' ? 0.24 : 0.16
-              ),
-            },
+            color: 'text.secondary',
+            fontSize: { md: 15, xs: 14 },
+            maxWidth: 720,
           }}
         >
-          <AddRoundedIcon fontSize="small" />
-        </IconButton>
+          {description}
+        </Typography>
       </Box>
 
       <Box sx={{ flexShrink: 0 }}>

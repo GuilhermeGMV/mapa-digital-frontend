@@ -26,6 +26,7 @@ export interface AppDropdownProps extends Omit<
   'value' | 'onChange'
 > {
   displayLabel?: string
+  hideLabel?: boolean
   hideIndicator?: boolean
   fullWidth?: boolean
   leadingIcon?: ReactNode
@@ -44,6 +45,7 @@ export interface AppDropdownProps extends Omit<
 
 function AppDropdown({
   displayLabel,
+  hideLabel = false,
   hideIndicator = false,
   fullWidth = false,
   leadingIcon,
@@ -102,13 +104,28 @@ function AppDropdown({
     '& .MuiSelect-select': {
       alignItems: 'center',
       display: 'flex',
-      gap: 1,
-      minHeight: '0 !important',
-      paddingBlock: isGhostTrigger ? '10px' : '12px',
-      paddingInline: isGhostTrigger ? '14px' : '16px',
-      ...(hideIndicator && {
-        paddingRight: `${isGhostTrigger ? 14 : 16}px !important`,
-      }),
+      gap: hideLabel ? 0 : 1,
+      ...(hideLabel
+        ? {
+            height: 44,
+            justifyContent: 'center',
+            lineHeight: 0,
+            minHeight: '44px !important',
+            padding: '0 !important',
+            paddingBottom: '0 !important',
+            paddingLeft: '0 !important',
+            paddingRight: '0 !important',
+            paddingTop: '0 !important',
+            textAlign: 'center',
+          }
+        : {
+            minHeight: '0 !important',
+            paddingBlock: isGhostTrigger ? '10px' : '12px',
+            paddingInline: isGhostTrigger ? '14px' : '16px',
+            ...(hideIndicator && {
+              paddingRight: `${isGhostTrigger ? 14 : 16}px !important`,
+            }),
+          }),
     },
     '& .MuiSelect-icon': {
       color: theme.palette.text.secondary,
@@ -147,6 +164,20 @@ function AppDropdown({
           ),
         },
       }),
+    ...(hideLabel && {
+      '& .MuiInputBase-input': {
+        padding: '0 !important',
+      },
+      '& .MuiOutlinedInput-input': {
+        padding: '0 !important',
+      },
+      '& .MuiOutlinedInput-root': {
+        alignItems: 'center',
+        display: 'flex',
+        justifyContent: 'center',
+        padding: 0,
+      },
+    }),
   }
 
   const neutralOutlineSx: SxProps<Theme> = {
@@ -206,6 +237,30 @@ function AppDropdown({
     const resolvedContent = displayLabel ?? content
     const resolvedPlaceholder = displayLabel ? false : isPlaceholder
 
+    if (hideLabel && leadingIcon) {
+      return (
+        <Box
+          className="flex min-w-0 items-center justify-center"
+          sx={{
+            alignItems: 'center',
+            color: resolvedPlaceholder
+              ? theme.palette.text.secondary
+              : theme.palette.text.primary,
+            display: 'flex',
+            height: '100%',
+            justifyContent: 'center',
+            lineHeight: 0,
+            width: '100%',
+            '& .MuiSvgIcon-root': {
+              display: 'block',
+            },
+          }}
+        >
+          {leadingIcon}
+        </Box>
+      )
+    }
+
     return (
       <Box className="flex min-w-0 items-center gap-2">
         {leadingIcon && (
@@ -253,7 +308,9 @@ function AppDropdown({
         onChange={onChange}
         displayEmpty
         renderValue={renderValue}
-        IconComponent={hideIndicator ? () => null : ExpandMoreIcon}
+        IconComponent={
+          hideIndicator || hideLabel ? () => null : ExpandMoreIcon
+        }
         sx={selectSx}
         MenuProps={{
           ...MenuProps,

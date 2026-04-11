@@ -162,12 +162,11 @@ function AppActionModal({
       </DialogTitle>
 
       <DialogContent
-        dividers={resolvedMode === 'confirm'}
         sx={{
           px: { md: 3, xs: 2 },
           py:
             resolvedMode === 'confirm'
-              ? 3
+              ? 1
               : resolvedMode === 'review'
                 ? { md: 3, xs: 2.25 }
                 : { md: 2.5, xs: 2 },

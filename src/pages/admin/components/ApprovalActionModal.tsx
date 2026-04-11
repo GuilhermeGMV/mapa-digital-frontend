@@ -13,6 +13,11 @@ import type {
   ContentApprovalResourceType,
 } from '@/types/admin'
 import type { UserRole } from '@/types/user'
+import type { AuthCredentials } from '@/types/auth'
+
+type ApprovalActionFormErrors = Partial<
+  Record<keyof AuthCredentials | 'confirmPassword' | 'fullName', string>
+>
 
 export type ApprovalActionModalMode =
   | {
@@ -33,6 +38,9 @@ type ApprovalActionModalUsage =
   | 'guardian-form'
 
 export interface ApprovalActionFormValues {
+  email: unknown
+  password: unknown
+  confirmPassword: unknown
   childName: string
   correctionFeedback: string
   correctionOutcome: 'completed' | 'completedWithNotes' | 'redo'
@@ -56,6 +64,8 @@ interface ApprovalActionModalProps {
   subjectOptions: DropdownOption[]
   values: ApprovalActionFormValues
   role: UserRole
+  isSubmitting?: boolean
+  onSubmit: (values: AuthCredentials) => Promise<void>
 }
 
 const fieldLabelSx = {
@@ -72,6 +82,11 @@ const inputSx = {
   },
   '& .MuiInputBase-input': {
     fontSize: { md: 14, xs: 13 },
+  },
+  '& .MuiInputBase-startAdornment': {
+    size: 10,
+    py: 1.25,
+    color: 'text.secondary',
   },
 }
 
@@ -270,7 +285,7 @@ function ApprovalActionModal({
         </Box>
       ) : null}
 
-      {usage === 'guardian-form' ? (
+      {usage === 'guardian-form' && mode.action === 'create' ? (
         <Box className="grid gap-3">
           <AppInput
             label="Nome do responsável"
@@ -281,37 +296,48 @@ function ApprovalActionModal({
             value={values.title}
           />
           <AppInput
-            label="Nome do aluno"
-            labelSx={fieldLabelSx}
-            onChange={event => onChange('childName', event.target.value)}
-            placeholder="Ex.: Luiza Souza"
+            label="E-mail"
+            onChange={event => onChange('email', event.target.value)}
+            placeholder="Ex.: mariana@gmail.com"
+            type="email"
             sx={inputSx}
-            value={values.childName}
+            value={values.email}
           />
-          <Box
-            sx={{
-              backgroundColor: 'background.default',
-              border: '1px solid',
-              borderColor: 'background.border',
-              borderRadius: '14px',
-              display: 'grid',
-              gap: 0.5,
-              px: 1.75,
-              py: 1.25,
-            }}
-          >
-            <Typography sx={fieldLabelSx}>Papel do responsável</Typography>
-            <Typography sx={{ color: 'text.primary', fontSize: { md: 14, xs: 13 } }}>
-              Responsável
-            </Typography>
-          </Box>
           <AppInput
-            label="Data da solicitação"
-            labelSx={fieldLabelSx}
-            onChange={event => onChange('requestedAt', event.target.value)}
-            placeholder="DD/MM/AAAA"
+            label="Senha"
+            onChange={event => onChange('password', event.target.value)}
+            placeholder="Mín. 8 caracteres"
+            type="password"
             sx={inputSx}
-            value={values.requestedAt}
+            value={values.password}
+          />
+          <AppInput
+            label="Confirmar senha"
+            onChange={event => onChange('confirmPassword', event.target.value)}
+            placeholder="Repita a senha"
+            type="password"
+            value={values.confirmPassword}
+            sx={inputSx}
+          />
+        </Box>
+      ) :
+      usage === 'guardian-form' && mode.action === 'edit' ? (
+        <Box className="grid gap-3">
+          <AppInput
+            label="Nome do responsável"
+            labelSx={fieldLabelSx}
+            onChange={event => onChange('title', event.target.value)}
+            placeholder="Ex.: Mariana Souza"
+            sx={inputSx}
+            value={values.title}
+          />
+          <AppInput
+            label="E-mail"
+            onChange={event => onChange('email', event.target.value)}
+            placeholder="Ex.: mariana@gmail.com"
+            type="email"
+            sx={inputSx}
+            value={values.email}
           />
         </Box>
       ) : null}
