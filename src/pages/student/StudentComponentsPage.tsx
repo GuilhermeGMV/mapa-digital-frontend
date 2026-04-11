@@ -15,11 +15,7 @@ import AppInput from '@/components/ui/AppInput'
 import AppSubjectsTags from '@/components/ui/AppSubjectsTags'
 import MetricsCard from '@/components/ui/MetricsCard'
 import SubjectBaseCard from '@/components/ui/SubjectBaseCard'
-import {
-  ALL_SUBJECT_TAG_CONTEXTS,
-  SUBJECT_TAG_SIZES,
-  SUBJECTS,
-} from '@/utils/subjectThemes'
+import { ALL_SUBJECT_TAG_CONTEXTS, SUBJECTS } from '@/utils/subjectThemes'
 import StudentComponentsShowcase from './components/StudentComponentsShowcase'
 import AppLink from '@/components/ui/AppLink'
 import PlannerModal, { Task } from '@/components/ui/PlannerModal'
