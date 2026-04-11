@@ -91,7 +91,9 @@ function LoginForm({ isSubmitting = false, mode, onSubmit }: LoginFormProps) {
       >
         {mode === 'register' && (
           <AppInput
+            data-testid="input-fullname"
             backgroundColor="background.default"
+            type="name"
             error={Boolean(errors.fullName)}
             helperText={errors.fullName ?? ' '}
             inputSize="medium"
@@ -113,6 +115,7 @@ function LoginForm({ isSubmitting = false, mode, onSubmit }: LoginFormProps) {
           sx={{ pt: mode === 'login' ? { xs: 3, md: 5 } : 0 }}
         >
           <AppInput
+            data-testid="input-email"
             backgroundColor="background.default"
             error={Boolean(errors.email)}
             helperText={errors.email ?? ' '}
@@ -124,6 +127,7 @@ function LoginForm({ isSubmitting = false, mode, onSubmit }: LoginFormProps) {
             value={values.email}
           />
           <AppInput
+            data-testid="input-password"
             backgroundColor="background.default"
             error={Boolean(errors.password)}
             helperText={errors.password ?? ' '}
@@ -138,6 +142,7 @@ function LoginForm({ isSubmitting = false, mode, onSubmit }: LoginFormProps) {
           {mode === 'login' && (
             <Box className="flex justify-end">
               <AppLink
+                data-testid="link-forgot-password"
                 href="#"
                 onClick={event => event.preventDefault()}
                 sx={{ fontSize: '0.875rem' }}
@@ -150,6 +155,7 @@ function LoginForm({ isSubmitting = false, mode, onSubmit }: LoginFormProps) {
 
         {mode === 'register' && (
           <AppInput
+            data-testid="input-confirm-password"
             backgroundColor="background.default"
             error={Boolean(errors.confirmPassword)}
             helperText={errors.confirmPassword ?? ' '}
@@ -170,6 +176,7 @@ function LoginForm({ isSubmitting = false, mode, onSubmit }: LoginFormProps) {
       </Stack>
 
       <AppButton
+        data-testid={mode === 'login' ? 'button-login' : 'button-register'}
         className="absolute bottom-0 left-0"
         borderRadius="8px"
         disabled={isSubmitting}
@@ -182,7 +189,7 @@ function LoginForm({ isSubmitting = false, mode, onSubmit }: LoginFormProps) {
           ? 'Processando...'
           : mode === 'login'
             ? 'Entrar'
-            : 'Confirmar cadastro'}
+            : 'Criar conta'}
       </AppButton>
     </Box>
   )
