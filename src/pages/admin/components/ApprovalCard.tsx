@@ -231,7 +231,7 @@ function ApprovalCard({ actions, item, status, type }: ApprovalCardProps) {
         <Typography
           sx={{
             color: 'text.primary',
-            fontSize: { md: 18, xs: 16 },
+            fontSize: { md: 20, xs: 16 },
             fontWeight: 700,
             gridColumn: { sm: 1, xs: '1 / -1' },
             gridRow: { sm: 1, xs: 2 },

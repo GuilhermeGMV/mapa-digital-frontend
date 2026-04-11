@@ -7,7 +7,6 @@ import Pagination from '@/components/common/Pagination'
 import { SearchBarAndFilter } from '@/components/common/SearchBarAndFilter'
 import type { DropdownOption } from '@/components/ui/AppDropdown'
 import AppCard from '@/components/ui/AppCard'
-import { useUserRole } from '@/hooks/useUserRole'
 import { AppColors } from '@/styles/AppColors'
 import type {
   ApprovalResultsSummary,
@@ -33,6 +32,7 @@ interface ApprovalComponentProps<TItem extends { id: string }> {
   query: string
   renderItem: (item: TItem) => ReactNode
   resultsSummary: ApprovalResultsSummary
+  role: UserRole
   searchPlaceholder: string
   selectedStatus: ApprovalStatus
   title: string
@@ -53,14 +53,14 @@ function ApprovalComponent<TItem extends { id: string }>({
   query,
   renderItem,
   resultsSummary,
+  role,
   searchPlaceholder,
   selectedStatus,
   title,
   totalPages,
 }: ApprovalComponentProps<TItem>) {
   const theme = useTheme()
-  const { role } = useUserRole()
-  const accentColor = AppColors.role.admin.primary
+  const accentColor = AppColors.role[role].primary
 
   return (
     <AppCard
@@ -205,7 +205,7 @@ function ApprovalComponent<TItem extends { id: string }>({
         <Pagination
           currentPage={currentPage}
           onPageChange={onPageChange}
-          role={(role ?? 'admin') as UserRole}
+          role={role}
           totalPages={totalPages}
         />
       </Box>

@@ -97,7 +97,7 @@ const contentQueueResponse: ApiResponse<{
     requested_at: string
     resource_type: 'task' | 'exam'
     stage_label: string
-    status: 'in_review' | 'sent' | 'approved' | 'rejected'
+    status: 'in_review' | 'sent' | 'approved' | 'rejected' | 'correction_in_progress'
     subject_label: string
     tags: Array<{
       id: string
@@ -199,8 +199,12 @@ test('admin approvals area is wired into routes and sidebar navigation', () => {
   )
 
   assert.match(routesSource, /approvals: '\/admin\/approvals'/)
+  assert.match(routesSource, /correction: '\/admin\/approvals\/corrections\/:contentId'/)
+  assert.match(routesSource, /buildAdminCorrectionRoute/)
   assert.match(adminRouteSource, /AdminApprovalsPage/)
+  assert.match(adminRouteSource, /AdminContentCorrectionPage/)
   assert.match(dashboardLayoutSource, /Aprovações/)
+  assert.doesNotMatch(dashboardLayoutSource, /Correção de atividade/)
 })
 
 test('mapContentApprovalQueueResponse normalizes python-style DTOs into UI items', () => {
@@ -212,6 +216,68 @@ test('mapContentApprovalQueueResponse normalizes python-style DTOs into UI items
   assert.equal(response.items[0]?.subtitle, 'Prova · Português · 07/04/2026')
   assert.equal(response.items[0]?.badges[0]?.label, '2 questões vinculadas')
   assert.equal(response.items[0]?.subject?.label, 'Português')
+})
+
+test('content correction sessions use a route-level workflow with mock fallback', async () => {
+  const adminApprovalsPageSource = readFileSync(
+    new URL('../../../src/pages/admin/AdminApprovalsPage.tsx', import.meta.url),
+    'utf8'
+  )
+  const correctionPageSource = readFileSync(
+    new URL('../../../src/pages/admin/AdminContentCorrectionPage.tsx', import.meta.url),
+    'utf8'
+  )
+  const repositorySource = readFileSync(
+    new URL('../../../src/services/admin/admin-approval.repository.ts', import.meta.url),
+    'utf8'
+  )
+  const modalSource = readFileSync(
+    new URL(
+      '../../../src/pages/admin/components/ApprovalActionModal.tsx',
+      import.meta.url
+    ),
+    'utf8'
+  )
+
+  assert.match(adminApprovalsPageSource, /buildAdminCorrectionRoute\(item\.id\)/)
+  assert.match(adminApprovalsPageSource, /navigate\(/)
+  assert.match(correctionPageSource, /useParams/)
+  assert.match(correctionPageSource, /useUserRole/)
+  assert.match(correctionPageSource, /getContentCorrectionSession/)
+  assert.match(correctionPageSource, /markContentCorrectionInProgress/)
+  assert.match(correctionPageSource, /sendContentCorrectionMessage/)
+  assert.match(correctionPageSource, /Prévia do upload/)
+  assert.match(correctionPageSource, /Chat de orientação com o aluno/)
+  assert.match(correctionPageSource, /correctionCardHeight/)
+  assert.match(correctionPageSource, /height: correctionCardHeight/)
+  assert.match(correctionPageSource, /'&:last-child': \{ pb: 0 \}/)
+  assert.match(correctionPageSource, /flex: '1 1 auto'/)
+  assert.match(correctionPageSource, /gridTemplateColumns: 'repeat\(3, minmax\(0, 1fr\)\)'/)
+  assert.match(correctionPageSource, /alignSelf: 'end'/)
+  assert.doesNotMatch(correctionPageSource, /overflowX: 'auto'/)
+  assert.doesNotMatch(correctionPageSource, /marginTop: 'auto'/)
+  assert.match(repositorySource, /correction_in_progress/)
+  assert.match(repositorySource, /getMockContentCorrectionSession/)
+  assert.match(repositorySource, /markMockContentCorrectionInProgress/)
+  assert.doesNotMatch(modalSource, /content-correction/)
+  assert.doesNotMatch(modalSource, /Feedback da correção/)
+})
+
+test('content correction status is normalized and exposed in admin queues', () => {
+  const response = mapContentApprovalQueueResponse({
+    ...contentQueueResponse,
+    data: {
+      ...contentQueueResponse.data,
+      items: [
+        {
+          ...contentQueueResponse.data.items[0],
+          status: 'correction_in_progress',
+        },
+      ],
+    },
+  })
+
+  assert.equal(response.items[0]?.status, 'correctionInProgress')
 })
 
 test('admin approval repository falls back to mock data when the remote API is unavailable', async () => {
@@ -350,7 +416,7 @@ test('approval list cards preserve the compact visual proportions from the refer
     'utf8'
   )
 
-  assert.match(approvalCardSource, /fontSize: \{ md: 22, xs: 18 \}/)
+  assert.match(approvalCardSource, /fontSize: \{ md: 20, xs: 16 \}/)
   assert.match(approvalCardSource, /AppTags/)
   assert.match(approvalCardSource, /size="sm"/)
   assert.doesNotMatch(approvalCardSource, /buildActions/)
@@ -412,14 +478,12 @@ test('admin approvals page renders cards directly and provides visible actions',
   assert.match(adminApprovalsPageSource, /type="content"/)
   assert.match(adminApprovalsPageSource, /type="guardian"/)
   assert.match(approvalCardSource, /type: ApprovalType/)
-  assert.match(approvalCardSource, /sectionLabel = type === 'content'/)
   assert.match(approvalCardSource, /MoreHorizRoundedIcon/)
   assert.match(approvalCardSource, /const primaryActions = actions\.filter/)
   assert.match(approvalCardSource, /const secondaryActions = actions\.filter/)
   assert.match(approvalCardSource, /<Menu/)
   assert.doesNotMatch(approvalCardSource, /ApprovalPill/)
   assert.match(approvalCardSource, /subjectTag/)
-  assert.match(approvalCardSource, /requestDateTag/)
   assert.match(approvalCardSource, /AppTag/)
   assert.doesNotMatch(approvalCardSource, /buildActions/)
 })
@@ -477,25 +541,25 @@ test('admin approvals page routes create edit and correction through a reusable 
   assert.match(adminApprovalsPageSource, /modalState/)
   assert.match(adminApprovalsPageSource, /action: 'create'/)
   assert.match(adminApprovalsPageSource, /action: 'edit'/)
-  assert.match(adminApprovalsPageSource, /\? 'edit' : 'correct'/)
+  assert.match(adminApprovalsPageSource, /buildAdminCorrectionRoute\(item\.id\)/)
   assert.match(adminApprovalsPageSource, /label: 'Revisar conteúdo'/)
   assert.match(adminApprovalsPageSource, /label: 'Excluir conteúdo'/)
   assert.match(adminApprovalsPageSource, /action: 'delete'/)
   assert.match(adminApprovalsPageSource, /priority: 'secondary'/)
-  assert.match(adminApprovalsPageSource, /: 'Corrigir atividade'/)
+  assert.match(adminApprovalsPageSource, /Corrigir atividade/)
   assert.match(adminApprovalsPageSource, /label: 'Validar conteúdo'/)
   assert.match(adminApprovalsPageSource, /label: 'Rejeitar conteúdo'/)
   assert.match(adminApprovalsPageSource, /label: 'Revisão de cadastro'/)
   assert.match(adminApprovalsPageSource, /label: 'Validar cadastro'/)
   assert.match(adminApprovalsPageSource, /label: 'Rejeitar cadastro'/)
-  assert.match(adminApprovalsPageSource, /applyContentCorrection/)
+  assert.doesNotMatch(adminApprovalsPageSource, /applyContentCorrection/)
   assert.match(modalSource, /AppActionModal/)
   assert.match(modalSource, /resolveUsageMode/)
   assert.match(modalSource, /mode=\{dialogMode\}/)
-  assert.match(modalSource, /mode\.action === 'correct'/)
-  assert.match(modalSource, /Corrigir atividade/)
-  assert.match(modalSource, /Feedback da correção/)
-  assert.match(modalSource, /correctionOutcomeOptions/)
+  assert.doesNotMatch(modalSource, /mode\.action === 'correct'/)
+  assert.doesNotMatch(modalSource, /Corrigir atividade/)
+  assert.doesNotMatch(modalSource, /Feedback da correção/)
+  assert.doesNotMatch(modalSource, /correctionOutcomeOptions/)
   assert.doesNotMatch(modalSource, /label="Nota"/)
   assert.doesNotMatch(modalSource, /roleOptions/)
   assert.match(modalSource, /mode\.type === 'guardian'/)

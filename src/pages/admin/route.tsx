@@ -4,6 +4,7 @@ import RoleRoute from '@/components/common/RoleRoute'
 import { APP_ROUTES } from '@/constants/routes'
 import DashboardLayout from '@/layouts/DashboardLayout'
 import AdminApprovalsPage from '@/pages/admin/AdminApprovalsPage'
+import AdminContentCorrectionPage from '@/pages/admin/AdminContentCorrectionPage'
 import AdminDashboardPage from '@/pages/admin/AdminDashboardPage'
 
 export const adminRoutes: RouteObject[] = [
@@ -23,6 +24,10 @@ export const adminRoutes: RouteObject[] = [
               {
                 path: APP_ROUTES.admin.approvals,
                 element: <AdminApprovalsPage />,
+              },
+              {
+                path: APP_ROUTES.admin.correction,
+                element: <AdminContentCorrectionPage />,
               },
             ],
           },

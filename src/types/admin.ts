@@ -62,6 +62,7 @@ interface BaseApprovalItem {
 export type ContentApprovalResourceType = 'exam' | 'task'
 export type ContentApprovalStatus =
   | 'inReview'
+  | 'correctionInProgress'
   | 'sent'
   | 'approved'
   | 'rejected'
@@ -136,4 +137,35 @@ export interface GuardianApprovalDraftInput {
 export interface ApprovalCorrectionInput {
   feedback: string
   outcome: ApprovalCorrectionOutcome
+}
+
+export type ContentCorrectionStatus =
+  | 'pending'
+  | 'inProgress'
+  | 'completed'
+
+export type ContentCorrectionMessageAuthor = 'admin' | 'student'
+
+export interface ContentCorrectionMessage {
+  author: ContentCorrectionMessageAuthor
+  body: string
+  createdAt: string
+  id: string
+}
+
+export interface ContentCorrectionSession {
+  contentId: string
+  messages: ContentCorrectionMessage[]
+  requestedAt?: string
+  resourceType?: ContentApprovalResourceType
+  status: ContentCorrectionStatus
+  subject?: SubjectContext
+  subtitle?: string
+  title: string
+  uploadFileName: string
+  uploadPreviewUrl?: string
+}
+
+export interface ContentCorrectionMessageInput {
+  body: string
 }

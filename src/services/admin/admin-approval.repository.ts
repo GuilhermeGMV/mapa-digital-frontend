@@ -1,6 +1,8 @@
 import type { ApiResponse, HttpRequestOptions } from '../../types/api'
 import type {
   ApprovalCorrectionInput,
+  ContentCorrectionMessageInput,
+  ContentCorrectionSession,
   ApprovalQueueQuery,
   ApprovalQueueResult,
   ContentApprovalDraftInput,
@@ -56,6 +58,7 @@ export type ApprovalApiClient = {
     path: string,
     options?: { query?: HttpRequestOptions['query'] }
   ): Promise<ApiResponse<T>>
+  post<T>(path: string, body?: unknown): Promise<ApiResponse<T>>
   patch<T>(path: string, body?: unknown): Promise<ApiResponse<T>>
 }
 
@@ -212,6 +215,26 @@ let mockGuardianApprovalItems: GuardianApprovalItem[] = [
   },
 ]
 
+const mockContentCorrectionMessages: Record<
+  string,
+  ContentCorrectionSession['messages']
+> = {
+  'content-1': [
+    {
+      author: 'student',
+      body: 'Enviei a resolução da lista. Fiquei em dúvida na questão 4.',
+      createdAt: '22/03/2026 14:22',
+      id: 'message-content-1-1',
+    },
+    {
+      author: 'admin',
+      body: 'Vou revisar seu upload e te aviso por aqui o que precisa ajustar.',
+      createdAt: '22/03/2026 14:36',
+      id: 'message-content-1-2',
+    },
+  ],
+}
+
 function shouldUseFallback(error: unknown, allowFallback: boolean) {
   if (!allowFallback) {
     return false
@@ -270,6 +293,87 @@ function updateMockContentStatus(
   }
 
   return nextItem
+}
+
+function getMockContentCorrectionSession(id: string): ContentCorrectionSession {
+  const item = mockContentApprovalItems.find(contentItem => contentItem.id === id)
+
+  if (!item) {
+    throw new Error(`Content approval ${id} not found`)
+  }
+
+  return {
+    contentId: item.id,
+    messages: mockContentCorrectionMessages[item.id] ?? [
+      {
+        author: 'student',
+        body: 'Atividade enviada para correção.',
+        createdAt: item.requestedAt ?? 'Agora',
+        id: `${item.id}-message-student`,
+      },
+    ],
+    requestedAt: item.requestedAt,
+    resourceType: item.resourceType,
+    status:
+      item.status === 'correctionInProgress'
+        ? 'inProgress'
+        : item.status === 'approved'
+          ? 'completed'
+          : 'pending',
+    subject: item.subject,
+    subtitle: item.subtitle,
+    title: item.title,
+    uploadFileName: `${item.title}.pdf`,
+  }
+}
+
+function markMockContentCorrectionInProgress(
+  id: string
+): ContentCorrectionSession {
+  updateMockContentStatus(id, 'correctionInProgress')
+
+  const currentMessages = mockContentCorrectionMessages[id] ?? []
+
+  if (
+    !currentMessages.some(message =>
+      message.body.includes('Correção iniciada pelo administrador')
+    )
+  ) {
+    mockContentCorrectionMessages[id] = [
+      ...currentMessages,
+      {
+        author: 'admin',
+        body: 'Correção iniciada pelo administrador.',
+        createdAt: 'Agora',
+        id: `${id}-message-in-progress`,
+      },
+    ]
+  }
+
+  return getMockContentCorrectionSession(id)
+}
+
+function sendMockContentCorrectionMessage(
+  id: string,
+  input: ContentCorrectionMessageInput
+): ContentCorrectionSession {
+  const body = input.body.trim()
+
+  if (!body) {
+    return getMockContentCorrectionSession(id)
+  }
+
+  mockContentCorrectionMessages[id] = [
+    ...(mockContentCorrectionMessages[id] ?? []),
+    {
+      author: 'admin',
+      body,
+      createdAt: 'Agora',
+      id: `${id}-message-${Date.now()}`,
+    },
+  ]
+
+  return getMockContentCorrectionSession(id)
 }
 
 function updateMockGuardianStatus(
@@ -545,7 +649,12 @@ export function createAdminApprovalRepository({
       }
     },
     async updateContentStatus(id: string, status: ContentApprovalStatus) {
-      const remoteStatus = status === 'inReview' ? 'in_review' : status
+      const remoteStatus =
+        status === 'inReview'
+          ? 'in_review'
+          : status === 'correctionInProgress'
+            ? 'correction_in_progress'
+            : status
 
       try {
         const response = await client.patch<ContentApprovalDto>(
@@ -601,6 +710,56 @@ export function createAdminApprovalRepository({
       correction: ApprovalCorrectionInput
     ) {
       return applyMockContentCorrection(id, correction)
+    },
+    async getContentCorrectionSession(id: string) {
+      try {
+        const response = await client.get<ContentCorrectionSession>(
+          `admin/approvals/content/${id}/correction`
+        )
+
+        return response.data
+      } catch (error) {
+        if (!shouldUseFallback(error, allowFallback)) {
+          throw error
+        }
+
+        return getMockContentCorrectionSession(id)
+      }
+    },
+    async markContentCorrectionInProgress(id: string) {
+      try {
+        const response = await client.patch<ContentCorrectionSession>(
+          `admin/approvals/content/${id}/correction/status`,
+          { status: 'correction_in_progress' }
+        )
+
+        return response.data
+      } catch (error) {
+        if (!shouldUseFallback(error, allowFallback)) {
+          throw error
+        }
+
+        return markMockContentCorrectionInProgress(id)
+      }
+    },
+    async sendContentCorrectionMessage(
+      id: string,
+      input: ContentCorrectionMessageInput
+    ) {
+      try {
+        const response = await client.post<ContentCorrectionSession>(
+          `admin/approvals/content/${id}/correction/messages`,
+          input
+        )
+
+        return response.data
+      } catch (error) {
+        if (!shouldUseFallback(error, allowFallback)) {
+          throw error
+        }
+
+        return sendMockContentCorrectionMessage(id, input)
+      }
     },
     async removeLocalContentItem(id: string) {
       removeMockContentItem(id)

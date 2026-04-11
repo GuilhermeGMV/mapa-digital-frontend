@@ -433,6 +433,10 @@ export const CONTENT_APPROVAL_CARD_STATUS: Record<
     label: 'Aprovado',
     tone: 'success',
   },
+  correctionInProgress: {
+    label: 'Correção em progresso',
+    tone: 'info',
+  },
   inReview: {
     label: 'Em revisão',
     tone: 'warning',

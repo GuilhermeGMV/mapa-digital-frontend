@@ -13,6 +13,7 @@ import { getSubjectTagContextByLabel } from '../../utils/themes'
 
 export type ContentApprovalStatusDto =
   | 'approved'
+  | 'correction_in_progress'
   | 'in_review'
   | 'rejected'
   | 'sent'
@@ -71,6 +72,7 @@ const contentStatusMap: Record<
   ContentApprovalStatus
 > = {
   approved: 'approved',
+  correction_in_progress: 'correctionInProgress',
   in_review: 'inReview',
   rejected: 'rejected',
   sent: 'sent',

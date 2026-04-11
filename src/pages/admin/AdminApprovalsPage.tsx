@@ -5,6 +5,7 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import RuleFolderOutlinedIcon from '@mui/icons-material/RuleFolderOutlined'
 import { Box } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
+import { useNavigate } from 'react-router-dom'
 import {
   startTransition,
   useCallback,
@@ -16,6 +17,8 @@ import {
 import LoadingScreen from '@/components/common/LoadingScreen'
 import PageHeader from '@/components/common/PageHeader'
 import AppPageContainer from '@/components/ui/AppPageContainer'
+import { buildAdminCorrectionRoute } from '@/constants/routes'
+import { useUserRole } from '@/hooks/useUserRole'
 import { adminApprovalService } from '@/services/admin/admin-approval.runtime'
 import type {
   ApprovalCardAction,
@@ -43,7 +46,6 @@ import {
   CONTENT_APPROVAL_CARD_STATUS,
   GUARDIAN_APPROVAL_CARD_STATUS,
 } from '@/utils/themes'
-import { AuthCredentials } from '@/types/auth'
 
 const DEFAULT_PAGE_INDEX = 1
 const DEFAULT_REQUESTED_AT = '09/04/2026'
@@ -58,6 +60,7 @@ const DEFAULT_QUERY: ApprovalQueueQuery = {
 const contentFilterOptions: ApprovalStatusOption[] = [
   { label: 'Todos', value: 'all' },
   { label: 'Em revisão', value: 'inReview' },
+  { label: 'Correção em progresso', value: 'correctionInProgress' },
   { label: 'Enviado', value: 'sent' },
   { label: 'Aprovado', value: 'approved' },
   { label: 'Recusado', value: 'rejected' },
@@ -73,12 +76,6 @@ const guardianFilterOptions: ApprovalStatusOption[] = [
 const resourceTypeOptions = [
   { label: 'Tarefa', value: 'task' },
   { label: 'Prova', value: 'exam' },
-] as const
-
-const correctionOutcomeOptions = [
-  { label: 'Corrigida', value: 'completed' },
-  { label: 'Corrigida com observações', value: 'completedWithNotes' },
-  { label: 'Refazer atividade', value: 'redo' },
 ] as const
 
 const subjectOptions = ALL_SUBJECT_TAG_CONTEXTS.filter(
@@ -121,11 +118,6 @@ function buildResultsSummary(count: number): ApprovalResultsSummary {
 function getDefaultFormValues(): ApprovalActionFormValues {
   return {
     childName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    correctionFeedback: '',
-    correctionOutcome: 'completed',
     requestedAt: DEFAULT_REQUESTED_AT,
     resourceType: 'task',
     subjectId: String(DEFAULT_SUBJECT_ID),
@@ -135,6 +127,8 @@ function getDefaultFormValues(): ApprovalActionFormValues {
 
 function AdminApprovalsPage() {
   const theme = useTheme()
+  const navigate = useNavigate()
+  const { role, isAdmin } = useUserRole()
   const [contentQuery, setContentQuery] =
     useState<ApprovalQueueQuery>(DEFAULT_QUERY)
   const [guardianQuery, setGuardianQuery] =
@@ -195,11 +189,6 @@ function AdminApprovalsPage() {
     setModalValues({
       childName:
         nextMode.item?.kind === 'guardian' ? nextMode.item.childName : '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      correctionFeedback: '',
-      correctionOutcome: 'completed',
       requestedAt: nextMode.item?.requestedAt ?? DEFAULT_REQUESTED_AT,
       resourceType:
         nextMode.item?.kind === 'content'
@@ -234,6 +223,7 @@ function AdminApprovalsPage() {
       const success = theme.palette.success.main
       const error = theme.palette.error.main
       const warning = theme.palette.warning.main
+      const correctionRoute = buildAdminCorrectionRoute(item.id)
 
       return [
         {
@@ -247,11 +237,12 @@ function AdminApprovalsPage() {
           id: `${item.id}-review`,
           label: 'Revisar conteúdo',
           onClick: () => {
-            openModal({
-              action: item.status === 'approved' ? 'edit' : 'correct',
-              item,
-              type: 'content',
-            })
+            if (item.status === 'approved') {
+              openModal({ action: 'edit', item, type: 'content' })
+              return
+            }
+
+            navigate(correctionRoute)
           },
           priority: 'secondary',
           tooltip:
@@ -292,7 +283,7 @@ function AdminApprovalsPage() {
         },
       ]
     },
-    [handleContentStatusUpdate, openModal, theme.palette]
+    [handleContentStatusUpdate, navigate, openModal, theme.palette]
   )
 
   const buildGuardianActions = useCallback(
@@ -367,17 +358,6 @@ function AdminApprovalsPage() {
         return
       }
 
-      if (modalState.action === 'correct' && modalState.item) {
-        await adminApprovalService.applyContentCorrection(modalState.item.id, {
-          feedback:
-            modalValues.correctionFeedback || 'Correção registrada pelo admin.',
-          outcome: modalValues.correctionOutcome,
-        })
-        setContentRefreshKey(current => current + 1)
-        resetModal()
-        return
-      }
-
       const payload: ContentApprovalDraftInput = {
         requestedAt: modalValues.requestedAt,
         resourceType: modalValues.resourceType,
@@ -425,28 +405,6 @@ function AdminApprovalsPage() {
     setGuardianRefreshKey(current => current + 1)
     resetModal()
   }, [getSubjectById, modalState, modalValues, resetModal])
-
-  const handleModalSubmit = useCallback(async () => {
-    if (!modalState) {
-      return
-    }
-
-    if (modalState.type === 'content') {
-      await adminApprovalService.createLocalContentDraft({
-        requestedAt: new Date().toLocaleDateString('pt-BR'),
-        resourceType: 'task',
-        subject: getSubjectById(modalValues.subjectId),
-        title: modalValues.title || 'Novo conteúdo',
-      })
-    } else if (modalState.type === 'guardian') {
-      await adminApprovalService.createLocalGuardianDraft({
-        childName: modalValues.childName,
-        requestedAt: modalValues.requestedAt,
-        roleLabel: 'Responsável',
-        title: modalValues.title || 'Novo responsável',
-      })
-    }
-  }, [getSubjectById, modalState, modalValues])
 
   useEffect(() => {
     let isActive = true
@@ -519,7 +477,7 @@ function AdminApprovalsPage() {
     }
   }, [resolvedGuardianQuery, guardianRefreshKey])
 
-  if (!hasLoadedContent || !hasLoadedGuardians) {
+  if (!isAdmin || role !== 'admin' || !hasLoadedContent || !hasLoadedGuardians) {
     return <LoadingScreen />
   }
 
@@ -589,6 +547,7 @@ function AdminApprovalsPage() {
             />
           )}
           resultsSummary={contentResultsSummary}
+          role={role}
           searchPlaceholder="Pesquisar tarefas e provas..."
           selectedStatus={contentQuery.status}
           title="Cadastro e Aprovação de atividades"
@@ -644,6 +603,7 @@ function AdminApprovalsPage() {
             />
           )}
           resultsSummary={guardianResultsSummary}
+          role={role}
           searchPlaceholder="Pesquisar responsáveis..."
           selectedStatus={guardianQuery.status}
           title="Validação e liberação de responsáveis"
@@ -652,16 +612,16 @@ function AdminApprovalsPage() {
       </Box>
 
       <ApprovalActionModal
-        correctionOutcomeOptions={[...correctionOutcomeOptions]}
         mode={modalState}
         onChange={handleModalChange}
         onClose={resetModal}
         onConfirm={handleModalConfirm}
         open={modalState !== null}
         resourceTypeOptions={[...resourceTypeOptions]}
-        role="admin"
+        role={role}
         subjectOptions={subjectOptions}
-        values={modalValues} onSubmit={handleModalSubmit}      />
+        values={modalValues}
+      />
     </AppPageContainer>
   )
 }

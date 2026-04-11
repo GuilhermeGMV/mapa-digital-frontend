@@ -13,37 +13,17 @@ import type {
   ContentApprovalResourceType,
 } from '@/types/admin'
 import type { UserRole } from '@/types/user'
-import type { AuthCredentials } from '@/types/auth'
 
-type ApprovalActionFormErrors = Partial<
-  Record<keyof AuthCredentials | 'confirmPassword' | 'fullName', string>
->
+export type ApprovalActionModalMode = {
+  action: Exclude<ApprovalModalAction, 'correct'>
+  item?: ApprovalItem
+  type: ApprovalType
+}
 
-export type ApprovalActionModalMode =
-  | {
-      action: Exclude<ApprovalModalAction, 'correct'>
-      item?: ApprovalItem
-      type: ApprovalType
-    }
-  | {
-      action: 'correct'
-      item: ApprovalItem
-      type: 'content'
-    }
-
-type ApprovalActionModalUsage =
-  | 'confirm'
-  | 'content-correction'
-  | 'content-form'
-  | 'guardian-form'
+type ApprovalActionModalUsage = 'confirm' | 'content-form' | 'guardian-form'
 
 export interface ApprovalActionFormValues {
-  email: unknown
-  password: unknown
-  confirmPassword: unknown
   childName: string
-  correctionFeedback: string
-  correctionOutcome: 'completed' | 'completedWithNotes' | 'redo'
   requestedAt: string
   resourceType: ContentApprovalResourceType
   subjectId: string
@@ -51,7 +31,6 @@ export interface ApprovalActionFormValues {
 }
 
 interface ApprovalActionModalProps {
-  correctionOutcomeOptions: DropdownOption[]
   mode: ApprovalActionModalMode | null
   onChange: (
     field: keyof ApprovalActionFormValues,
@@ -65,7 +44,6 @@ interface ApprovalActionModalProps {
   values: ApprovalActionFormValues
   role: UserRole
   isSubmitting?: boolean
-  onSubmit: (values: AuthCredentials) => Promise<void>
 }
 
 const fieldLabelSx = {
@@ -79,23 +57,6 @@ const inputSx = {
   '& .MuiOutlinedInput-root': {
     borderRadius: '14px',
     height: { md: 46, xs: 44 },
-  },
-  '& .MuiInputBase-input': {
-    fontSize: { md: 14, xs: 13 },
-  },
-  '& .MuiInputBase-startAdornment': {
-    size: 10,
-    py: 1.25,
-    color: 'text.secondary',
-  },
-}
-
-const multilineInputSx = {
-  '& .MuiOutlinedInput-root': {
-    alignItems: 'flex-start',
-    borderRadius: '14px',
-    minHeight: 132,
-    py: 0.75,
   },
   '& .MuiInputBase-input': {
     fontSize: { md: 14, xs: 13 },
@@ -120,10 +81,6 @@ function resolveUsageMode(mode: ApprovalActionModalMode): ApprovalActionModalUsa
     return 'confirm'
   }
 
-  if (mode.action === 'correct') {
-    return 'content-correction'
-  }
-
   return mode.type === 'guardian'
     ? 'guardian-form'
     : isContentMode
@@ -136,19 +93,10 @@ function resolveDialogMode(usage: ApprovalActionModalUsage): AppActionModalMode 
     return 'confirm'
   }
 
-  return usage === 'content-correction' ? 'review' : 'form'
+  return 'form'
 }
 
 function resolveModalCopy(mode: ApprovalActionModalMode) {
-  if (mode.action === 'correct') {
-    return {
-      confirmLabel: 'Salvar correção',
-      description:
-        'Registre o resultado da correção da atividade enviada pelo aluno.',
-      title: 'Corrigir atividade',
-    }
-  }
-
   if (mode.action === 'delete') {
     return {
       confirmLabel: 'Confirmar exclusão',
@@ -182,7 +130,6 @@ function resolveModalCopy(mode: ApprovalActionModalMode) {
 }
 
 function ApprovalActionModal({
-  correctionOutcomeOptions,
   mode,
   onChange,
   onClose,
@@ -202,7 +149,6 @@ function ApprovalActionModal({
   const dialogMode = resolveDialogMode(usage)
   const copy = resolveModalCopy(mode)
   const currentItem = mode.item
-  const correctionItem = mode.action === 'correct' ? mode.item : null
 
   return (
     <AppActionModal
@@ -211,7 +157,7 @@ function ApprovalActionModal({
       confirmLabel={copy.confirmLabel}
       confirmTextColor={accent.contrast}
       description={copy.description}
-      maxWidth={usage === 'content-correction' ? 'md' : 'sm'}
+      maxWidth="sm"
       mode={dialogMode}
       onClose={onClose}
       onConfirm={onConfirm}
@@ -227,117 +173,48 @@ function ApprovalActionModal({
         </Typography>
       ) : null}
 
-      {usage === 'content-correction' && correctionItem ? (
+      {usage === 'guardian-form' ? (
         <Box className="grid gap-3">
+          <AppInput
+            label="Nome do responsável"
+            labelSx={fieldLabelSx}
+            onChange={event => onChange('title', event.target.value)}
+            placeholder="Ex.: Mariana Souza"
+            sx={inputSx}
+            value={values.title}
+          />
+          <AppInput
+            label="Nome do aluno"
+            labelSx={fieldLabelSx}
+            onChange={event => onChange('childName', event.target.value)}
+            placeholder="Ex.: Luiza Souza"
+            sx={inputSx}
+            value={values.childName}
+          />
           <Box
             sx={{
-              backgroundColor: 'background.paper',
+              backgroundColor: 'background.default',
               border: '1px solid',
-              borderColor: accent.soft,
-              borderRadius: '18px',
+              borderColor: 'background.border',
+              borderRadius: '14px',
               display: 'grid',
-              gap: 1,
-              p: { md: 2, xs: 1.75 },
+              gap: 0.5,
+              px: 1.75,
+              py: 1.25,
             }}
           >
-            <Typography
-              sx={{
-                color: 'text.primary',
-                fontSize: { md: 15, xs: 14 },
-                fontWeight: 700,
-              }}
-            >
-              {correctionItem.title}
-            </Typography>
-            <Typography
-              sx={{ color: 'text.secondary', fontSize: { md: 13, xs: 12 } }}
-            >
-              {correctionItem.subtitle}
+            <Typography sx={fieldLabelSx}>Papel do responsável</Typography>
+            <Typography sx={{ color: 'text.primary', fontSize: { md: 14, xs: 13 } }}>
+              Responsável
             </Typography>
           </Box>
-
-          <Box className="grid gap-1">
-            <Typography sx={fieldLabelSx}>Resultado da revisão</Typography>
-            <AppDropdown
-              fullWidth
-              onChange={event =>
-                onChange('correctionOutcome', String(event.target.value))
-              }
-              options={correctionOutcomeOptions}
-              placeholder="Selecione o resultado"
-              sx={selectSx}
-              value={values.correctionOutcome}
-            />
-          </Box>
-
           <AppInput
-            label="Feedback da correção"
+            label="Data da solicitação"
             labelSx={fieldLabelSx}
-            multiline
-            minRows={4}
-            onChange={event =>
-              onChange('correctionFeedback', event.target.value)
-            }
-            placeholder="Descreva a correção aplicada, os acertos e o que ainda precisa evoluir."
-            sx={multilineInputSx}
-            value={values.correctionFeedback}
-          />
-        </Box>
-      ) : null}
-
-      {usage === 'guardian-form' && mode.action === 'create' ? (
-        <Box className="grid gap-3">
-          <AppInput
-            label="Nome do responsável"
-            labelSx={fieldLabelSx}
-            onChange={event => onChange('title', event.target.value)}
-            placeholder="Ex.: Mariana Souza"
+            onChange={event => onChange('requestedAt', event.target.value)}
+            placeholder="DD/MM/AAAA"
             sx={inputSx}
-            value={values.title}
-          />
-          <AppInput
-            label="E-mail"
-            onChange={event => onChange('email', event.target.value)}
-            placeholder="Ex.: mariana@gmail.com"
-            type="email"
-            sx={inputSx}
-            value={values.email}
-          />
-          <AppInput
-            label="Senha"
-            onChange={event => onChange('password', event.target.value)}
-            placeholder="Mín. 8 caracteres"
-            type="password"
-            sx={inputSx}
-            value={values.password}
-          />
-          <AppInput
-            label="Confirmar senha"
-            onChange={event => onChange('confirmPassword', event.target.value)}
-            placeholder="Repita a senha"
-            type="password"
-            value={values.confirmPassword}
-            sx={inputSx}
-          />
-        </Box>
-      ) :
-      usage === 'guardian-form' && mode.action === 'edit' ? (
-        <Box className="grid gap-3">
-          <AppInput
-            label="Nome do responsável"
-            labelSx={fieldLabelSx}
-            onChange={event => onChange('title', event.target.value)}
-            placeholder="Ex.: Mariana Souza"
-            sx={inputSx}
-            value={values.title}
-          />
-          <AppInput
-            label="E-mail"
-            onChange={event => onChange('email', event.target.value)}
-            placeholder="Ex.: mariana@gmail.com"
-            type="email"
-            sx={inputSx}
-            value={values.email}
+            value={values.requestedAt}
           />
         </Box>
       ) : null}
