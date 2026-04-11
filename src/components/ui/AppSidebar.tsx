@@ -105,17 +105,26 @@ function AppSidebar({
                   color: AppColors.neutral.mutedText,
                 },
                 '&.Mui-selected': {
-                  backgroundColor: alpha(accentColor, theme.palette.mode === 'dark' ? 0.2 : 0.12),
+                  backgroundColor: alpha(
+                    accentColor,
+                    theme.palette.mode === 'dark' ? 0.2 : 0.12
+                  ),
                 },
-                '&.Mui-selected .MuiListItemIcon-root, &.Mui-selected .MuiListItemText-primary': {
-                  color: accentColor,
-                },
+                '&.Mui-selected .MuiListItemIcon-root, &.Mui-selected .MuiListItemText-primary':
+                  {
+                    color: accentColor,
+                    fontWeight: 600,
+                  },
                 '&:hover': {
-                  backgroundColor: alpha(accentColor, theme.palette.mode === 'dark' ? 0.2 : 0.12),
+                  backgroundColor: alpha(
+                    accentColor,
+                    theme.palette.mode === 'dark' ? 0.2 : 0.12
+                  ),
                 },
-                '&:hover .MuiListItemIcon-root, &:hover .MuiListItemText-primary': {
-                  color: accentColor,
-                },
+                '&:hover .MuiListItemIcon-root, &:hover .MuiListItemText-primary':
+                  {
+                    color: accentColor,
+                  },
                 '&:hover .MuiListItemText-primary': {
                   fontWeight: 600,
                 },
@@ -132,20 +141,25 @@ function AppSidebar({
         <Box className="mt-auto pt-3">
           <Divider sx={{ borderColor: 'var(--app-border)', mb: 1.5 }} />
           <ListItemButton
-            className="rounded-2xl px-2 py-1.5 transition-all duration-200 ease-out"
+            className="rounded-full px-2 py-1.5 transition-all duration-200 ease-out"
             data-testid="logout-button"
             onClick={onLogout}
             sx={{
+              borderRadius: '18px',
+              transition: 'all 0.2s ease',
               '& .MuiListItemText-primary': {
                 color: AppColors.neutral.mutedText,
                 fontWeight: 600,
               },
               '& .MuiListItemIcon-root': {
-                color:AppColors.neutral.mutedText,
+                color: AppColors.neutral.mutedText,
               },
               '&:hover': {
                 borderRadius: 'var(--app-radius-control)',
-                bgcolor: alpha(accentColor, theme.palette.mode === 'dark' ? 0.2 : 0.12),
+                bgcolor: alpha(
+                  accentColor,
+                  theme.palette.mode === 'dark' ? 0.2 : 0.12
+                ),
                 color: accentColor,
               },
               '&:hover .MuiListItemIcon-root, &:hover .MuiListItemText-primary': {

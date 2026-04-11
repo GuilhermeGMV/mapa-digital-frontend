@@ -1,8 +1,8 @@
-import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import AutoStoriesIcon from '@mui/icons-material/AutoStories'
 import FactCheckRoundedIcon from '@mui/icons-material/FactCheckRounded'
-import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined';
-import RouteRoundedIcon from '@mui/icons-material/RouteRounded';
-import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded'
+import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined'
+import RouteRoundedIcon from '@mui/icons-material/RouteRounded'
+import UploadFileOutlinedIcon from '@mui/icons-material/UploadFileOutlined'
 import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded'
 import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineRounded'
 import type { SidebarItem } from '@/types/common'
@@ -29,18 +29,18 @@ export const NAVIGATION_BY_ROLE: Record<UserRole, SidebarItem[]> = {
     {
       label: 'Upload de Avaliações',
       path: APP_ROUTES.student.uploads,
-      icon: <DescriptionRoundedIcon fontSize="medium" />,
+      icon: <UploadFileOutlinedIcon fontSize="medium" />,
     },
     {
       label: 'Rotina & Bem-estar',
       path: APP_ROUTES.student.routine,
-      icon: <FavoriteBorderRoundedIcon fontSize='medium'/>,
+      icon: <FavoriteBorderRoundedIcon fontSize="medium" />,
     },
     {
       label: 'Chat IA',
       path: APP_ROUTES.student.chat,
       icon: <ChatBubbleOutlineRoundedIcon fontSize="medium" />,
-    }
+    },
   ],
   parent: [
     {
