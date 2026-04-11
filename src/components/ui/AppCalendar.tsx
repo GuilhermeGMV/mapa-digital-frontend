@@ -98,10 +98,7 @@ export default function AppCalendar() {
             width: '100%',
             maxWidth: '100%',
             height: 'auto',
-            overflow: 'visible',
-            '& .MuiDayCalendar-root': {
-              overflow: 'visible',
-            },
+            minHeight: '30rem',
             '& .MuiDayCalendar-slideTransition': {
               minHeight: '26rem',
             },
@@ -112,8 +109,8 @@ export default function AppCalendar() {
               justifyContent: 'space-around',
             },
             '& .MuiPickersDay-root': {
-              width: 84,
-              height: 60,
+              width: 92,
+              height: 62,
               fontSize: '1.2rem',
               display: 'flex',
               alignItems: 'center',
