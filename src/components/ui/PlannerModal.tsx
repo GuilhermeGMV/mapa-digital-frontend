@@ -46,10 +46,10 @@ function renderIconBox(icon: React.ReactNode, color: string, bg: string) {
   return (
     <Box
       sx={{
-        width: 40,
-        height: 40,
-        minWidth: 40,
-        minHeight: 40,
+        width: 36,
+        height: 36,
+        minWidth: 36,
+        minHeight: 36,
         flexShrink: 0,
         borderRadius: '50%',
         display: 'flex',
@@ -66,7 +66,7 @@ function renderIconBox(icon: React.ReactNode, color: string, bg: string) {
 
 function getMoreThanOneTaskDayIcon() {
   return renderIconBox(
-    <ListIcon sx={{ fontSize: 22 }} />,
+    <ListIcon sx={{ fontSize: 20 }} />,
     '#6132BD',
     'rgba(97,50,189,0.15)'
   )
@@ -74,17 +74,17 @@ function getMoreThanOneTaskDayIcon() {
 function getTaskIcon(status: Task['status']) {
   const config = {
     done: {
-      icon: <CheckIcon sx={{ fontSize: 25 }} />,
+      icon: <CheckIcon sx={{ fontSize: 20 }} />,
       color: '#22c55e',
       bg: 'rgba(34,197,94,0.15)',
     },
     adjust: {
-      icon: <FitnessCenterIcon sx={{ fontSize: 25 }} />,
+      icon: <FitnessCenterIcon sx={{ fontSize: 20 }} />,
       color: '#eab308',
       bg: 'rgba(234,179,8,0.15)',
     },
     pending: {
-      icon: <FitnessCenterIcon sx={{ fontSize: 25 }} />,
+      icon: <FitnessCenterIcon sx={{ fontSize: 20 }} />,
       color: '#9ca3af',
       bg: 'rgba(156,163,175,0.15)',
     },
