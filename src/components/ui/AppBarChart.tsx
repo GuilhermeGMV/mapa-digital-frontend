@@ -18,7 +18,7 @@ export default function AppBarChart({
   maxValue,
   className = '',
 }: AppBarChartProps) {
-  const computedMax = maxValue ?? Math.max(...data.map((d) => d.value), 1)
+  const computedMax = maxValue ?? Math.max(...data.map(d => d.value), 1)
 
   return (
     <div
@@ -32,23 +32,18 @@ export default function AppBarChart({
         .join(' ')}
       style={{ height }}
     >
-      
-      
       {data.map((item, index) => {
         const percentage = Math.max(
           0,
           Math.min(100, (item.value / computedMax) * 100)
-        )  // Calcula a porcentagem da altura da barra atual em relação ao valor máximo
-
+        ) // Calcula a porcentagem da altura da barra atual em relação ao valor máximo
 
         return (
           <div
             key={index}
             className="flex flex-col items-center flex-1 h-full gap-2"
           >
-
-
-            <div 
+            <div
               className="relative flex-1 w-full flex items-end overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800/50"
               title={`${item.label}: ${item.value}`}
             >
@@ -59,15 +54,15 @@ export default function AppBarChart({
                 style={{ height: `${percentage}%` }}
               />
             </div>
-            
+
             <Typography
               color="text.secondary"
               variant="body2"
               noWrap
-              sx={{ 
-                fontWeight: 600, 
+              sx={{
+                fontWeight: 600,
                 fontSize: { xs: '0.65rem', sm: '0.75rem' },
-                textAlign: 'center'
+                textAlign: 'center',
               }}
             >
               {item.label}
