@@ -5,6 +5,7 @@ import { Link as RouterLink, Outlet } from 'react-router-dom'
 import AppButton from '@/components/ui/AppButton'
 import { APP_CONFIG } from '@/constants/app'
 import { APP_ROUTES } from '@/constants/routes'
+import logo from '@/assets/logos/WhiteLogo.png'
 import { AppColors } from '@/styles/AppColors'
 
 function AuthLayout() {
@@ -48,9 +49,9 @@ function AuthLayout() {
             </Typography>
 
             <img
-              src="/logo-mapa.png"
+              src={logo}
               alt="Mapa"
-              className="w-24 mt-30 block mx-auto"
+              className="w-32 mt-14 block mx-auto"
             />
 
           </Box>
