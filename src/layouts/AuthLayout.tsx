@@ -67,20 +67,24 @@ function AuthLayout() {
             <SecurityRoundedIcon sx={{ fontSize: 18 }} />
             Acesso seguro à plataforma
           </Box>
-          
+
           <Stack spacing={2}>
-            <Typography className="max-w-[450px] leading-tight" sx={{ fontSize: '30px', fontWeight: 700 }}>
+            <Typography
+              className="max-w-[450px] leading-tight"
+              sx={{ fontSize: '30px', fontWeight: 700 }}
+            >
               {mode === 'register'
                 ? 'Cadastre-se no Mapa Digital'
-                : 'Entre no Mapa Digital'
-              }
+                : 'Entre no Mapa Digital'}
             </Typography>
 
-            <Typography className="mt-12 max-w-[450px] text-white/90" sx={{ fontSize: '16px', lineHeight: '21px' }}>
+            <Typography
+              className="mt-12 max-w-[450px] text-white/90"
+              sx={{ fontSize: '16px', lineHeight: '21px' }}
+            >
               {mode === 'register'
                 ? 'Seja bem-vindo! Descubra um novo jeito de aprender, acompanhar e transformar a educação.'
-                : 'Bem-vindo de volta! Continue sua jornada de conquistas.'
-              }
+                : 'Bem-vindo de volta! Continue sua jornada de conquistas.'}
             </Typography>
           </Stack>
           <SiteLogo />
