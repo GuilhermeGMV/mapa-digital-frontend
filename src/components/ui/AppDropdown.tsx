@@ -6,6 +6,7 @@ import {
   FormControl,
   Checkbox,
   SelectProps,
+  Typography,
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import CheckIcon from '@mui/icons-material/Check'
@@ -19,6 +20,7 @@ export interface AppDropdownProps extends Omit<
   SelectProps,
   'value' | 'onChange'
 > {
+  label?: string
   options: DropdownOption[]
   value: string | number | Array<string | number>
   onChange: SelectProps['onChange']
@@ -30,6 +32,7 @@ export interface AppDropdownProps extends Omit<
 }
 
 function AppDropdown({
+  label,
   options = [],
   value,
   onChange,
@@ -71,6 +74,7 @@ function AppDropdown({
       disabled={disabled}
       style={{ minWidth: width, maxWidth: width, width, borderRadius }}
     >
+      {label && <Typography variant="body2">{label}</Typography>}
       <Select
         {...props}
         value={value}
