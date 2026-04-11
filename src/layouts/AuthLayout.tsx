@@ -11,7 +11,7 @@ import { AppColors } from '@/styles/AppColors'
 function AuthLayout() {
   return (
     <Box
-      className="py-10 md:py-14"
+      className="min-h-screen flex items-center justify-center"
       style={{
         backgroundImage:
           'radial-gradient(circle at 20% 10%, #d9e7f5 0%, transparent 30%), linear-gradient(90deg, #e8edf4 0%, #dce5f1 50%, #d2deee 100%)',
@@ -31,8 +31,10 @@ function AuthLayout() {
         <Box className="mt-4 grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[1.1fr_0.9fr] lg:gap-5">
           <Box
             className="rounded-3xl p-5 text-white shadow-[0_12px_32px_rgba(29,78,216,0.28)] md:p-8"
-            style={{
-              background: '#359CDF',
+            sx={{
+              width: '534px',
+              height: '431px',
+              background: '#359CDF'
             }}
           >
 
@@ -41,11 +43,11 @@ function AuthLayout() {
               Acesso seguro à plataforma
             </Box>
 
-            <Typography className="max-w-xl text-3xl font-bold leading-tight md:text-5xl">
-              Seja bem-vindo(a)!
+            <Typography className="max-w-xl leading-tight " sx={{ fontSize: '30px', fontWeight: 700 }}>
+              Entre no Mapa Digital
             </Typography>
-            <Typography className="mt-4 max-w-xl text-lg text-white/90">
-            Continue sua jornada de conquistas na {APP_CONFIG.name.toUpperCase()}.
+            <Typography className="mt-4 max-w-xl text-white/90" sx={{ fontSize: '16px' }}>
+              Bem-vindo de volta! Continue sua jornada de conquistas.
             </Typography>
 
             <img

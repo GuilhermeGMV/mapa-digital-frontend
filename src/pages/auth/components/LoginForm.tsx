@@ -5,6 +5,7 @@ import AppInput from '@/components/ui/AppInput'
 import { ROLE_LABELS, USER_ROLES } from '@/constants/roles'
 import type { AuthCredentials } from '@/types/auth'
 import { hasMinLength, isRequired, isValidEmail } from '@/utils/validators'
+import AppLink from '@/components/ui/AppLink'
 
 interface LoginFormProps {
   isSubmitting?: boolean
@@ -79,11 +80,11 @@ function LoginForm({ isSubmitting = false, onSubmit }: LoginFormProps) {
   }
 
   return (
-    <Stack className="gap-4" component="form" onSubmit={handleSubmit}>
-      <Box className="grid grid-cols-2 gap-1 rounded-2xl border border-slate-200 bg-slate-200 p-1">
+    <Stack className="gap-6" component="form" onSubmit={handleSubmit}>
+      <Box className="grid grid-cols-2 gap-1 rounded-lg border border border-slate-200 bg-slate-200 p-1">
         <Button
           className={[
-            'rounded-xl py-2 text-base font-semibold transition',
+            'rounded-md text-base font-semibold transition !min-h-0 !h-8',
             mode === 'login' ? '!bg-[#359CDF] !text-white' : '!text-slate-500',
           ].join(' ')}
           onClick={() => setMode('login')}
@@ -93,7 +94,7 @@ function LoginForm({ isSubmitting = false, onSubmit }: LoginFormProps) {
         </Button>
         <Button
           className={[
-            'rounded-xl py-2 text-base font-semibold transition',
+            'rounded-md text-base font-semibold transition !min-h-0 !h-8',
             mode === 'register' ? '!bg-[#359CDF] !text-white' : '!text-slate-500',
           ].join(' ')}
           onClick={() => setMode('register')}
@@ -123,6 +124,7 @@ function LoginForm({ isSubmitting = false, onSubmit }: LoginFormProps) {
 
       <AppInput
         error={Boolean(errors.email)}
+        type="email"
         helperText={errors.email}
         label="E-mail"
         onChange={event => updateField('email', event.target.value)}
@@ -161,15 +163,22 @@ function LoginForm({ isSubmitting = false, onSubmit }: LoginFormProps) {
           />
         </Box>
       ) : (
-        <AppInput
-          error={Boolean(errors.password)}
-          helperText={errors.password}
-          label="Senha"
-          onChange={event => updateField('password', event.target.value)}
-          type="password"
-          value={values.password}
-          backgroundColor="background.default"
-        />
+        <Box className="flex flex-col">
+          <AppInput
+            error={Boolean(errors.password)}
+            helperText={errors.password}
+            label="Senha"
+            onChange={event => updateField('password', event.target.value)}
+            type="password"
+            value={values.password}
+            backgroundColor="background.default"
+          />
+
+          <AppLink to="/forgot-password" className="text-sx self-end ml-auto mt-1">
+            Esqueci minha senha
+          </AppLink>
+        </Box>
+        
       )}
 
 
@@ -178,7 +187,7 @@ function LoginForm({ isSubmitting = false, onSubmit }: LoginFormProps) {
         disabled={isSubmitting}
         size="medium"
         type="submit"
-        borderRadius="50px"
+        borderRadius="12px"
       >
         {isSubmitting
           ? 'Processando...'
@@ -186,12 +195,6 @@ function LoginForm({ isSubmitting = false, onSubmit }: LoginFormProps) {
             ? 'Entrar'
             : 'Criar conta'}
       </AppButton>
-
-      <Typography className="text-center text-sm text-slate-500">
-        {mode === 'login'
-          ? 'Use as credenciais mockadas para acessar.'
-          : 'Cadastro em modo demonstrativo para validação visual.'}
-      </Typography>
     </Stack>
   )
 }

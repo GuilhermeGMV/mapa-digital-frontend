@@ -34,8 +34,8 @@ function LoginPage() {
 
   return (
 
-    <Box className="flex items-center justify-center">
-      <Box className="w-full max-w-md bg-white rounded-3xl p-6">
+    <Box className="flex items-center justify-center min-h-[431px]">
+      <Box className="bg-white rounded-3xl p-6" sx={{ width: '534px', height: '431px' }}>
         {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
         <LoginForm isSubmitting={isSubmitting} onSubmit={handleSubmit} />
       </Box>
