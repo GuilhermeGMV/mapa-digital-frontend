@@ -8,6 +8,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import { Stack, Typography } from '@mui/material'
+import type { SxProps, Theme } from '@mui/material/styles'
 
 type InputSize = 'small' | 'medium' | 'large'
 
@@ -17,6 +18,7 @@ type BackgroundColor = 'background.paper' | 'background.default' | string
 
 type AppInputProps = Omit<TextFieldProps, 'type'> & {
   label?: string
+  labelSx?: SxProps<Theme>
   inputSize?: InputSize
   customSize?: {
     height?: number
@@ -30,6 +32,7 @@ type AppInputProps = Omit<TextFieldProps, 'type'> & {
 
 export default function AppInput({
   label,
+  labelSx,
   inputSize = 'medium',
   customSize,
   icon,
@@ -103,11 +106,17 @@ export default function AppInput({
 
   return (
     <Stack spacing={0.5} className={className}>
-      {label && (
-        <Typography variant="body2" color={error ? 'error.main' : undefined}>
+      {label ? (
+        <Typography
+          variant="body2"
+          sx={[
+            { color: error ? 'error.main' : undefined },
+            ...(Array.isArray(labelSx) ? labelSx : labelSx ? [labelSx] : []),
+          ]}
+        >
           {label}
         </Typography>
-      )}
+      ) : null}
 
       <TextField
         {...props}
@@ -118,9 +127,11 @@ export default function AppInput({
         variant="outlined"
         InputProps={{
           ...InputProps,
-          startAdornment: startIcon ? (
-            <InputAdornment position="start">{startIcon}</InputAdornment>
-          ) : null,
+          startAdornment:
+            InputProps?.startAdornment ??
+            (startIcon ? (
+              <InputAdornment position="start">{startIcon}</InputAdornment>
+            ) : null),
           endAdornment: isPasswordField ? (
             <InputAdornment position="end">
               <IconButton
@@ -130,7 +141,9 @@ export default function AppInput({
                 {showPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>
-          ) : null,
+          ) : (
+            (InputProps?.endAdornment ?? null)
+          ),
         }}
         sx={{
           '& .MuiOutlinedInput-notchedOutline': {
