@@ -19,7 +19,18 @@ import { ALL_SUBJECT_TAG_CONTEXTS, SUBJECTS } from '@/utils/subjectThemes'
 import StudentComponentsShowcase from './components/StudentComponentsShowcase'
 import AppLink from '@/components/ui/AppLink'
 import Planner, { Task } from '@/components/ui/Planner'
+import AppBarChart from '@/components/ui/AppBarChart'
 import dayjs from 'dayjs'
+
+const mockChartData = [
+  { label: 'Seg', value: 2 },
+  { label: 'Ter', value: 4 },
+  { label: 'Qua', value: 3 },
+  { label: 'Qui', value: 6 },
+  { label: 'Sex', value: 5 },
+  { label: 'Sáb', value: 1 },
+  { label: 'Dom', value: 0 },
+]
 
 const initialTasks: Task[] = [
   {
@@ -281,6 +292,21 @@ function StudentComponentsPage() {
             <Box sx={{ mt: 2 }}>
               <AppSubjectsTags size="lg" subjects={ALL_SUBJECT_TAG_CONTEXTS} />
             </Box>
+          </Box>
+
+          <Typography variant="h6" sx={{ mt: 4, mb: 2 }}>
+            Teste de Gráfico (AppBarChart)
+          </Typography>
+          <Box
+            sx={{
+              height: 250,
+              p: 2,
+              border: '1px solid',
+              borderColor: 'divider',
+              borderRadius: 2,
+            }}
+          >
+            <AppBarChart data={mockChartData} />
           </Box>
         </Box>
       </Box>
