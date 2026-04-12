@@ -1,43 +1,24 @@
+import { COOKIE_KEYS } from '@/constants/storage'
+import { httpClient } from '@/services/http/client'
 import type { ParentChild, SummaryMetric } from '@/types/common'
-
-const parentSummary: SummaryMetric[] = [
-  {
-    id: 'attendance',
-    title: 'Presença média',
-    value: '97%',
-    helperText: 'Acompanhamento semanal',
-  },
-  {
-    id: 'alerts',
-    title: 'Alertas pendentes',
-    value: 2,
-    helperText: 'Recados da coordenação',
-  },
-]
-
-const children: ParentChild[] = [
-  {
-    id: 'child-1',
-    name: 'Luiza Souza',
-    grade: '7º ano',
-    status: 'Participação consistente',
-  },
-  {
-    id: 'child-2',
-    name: 'Rafael Souza',
-    grade: '4º ano',
-    status: 'Precisa revisar tarefas',
-  },
-]
+import { getCookie } from '@/utils/cookies'
 
 export const parentService = {
+  getName(): string | null {
+    return getCookie(COOKIE_KEYS.authName)
+  },
+
+  getEmail(): string | null {
+    return getCookie(COOKIE_KEYS.authEmail)
+  },
+
   async getSummary() {
-    return Promise.resolve(parentSummary)
+    const response = await httpClient.get<SummaryMetric[]>('parent/summary')
+    return response.data
   },
+
   async getChildren() {
-    return Promise.resolve(children)
-  },
-  async getStatus() {
-    return Promise.resolve('AGUARDANDO')
+    const response = await httpClient.get<ParentChild[]>('parent/children')
+    return response.data
   },
 }

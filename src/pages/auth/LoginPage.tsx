@@ -12,7 +12,7 @@ import LoginForm from './components/LoginForm'
 
 function LoginPage() {
   const navigate = useNavigate()
-  const { isAuthenticated, login, role } = useAuth()
+  const { isAuthenticated, login, user } = useAuth()
   const { mode, setMode } = useOutletContext<{
     mode: AuthMode
     setMode: (mode: AuthMode) => void
@@ -26,10 +26,10 @@ function LoginPage() {
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false)
 
   useEffect(() => {
-    if (isAuthenticated && role) {
-      navigate(DEFAULT_ROUTE_BY_ROLE[role], { replace: true })
+    if (isAuthenticated && user?.role) {
+      navigate(DEFAULT_ROUTE_BY_ROLE[user.role], { replace: true })
     }
-  }, [isAuthenticated, navigate, role])
+  }, [isAuthenticated, navigate, user])
 
   async function handleSubmit(values: AuthCredentials) {
     setIsSubmitting(true)

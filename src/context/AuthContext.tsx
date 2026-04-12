@@ -5,21 +5,13 @@ import { AuthContext } from './auth-context'
 
 function getInitialState(): AuthState {
   const token = authService.getToken()
-  const role = authService.getRole()
+  const user = authService.getUser()
 
-  if (token && role) {
-    return {
-      token,
-      role,
-      status: 'authenticated',
-    }
+  if (token && user) {
+    return { user, token, status: 'authenticated' }
   }
 
-  return {
-    role: null,
-    token: null,
-    status: 'unauthenticated',
-  }
+  return { user: null, token: null, status: 'unauthenticated' }
 }
 
 export function AuthProvider({ children }: PropsWithChildren) {
@@ -29,7 +21,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
     const result = await authService.login(credentials)
 
     setAuthState({
-      role: result.role,
+      user: {
+        name: result.name,
+        email: result.email,
+        role: result.role,
+      },
       token: result.token,
       status: 'authenticated',
     })
@@ -37,12 +33,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   function logout() {
     authService.logout()
-
-    setAuthState({
-      role: null,
-      token: null,
-      status: 'unauthenticated',
-    })
+    setAuthState({ user: null, token: null, status: 'unauthenticated' })
   }
 
   const value: AuthContextValue = {

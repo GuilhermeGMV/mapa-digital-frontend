@@ -10,6 +10,9 @@ export interface AuthCredentials {
 export interface LoginApiResponse {
   token: string
   role: UserRole
+  name: string
+  email: string
+  status?: ParentStatus
 }
 
 export class ParentStatusError extends Error {
@@ -19,13 +22,8 @@ export class ParentStatusError extends Error {
   }
 }
 
-export interface AuthSession {
-  token: string
-  role: UserRole
-}
-
 export interface AuthState {
-  role: UserRole | null
+  user: User | null
   token: string | null
   status: 'loading' | 'authenticated' | 'unauthenticated'
 }
