@@ -1,4 +1,6 @@
-export type ParentStatus = 'AGUARDANDO' | 'NEGADO' | 'APROVADO'
+import type { ParentStatus } from '@/types/auth'
+
+export type { ParentStatus }
 
 export interface ParentStatusModalCopy {
   description: string
