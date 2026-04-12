@@ -10,23 +10,15 @@ import {
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt'
 import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral'
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied'
-import { ReactNode } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
+
+type EmotionButtonColor = 'success' | 'warning' | 'error'
 
 interface EmotionButtonProps {
   icon: ReactNode
   label: string
-  color:
-    | 'success'
-    | 'warning'
-    | 'error'
-    | 'info'
-    | 'primary'
-    | 'secondary'
-    | 'text'
-    | 'background'
-    | 'light'
+  color: EmotionButtonColor
   onClick: () => void
   testId: string
   width?: string
@@ -42,7 +34,7 @@ function EmotionButton({
   width,
   height,
 }: EmotionButtonProps) {
-  const hoverBackgrounds: Record<string, string> = {
+  const hoverBackgrounds: Record<EmotionButtonColor, string> = {
     success: 'rgba(184, 246, 181, 0.8)',
     warning: 'rgba(244, 253, 177, 0.8)',
     error: 'rgba(253, 194, 200, 0.8)',
@@ -60,6 +52,7 @@ function EmotionButton({
         flexDirection: 'column',
         cursor: 'pointer',
         borderRadius: '12px',
+        border: '1px solid',
         borderColor: `${color}.main`,
         backgroundColor: 'transparent',
         color: `${color}.main`,
@@ -95,23 +88,24 @@ export default function EmotionalContainer() {
     <Box
       data-testid="card-checkin-emocional"
       sx={{
-        backgroundColor: 'white',
-        border: '1px solid #E2E8F0',
-        borderRadius: '16px',
-        padding: '24px',
+        backgroundColor: 'background.paper',
+        border: '1px solid',
+        borderColor: 'background.border',
+        borderRadius: 'var(--app-radius-card)',
+        boxShadow: 'none',
+        p: 3,
         width: '100%',
         maxWidth: '556px',
-        maxHeight: '258px',
       }}
     >
       <Typography
         variant="h6"
-        sx={{ mb: 3, fontWeight: 'bold', color: 'black' }}
+        sx={{ mb: 3, fontWeight: 'bold', color: 'text.primary' }}
       >
         Check-in emocional
       </Typography>
 
-      <Stack direction="row" spacing={2} sx={{ mb: 4 }}>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 4 }}>
         <EmotionButton
           testId="emotion-button-good"
           label="Bem"
@@ -137,7 +131,10 @@ export default function EmotionalContainer() {
         />
       </Stack>
 
-      <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'black' }}>
+      <Typography
+        variant="h6"
+        sx={{ fontWeight: 'bold', color: 'text.primary' }}
+      >
         Humor da Semana
       </Typography>
       <Dialog
@@ -156,7 +153,6 @@ export default function EmotionalContainer() {
           }}
         >
           <Typography fontWeight="bold">Confirmação</Typography>
-          {}
           <IconButton onClick={handleModalClose} size="small">
             <CloseIcon />
           </IconButton>
@@ -168,7 +164,6 @@ export default function EmotionalContainer() {
           </Typography>
         </DialogContent>
       </Dialog>
-      {}
     </Box>
   )
 }
