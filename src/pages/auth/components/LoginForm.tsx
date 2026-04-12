@@ -31,10 +31,32 @@ function getAuthInputSx(hasError: boolean) {
     },
     '& .MuiInputBase-input': {
       color: '#0f172a',
+      caretColor: '#0f172a',
+      fontSize: '0.95rem',
+      height: '24px',
+      lineHeight: '24px',
+      paddingBottom: '12px',
+      paddingTop: '12px',
       '&::placeholder': {
         color: '#64748b',
         opacity: 1,
       },
+      '&:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus, &:-webkit-autofill:active':
+        {
+          backgroundColor: '#ffffff',
+          backgroundImage: 'none',
+          color: '#0f172a',
+          fontFamily: 'inherit',
+          fontSize: '0.95rem',
+          height: '24px',
+          lineHeight: '24px',
+          paddingBottom: '12px',
+          paddingTop: '12px',
+          WebkitBoxShadow: '0 0 0 1000px #ffffff inset',
+          WebkitTextFillColor: '#0f172a',
+          caretColor: '#0f172a',
+          transition: 'background-color 9999s ease-out 0s',
+        },
     },
     '& .MuiInputAdornment-root .MuiSvgIcon-root, & .MuiIconButton-root': {
       color: '#64748b',
@@ -56,12 +78,11 @@ function getAuthInputSx(hasError: boolean) {
 
 function LoginForm({ isSubmitting = false, mode, onSubmit }: LoginFormProps) {
   const [values, setValues] = useState<AuthCredentials>({
-    email: 'aluno@mapadigital.com',
-    password: '12345678',
-    role: 'student',
+    email: '',
+    password: '',
   })
-  const [fullName, setFullName] = useState('Lucas Silva')
-  const [confirmPassword, setConfirmPassword] = useState('12345678')
+  const [fullName, setFullName] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [errors, setErrors] = useState<LoginFormErrors>({})
 
   function updateField<K extends keyof AuthCredentials>(
@@ -117,14 +138,15 @@ function LoginForm({ isSubmitting = false, mode, onSubmit }: LoginFormProps) {
       component="form"
       onSubmit={handleSubmit}
       sx={{
-        pb: 8.5,
+        boxSizing: 'border-box',
+        pb: 7,
         '& .auth-login-input .MuiTypography-root': {
           color: '#334155',
         },
       }}
     >
       <Stack
-        spacing={mode === 'register' ? 1 : 2}
+        spacing={mode === 'register' ? 1 : 0}
         sx={{
           height: '100%',
           overflowY: 'visible',
@@ -154,10 +176,11 @@ function LoginForm({ isSubmitting = false, mode, onSubmit }: LoginFormProps) {
           />
         )}
 
-        <Stack
-          spacing={mode === 'register' ? 0 : 3}
-          sx={{ pt: mode === 'login' ? { xs: 3, md: 5 } : 0 }}
-        >
+        {mode === 'login' && (
+          <Box aria-hidden sx={{ flexShrink: 0, height: { xs: 52, md: 64 } }} />
+        )}
+
+        <Stack spacing={mode === 'register' ? 0 : 3}>
           <AppInput
             className="auth-login-input"
             data-testid="input-email"
@@ -244,13 +267,16 @@ function LoginForm({ isSubmitting = false, mode, onSubmit }: LoginFormProps) {
 
       <AppButton
         data-testid={mode === 'login' ? 'button-login' : 'button-register'}
-        className="absolute bottom-0 left-0"
         borderRadius="8px"
         disabled={isSubmitting}
         fullWidth
         size="medium"
         textColor="#ffffff"
         sx={{
+          position: 'absolute',
+          right: 0,
+          bottom: 0,
+          left: 0,
           minHeight: 50,
           fontSize: '1rem',
           backgroundColor: '#359CDF',

@@ -9,14 +9,14 @@ function getInitialState(): AuthState {
 
   if (token && role) {
     return {
-      user: { id: '', name: '', email: '', role },
       token,
+      role,
       status: 'authenticated',
     }
   }
 
   return {
-    user: null,
+    role: null,
     token: null,
     status: 'unauthenticated',
   }
@@ -29,7 +29,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     const result = await authService.login(credentials)
 
     setAuthState({
-      user: { id: '', name: '', email: '', role: result.role },
+      role: result.role,
       token: result.token,
       status: 'authenticated',
     })
@@ -39,7 +39,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     authService.logout()
 
     setAuthState({
-      user: null,
+      role: null,
       token: null,
       status: 'unauthenticated',
     })

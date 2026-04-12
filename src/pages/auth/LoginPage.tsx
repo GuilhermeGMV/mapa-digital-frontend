@@ -1,28 +1,35 @@
 import { Alert, Box } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useOutletContext } from 'react-router-dom'
 import { DEFAULT_ROUTE_BY_ROLE } from '@/constants/routes'
 import { useAuth } from '@/hooks/useAuth'
-import type { AuthCredentials } from '@/types/auth'
+import { authService } from '@/services/auth.service'
+import type { AuthCredentials, ParentStatus } from '@/types/auth'
+import { ParentStatusError } from '@/types/auth'
+import ParentStatusModal from '../parent/components/ParentStatusModal'
 import AuthModeSelect, { type AuthMode } from './components/AuthModeSelect'
 import LoginForm from './components/LoginForm'
-import { useOutletContext } from 'react-router-dom'
 
 function LoginPage() {
   const navigate = useNavigate()
-  const { isAuthenticated, login, user } = useAuth()
+  const { isAuthenticated, login, role } = useAuth()
   const { mode, setMode } = useOutletContext<{
     mode: AuthMode
     setMode: (mode: AuthMode) => void
   }>()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [parentStatus, setParentStatus] = useState<Exclude<
+    ParentStatus,
+    'APROVADO'
+  > | null>(null)
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false)
 
   useEffect(() => {
-    if (isAuthenticated && user) {
-      navigate(DEFAULT_ROUTE_BY_ROLE[user.role], { replace: true })
+    if (isAuthenticated && role) {
+      navigate(DEFAULT_ROUTE_BY_ROLE[role], { replace: true })
     }
-  }, [isAuthenticated, navigate, user])
+  }, [isAuthenticated, navigate, role])
 
   async function handleSubmit(values: AuthCredentials) {
     setIsSubmitting(true)
@@ -30,9 +37,17 @@ function LoginPage() {
 
     try {
       await login(values)
-      navigate(DEFAULT_ROUTE_BY_ROLE[values.role], { replace: true })
-    } catch {
-      setErrorMessage('Falha ao iniciar a sessão mock.')
+      const role = authService.getRole()
+      if (role) {
+        navigate(DEFAULT_ROUTE_BY_ROLE[role], { replace: true })
+      }
+    } catch (error) {
+      if (error instanceof ParentStatusError) {
+        setParentStatus(error.parentStatus)
+        setIsStatusModalOpen(true)
+      } else {
+        setErrorMessage('E-mail ou senha inválidos.')
+      }
     } finally {
       setIsSubmitting(false)
     }
@@ -56,9 +71,29 @@ function LoginPage() {
         }}
       />
 
-      <Box className="min-h-4">
+      <Box
+        sx={{
+          mt: 1,
+          height: 8,
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
         {errorMessage && (
-          <Alert className="h-12 items-center py-0" severity="error">
+          <Alert
+            className="items-center py-0"
+            severity="error"
+            sx={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              left: 0,
+              height: { xs: 40, md: 48 },
+              backgroundColor: '#fef2f2',
+              color: '#991b1b',
+              '& .MuiAlert-icon': { color: '#dc2626' },
+            }}
+          >
             {errorMessage}
           </Alert>
         )}
@@ -72,6 +107,12 @@ function LoginPage() {
           onSubmit={handleSubmit}
         />
       </Box>
+
+      <ParentStatusModal
+        open={isStatusModalOpen}
+        status={parentStatus ?? ''}
+        onClose={() => setIsStatusModalOpen(false)}
+      />
     </Box>
   )
 }
