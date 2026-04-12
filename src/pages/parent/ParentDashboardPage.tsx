@@ -13,8 +13,6 @@ import AppPageContainer from '@/components/ui/AppPageContainer'
 import { parentService } from '@/services/parent.service'
 import { AppColors } from '@/styles/AppColors'
 import type { ParentChild, SummaryMetric } from '@/types/common'
-import ParentStatusModal from './components/ParentStatusModal'
-import { shouldOpenParentStatusModal } from './components/parentStatusModal.utils'
 
 const DISCIPLINE_PERFORMANCE = [
   {
@@ -79,17 +77,14 @@ function ParentDashboardPage() {
   const [summary, setSummary] = useState<SummaryMetric[]>([])
   const [children, setChildren] = useState<ParentChild[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [status, setStatus] = useState<string>('')
-  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     let isActive = true
 
     async function loadPage() {
-      const [nextSummary, nextChildren, nextStatus] = await Promise.all([
+      const [nextSummary, nextChildren] = await Promise.all([
         parentService.getSummary(),
         parentService.getChildren(),
-        parentService.getStatus(),
       ])
 
       if (!isActive) {
@@ -98,12 +93,7 @@ function ParentDashboardPage() {
 
       setSummary(nextSummary)
       setChildren(nextChildren)
-      setStatus(nextStatus)
       setIsLoading(false)
-
-      if (shouldOpenParentStatusModal(nextStatus)) {
-        setIsModalOpen(true)
-      }
     }
 
     void loadPage()
@@ -267,12 +257,6 @@ function ParentDashboardPage() {
           </Typography>
         </AppCard>
       </Box>
-
-      <ParentStatusModal
-        open={isModalOpen}
-        status={status}
-        onClose={() => setIsModalOpen(false)}
-      />
     </AppPageContainer>
   )
 }
