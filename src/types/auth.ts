@@ -21,11 +21,11 @@ export class ParentStatusError extends Error {
 
 export interface AuthSession {
   token: string
-  user: User
+  role: UserRole
 }
 
 export interface AuthState {
-  user: User | null
+  role: UserRole | null
   token: string | null
   status: 'loading' | 'authenticated' | 'unauthenticated'
 }
