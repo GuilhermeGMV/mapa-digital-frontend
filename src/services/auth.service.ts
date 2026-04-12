@@ -1,64 +1,48 @@
-import { APP_CONFIG } from '@/constants/app'
-import { STORAGE_KEYS } from '@/constants/storage'
-import type { AuthCredentials, AuthSession } from '@/types/auth'
+import { COOKIE_KEYS } from '@/constants/storage'
+import { HttpRequestError, httpClient } from '@/services/http/client'
+import type { AuthCredentials, LoginApiResponse } from '@/types/auth'
+import { ParentStatusError } from '@/types/auth'
 import type { UserRole } from '@/types/user'
-import {
-  getStorageItem,
-  removeStorageItem,
-  setStorageItem,
-} from '@/utils/storage'
-
-const MOCK_PROFILES: Record<UserRole, { name: string; organization: string }> =
-  {
-    student: {
-      name: 'Ana Ferreira',
-      organization: 'Escola Horizonte',
-    },
-    parent: {
-      name: 'Carlos Souza',
-      organization: 'Comunidade Escolar',
-    },
-    admin: {
-      name: 'Admin',
-      organization: 'Gestão Mapa Digital',
-    },
-  }
-
-function wait(ms = 300) {
-  return new Promise(resolve => {
-    window.setTimeout(resolve, ms)
-  })
-}
+import { getCookie, removeCookie, setCookie } from '@/utils/cookies'
 
 export const authService = {
-  async login(credentials: AuthCredentials): Promise<AuthSession> {
-    await wait()
+  async login(credentials: AuthCredentials): Promise<LoginApiResponse> {
+    try {
+      const response = await httpClient.post<LoginApiResponse>('login', {
+        email: credentials.email,
+        password: credentials.password,
+      })
 
-    const role = credentials.role ?? APP_CONFIG.defaultRole
-    const profile = MOCK_PROFILES[role]
+      const result = response.data
+      setCookie(COOKIE_KEYS.authToken, result.token)
+      setCookie(COOKIE_KEYS.authRole, result.role)
 
-    const session: AuthSession = {
-      token: `mock-token-${role}`,
-      user: {
-        id: `${role}-001`,
-        name: profile.name,
-        email: credentials.email.toLowerCase(),
-        role,
-        organization: profile.organization,
-      },
+      return result
+    } catch (error) {
+      if (error instanceof HttpRequestError && error.status === 403) {
+        const body = (await error.response?.json().catch(() => null)) as {
+          detail?: string
+        } | null
+        const detail = body?.detail?.toLowerCase()
+
+        if (detail === 'aguardando') throw new ParentStatusError('AGUARDANDO')
+        if (detail === 'negado') throw new ParentStatusError('NEGADO')
+      }
+
+      throw error
     }
+  },
 
-    setStorageItem(STORAGE_KEYS.authSession, session)
+  getToken(): string | null {
+    return getCookie(COOKIE_KEYS.authToken)
+  },
 
-    return session
+  getRole(): UserRole | null {
+    return getCookie(COOKIE_KEYS.authRole) as UserRole | null
   },
-  getSession() {
-    return getStorageItem<AuthSession>(STORAGE_KEYS.authSession)
-  },
-  getToken() {
-    return this.getSession()?.token ?? null
-  },
+
   logout() {
-    removeStorageItem(STORAGE_KEYS.authSession)
+    removeCookie(COOKIE_KEYS.authToken)
+    removeCookie(COOKIE_KEYS.authRole)
   },
 }
