@@ -4,7 +4,11 @@ import { useNavigate, useOutletContext } from 'react-router-dom'
 import { DEFAULT_ROUTE_BY_ROLE } from '@/constants/routes'
 import { useAuth } from '@/hooks/useAuth'
 import { authService } from '@/services/auth.service'
-import type { AuthCredentials, ParentStatus } from '@/types/auth'
+import type {
+  AuthCredentials,
+  ParentStatus,
+  RegisterCredentials,
+} from '@/types/auth'
 import { ParentStatusError } from '@/types/auth'
 import ParentStatusModal from '../parent/components/ParentStatusModal'
 import AuthModeSelect, { type AuthMode } from './components/AuthModeSelect'
@@ -31,11 +35,24 @@ function LoginPage() {
     }
   }, [isAuthenticated, navigate, user])
 
-  async function handleSubmit(values: AuthCredentials) {
+  async function handleSubmit(values: AuthCredentials | RegisterCredentials) {
     setIsSubmitting(true)
     setErrorMessage(null)
+    setParentStatus(null)
+    setIsStatusModalOpen(false)
 
     try {
+      if (mode === 'register') {
+        if (!('name' in values)) {
+          throw new Error('Nome não informado para cadastro.')
+        }
+
+        await authService.register(values)
+        setParentStatus('AGUARDANDO')
+        setIsStatusModalOpen(true)
+        return
+      }
+
       await login(values)
       const role = authService.getRole()
       if (role) {
@@ -46,7 +63,11 @@ function LoginPage() {
         setParentStatus(error.parentStatus)
         setIsStatusModalOpen(true)
       } else {
-        setErrorMessage('E-mail ou senha inválidos.')
+        setErrorMessage(
+          mode === 'register'
+            ? 'Não foi possível criar sua conta.'
+            : 'E-mail ou senha inválidos.'
+        )
       }
     } finally {
       setIsSubmitting(false)

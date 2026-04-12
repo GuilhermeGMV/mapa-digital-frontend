@@ -3,14 +3,14 @@ import { useState, type FormEvent } from 'react'
 import AppButton from '@/components/ui/AppButton'
 import AppInput from '@/components/ui/AppInput'
 import AppLink from '@/components/ui/AppLink'
-import type { AuthCredentials } from '@/types/auth'
+import type { AuthCredentials, RegisterCredentials } from '@/types/auth'
 import { hasMinLength, isRequired, isValidEmail } from '@/utils/validators'
 import type { AuthMode } from './AuthModeSelect'
 
 interface LoginFormProps {
   isSubmitting?: boolean
   mode: AuthMode
-  onSubmit: (values: AuthCredentials) => Promise<void>
+  onSubmit: (values: AuthCredentials | RegisterCredentials) => Promise<void>
 }
 
 type LoginFormErrors = Partial<
@@ -129,7 +129,19 @@ function LoginForm({ isSubmitting = false, mode, onSubmit }: LoginFormProps) {
       return
     }
 
-    await onSubmit(values)
+    const submitValues = {
+      email: values.email.trim(),
+      password: values.password,
+    }
+
+    await onSubmit(
+      mode === 'register'
+        ? {
+            ...submitValues,
+            name: fullName.trim(),
+          }
+        : submitValues
+    )
   }
 
   return (

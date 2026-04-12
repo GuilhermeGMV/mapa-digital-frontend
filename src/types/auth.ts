@@ -7,6 +7,10 @@ export interface AuthCredentials {
   password: string
 }
 
+export interface RegisterCredentials extends AuthCredentials {
+  name: string
+}
+
 export interface LoginApiResponse {
   token: string
   role: UserRole

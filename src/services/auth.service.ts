@@ -1,6 +1,10 @@
 import { COOKIE_KEYS } from '@/constants/storage'
 import { HttpRequestError, httpClient } from '@/services/http/client'
-import type { AuthCredentials, LoginApiResponse } from '@/types/auth'
+import type {
+  AuthCredentials,
+  LoginApiResponse,
+  RegisterCredentials,
+} from '@/types/auth'
 import { ParentStatusError } from '@/types/auth'
 import type { User, UserRole } from '@/types/user'
 import { getCookie, removeCookie, setCookie } from '@/utils/cookies'
@@ -63,6 +67,18 @@ export const authService = {
 
       throw error
     }
+  },
+
+  async register(credentials: RegisterCredentials): Promise<void> {
+    await httpClient.post(
+      'register',
+      {
+        name: credentials.name,
+        email: credentials.email,
+        password: credentials.password,
+      },
+      { skipAuth: true }
+    )
   },
 
   getToken(): string | null {
