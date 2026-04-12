@@ -37,4 +37,7 @@ export const parentService = {
   async getChildren() {
     return Promise.resolve(children)
   },
+  async getStatus() {
+    return Promise.resolve('AGUARDANDO')
+  },
 }
