@@ -12,9 +12,11 @@ import type {
 } from '@/types/student'
 import { STUDENT_ONBOARDING_FLOW_QUESTIONS } from './components/onboardingQuestionFlow'
 
-export function studentOnboardingFlowLoader(): StudentOnboardingFlowLoaderData {
+const DEFAULT_ASSESSMENT_ID = 'local-assessment'
+
+export async function studentOnboardingFlowLoader(): Promise<StudentOnboardingFlowLoaderData> {
   return {
-    assessmentId: 'local-assessment',
+    assessmentId: DEFAULT_ASSESSMENT_ID,
     initialAnswersByQuestionId: {},
     questions: STUDENT_ONBOARDING_FLOW_QUESTIONS,
   }
@@ -23,11 +25,11 @@ export function studentOnboardingFlowLoader(): StudentOnboardingFlowLoaderData {
 export async function studentOnboardingFlowAction({
   request,
 }: ActionFunctionArgs): Promise<StudentOnboardingFlowActionInput | null> {
-  if (!request.headers.get('content-type')?.includes('application/json')) {
+  try {
+    return (await request.json()) as StudentOnboardingFlowActionInput
+  } catch {
     return null
   }
-
-  return (await request.json()) as StudentOnboardingFlowActionInput
 }
 
 export const studentRoutes: RouteObject[] = [
