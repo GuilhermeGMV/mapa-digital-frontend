@@ -11,8 +11,9 @@ import AppCalendar from '@/components/ui/AppCalendar'
 import AppCard from '@/components/ui/AppCard'
 import AppDropdown, { DropdownOption } from '@/components/ui/AppDropdown'
 import AppInput from '@/components/ui/AppInput'
-
+import AppPageContainer from '@/components/ui/AppPageContainer'
 import AppSubjectsTags from '@/components/ui/AppSubjectsTags'
+import EmotionalContainer from '@/components/ui/EmotionalContainer'
 import MetricsCard from '@/components/ui/MetricsCard'
 import SubjectBaseCard from '@/components/ui/SubjectBaseCard'
 import { ALL_SUBJECT_TAG_CONTEXTS, SUBJECTS } from '@/utils/subjectThemes'
@@ -92,7 +93,8 @@ function StudentComponentsPage() {
   const theme = useTheme()
 
   return (
-    <Box className="grid w-full gap-4 md:gap-5">
+    <AppPageContainer className="gap-4 md:gap-5">
+      <EmotionalContainer />
       <PageHeader
         variant="student"
         eyebrow="Olá, Lucas!"
@@ -314,7 +316,7 @@ function StudentComponentsPage() {
       <StudentComponentsShowcase />
       <AppLink to="/student/dashboard">Ir para dashboard</AppLink>
       <AppLink href="https://google.com">Ir para o Google</AppLink>
-    </Box>
+    </AppPageContainer>
   )
 }
 
