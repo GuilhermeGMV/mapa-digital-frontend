@@ -12,6 +12,7 @@ import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral'
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied'
 import CloseIcon from '@mui/icons-material/Close'
 import { useState, type ReactNode } from 'react'
+import { useTheme } from '@mui/material/styles'
 
 type EmotionButtonColor = 'success' | 'warning' | 'error'
 
@@ -34,10 +35,20 @@ function EmotionButton({
   width,
   height,
 }: EmotionButtonProps) {
+  const theme = useTheme()
   const hoverBackgrounds: Record<EmotionButtonColor, string> = {
-    success: 'rgba(184, 246, 181, 0.8)',
-    warning: 'rgba(244, 253, 177, 0.8)',
-    error: 'rgba(253, 194, 200, 0.8)',
+    success:
+      theme.palette.mode === 'dark'
+        ? 'rgba(184, 246, 181, 0.4)'
+        : 'rgba(184, 246, 181, 0.8)',
+    warning:
+      theme.palette.mode === 'dark'
+        ? 'rgba(244, 253, 177, 0.4)'
+        : 'rgba(244, 253, 177, 0.8)',
+    error:
+      theme.palette.mode === 'dark'
+        ? 'rgba(253, 194, 200, 0.4)'
+        : 'rgba(253, 194, 200, 0.8)',
   }
 
   return (
