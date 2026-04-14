@@ -215,6 +215,14 @@ function ApprovalActionModal({
               />
             </>
           ) : null}
+          <AppInput
+            disabled
+            label="Data da solicitação"
+            labelSx={fieldLabelSx}
+            placeholder="DD/MM/AAAA"
+            sx={inputSx}
+            value={values.requestedAt}
+          />
         </Box>
       ) : null}
 
@@ -269,6 +277,7 @@ function ApprovalActionModal({
             </Box>
           </Box>
           <AppInput
+            disabled={mode.action === 'create'}
             label="Data da solicitação"
             labelSx={fieldLabelSx}
             onChange={event => onChange('requestedAt', event.target.value)}

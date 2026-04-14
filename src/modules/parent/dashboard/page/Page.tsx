@@ -7,8 +7,6 @@ import AppCard from '@/shared/ui/AppCard'
 import AppInput from '@/shared/ui/AppInput'
 import AppPageContainer from '@/shared/ui/AppPageContainer'
 import PageHeader from '@/shared/ui/PageHeader'
-import EmotionalContainer from '@/shared/ui/EmotionalContainer'
-
 interface ChildRegistrationForm {
   grade: string
   name: string
@@ -87,9 +85,6 @@ export default function Page() {
           </AppButton>
         </Box>
       </AppCard>
-
-      <EmotionalContainer />
-
       <AppActionModal
         confirmLabel="Salvar cadastro"
         description="Preencha os dados iniciais do aluno."

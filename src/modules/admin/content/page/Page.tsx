@@ -43,7 +43,6 @@ import ApprovalComponent, {
 } from '@/modules/admin/shared/components/ApprovalComponent'
 
 const DEFAULT_PAGE_INDEX = 1
-const DEFAULT_REQUESTED_AT = '09/04/2026'
 
 const DEFAULT_QUERY: ApprovalQueueQuery = {
   page: DEFAULT_PAGE_INDEX,
@@ -96,12 +95,16 @@ function buildResultsSummary(count: number): ApprovalResultsSummary {
   }
 }
 
+function getTodayRequestDate() {
+  return new Intl.DateTimeFormat('pt-BR').format(new Date())
+}
+
 function getDefaultFormValues(): ApprovalActionFormValues {
   return {
     childName: '',
     email: '',
     password: '',
-    requestedAt: DEFAULT_REQUESTED_AT,
+    requestedAt: getTodayRequestDate(),
     resourceType: 'task',
     subjectId: String(DEFAULT_SUBJECT_ID),
     title: '',
@@ -175,7 +178,7 @@ export default function Page() {
         childName: '',
         email: '',
         password: '',
-        requestedAt: item.requestedAt ?? DEFAULT_REQUESTED_AT,
+        requestedAt: item.requestedAt ?? getTodayRequestDate(),
         resourceType: item.resourceType ?? 'task',
         subjectId: String(item.subject?.id ?? DEFAULT_SUBJECT_ID),
         title: item.title ?? '',
@@ -190,7 +193,10 @@ export default function Page() {
       childName: '',
       email: '',
       password: '',
-      requestedAt: nextMode.item?.requestedAt ?? DEFAULT_REQUESTED_AT,
+      requestedAt:
+        nextMode.action === 'create'
+          ? getTodayRequestDate()
+          : (nextMode.item?.requestedAt ?? getTodayRequestDate()),
       resourceType:
         nextMode.item?.kind === 'content'
           ? (nextMode.item.resourceType ?? 'task')

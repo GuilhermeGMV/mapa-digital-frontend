@@ -144,6 +144,13 @@ class HttpClient {
       method: 'PATCH' satisfies HttpMethod,
     })
   }
+
+  delete<T>(path: string, options?: Omit<HttpRequestOptions, 'method'>) {
+    return this.request<T>(path, {
+      ...options,
+      method: 'DELETE' satisfies HttpMethod,
+    })
+  }
 }
 
 export const httpClient = new HttpClient()

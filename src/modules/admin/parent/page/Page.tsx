@@ -36,7 +36,6 @@ import PageHeader from '@/shared/ui/PageHeader'
 import { PARENT_APPROVAL_CARD_STATUS } from '@/shared/utils/themes'
 
 const DEFAULT_PAGE_INDEX = 1
-const DEFAULT_REQUESTED_AT = '09/04/2026'
 
 const DEFAULT_QUERY: ApprovalQueueQuery = {
   page: DEFAULT_PAGE_INDEX,
@@ -77,26 +76,8 @@ function buildResultsSummary(count: number): ApprovalResultsSummary {
   }
 }
 
-function removeParentRequestFromQueue(
-  queue: ApprovalQueueResult<ParentApprovalItem>,
-  id: string
-): ApprovalQueueResult<ParentApprovalItem> {
-  const items = queue.items.filter(item => item.id !== id)
-
-  if (items.length === queue.items.length) {
-    return queue
-  }
-
-  const totalItems = Math.max(queue.totalItems - 1, 0)
-  const totalPages = Math.max(Math.ceil(totalItems / queue.pageSize), 1)
-
-  return {
-    ...queue,
-    currentPage: Math.min(queue.currentPage, totalPages),
-    items,
-    totalItems,
-    totalPages,
-  }
+function getTodayRequestDate() {
+  return new Intl.DateTimeFormat('pt-BR').format(new Date())
 }
 
 function getDefaultFormValues(): ApprovalActionFormValues {
@@ -104,7 +85,7 @@ function getDefaultFormValues(): ApprovalActionFormValues {
     childName: '',
     email: '',
     password: '',
-    requestedAt: DEFAULT_REQUESTED_AT,
+    requestedAt: getTodayRequestDate(),
     resourceType: 'task',
     subjectId: 'default',
     title: '',
@@ -123,7 +104,6 @@ export default function Page() {
   const [parentError, setParentError] = useState<string | null>(null)
   const [hasLoadedParents, setHasLoadedParents] = useState(false)
   const [parentRefreshKey, setParentRefreshKey] = useState(0)
-  const [dismissedParentRequestIds] = useState<string[]>([])
   const [modalState, setModalState] = useState<ApprovalActionModalMode | null>(
     null
   )
@@ -170,7 +150,7 @@ export default function Page() {
         childName: item.childName ?? '',
         email: '',
         password: '',
-        requestedAt: item.requestedAt ?? DEFAULT_REQUESTED_AT,
+        requestedAt: item.requestedAt ?? getTodayRequestDate(),
         resourceType: 'task',
         subjectId: 'default',
         title: item.title ?? '',
@@ -186,7 +166,10 @@ export default function Page() {
         nextMode.item?.kind === 'parent' ? (nextMode.item.childName ?? '') : '',
       email: '',
       password: '',
-      requestedAt: nextMode.item?.requestedAt ?? DEFAULT_REQUESTED_AT,
+      requestedAt:
+        nextMode.action === 'create'
+          ? getTodayRequestDate()
+          : (nextMode.item?.requestedAt ?? getTodayRequestDate()),
       resourceType: 'task',
       subjectId: 'default',
       title: nextMode.item?.title ?? '',
@@ -260,10 +243,8 @@ export default function Page() {
     try {
       if (modalState.action === 'create') {
         const payload: ParentApprovalDraftInput = {
-          childName: modalValues.childName.trim(),
           email: modalValues.email.trim(),
           password: modalValues.password,
-          requestedAt: modalValues.requestedAt,
           title: modalValues.title.trim(),
         }
 
@@ -274,11 +255,9 @@ export default function Page() {
       }
 
       if (modalState.action === 'edit' && modalState.item) {
-        await parentApprovalService.updateLocalParentRegistration(
+        await parentApprovalService.updateParentRegistration(
           modalState.item.id,
           {
-            childName: modalValues.childName.trim(),
-            requestedAt: modalValues.requestedAt,
             title: modalValues.title.trim(),
           }
         )
@@ -288,9 +267,7 @@ export default function Page() {
       }
 
       if (modalState.action === 'delete' && modalState.item) {
-        await parentApprovalService.removeLocalParentRegistration(
-          modalState.item.id
-        )
+        await parentApprovalService.removeParentRegistration(modalState.item.id)
         setParentRefreshKey(current => current + 1)
         resetModal()
         return
@@ -326,17 +303,12 @@ export default function Page() {
         const nextParentQueue =
           await parentApprovalService.getParentQueue(resolvedParentQuery)
 
-        const visibleParentQueue = dismissedParentRequestIds.reduce(
-          removeParentRequestFromQueue,
-          nextParentQueue
-        )
-
         if (!isActive) {
           return
         }
 
         setParentError(null)
-        setParentQueue(visibleParentQueue)
+        setParentQueue(nextParentQueue)
       } catch {
         if (!isActive) {
           return
@@ -358,7 +330,7 @@ export default function Page() {
     return () => {
       isActive = false
     }
-  }, [dismissedParentRequestIds, resolvedParentQuery, parentRefreshKey])
+  }, [resolvedParentQuery, parentRefreshKey])
 
   if (!isAdmin || role !== 'admin' || !hasLoadedParents) {
     return <LoadingScreen />
