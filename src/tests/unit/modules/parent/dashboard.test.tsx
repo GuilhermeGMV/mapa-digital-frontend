@@ -1,15 +1,9 @@
-import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
-import test from 'node:test'
+import { assert } from '@/tests/helpers/assert'
+import { test } from '@jest/globals'
+import { readSource } from '@/tests/helpers/source'
 
 test('parent dashboard exposes only the child registration entry point', () => {
-  const source = readFileSync(
-    new URL(
-      '../../../../modules/parent/dashboard/page/Page.tsx',
-      import.meta.url
-    ),
-    'utf8'
-  )
+  const source = readSource('modules/parent/dashboard/page/Page.tsx')
 
   assert.match(source, /PageHeader/)
   assert.match(source, /AppActionModal/)

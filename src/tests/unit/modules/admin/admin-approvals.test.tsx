@@ -1,6 +1,6 @@
-import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
-import test from 'node:test'
+import { assert } from '@/tests/helpers/assert'
+import { test } from '@jest/globals'
+import { readSource } from '@/tests/helpers/source'
 import type { ApiResponse } from '../../../../shared/types/api'
 import type {
   ContentApprovalItem,
@@ -187,18 +187,9 @@ test('getParentApprovalEligibility only allows approval when all validations pas
 })
 
 test('admin approvals area is wired into routes and sidebar navigation', () => {
-  const routesSource = readFileSync(
-    new URL('../../../../app/router/paths.ts', import.meta.url),
-    'utf8'
-  )
-  const adminRouteSource = readFileSync(
-    new URL('../../../../modules/admin/route.tsx', import.meta.url),
-    'utf8'
-  )
-  const dashboardLayoutSource = readFileSync(
-    new URL('../../../../app/layout/DashboardLayout.tsx', import.meta.url),
-    'utf8'
-  )
+  const routesSource = readSource('app/router/paths.ts')
+  const adminRouteSource = readSource('modules/admin/route.tsx')
+  const dashboardLayoutSource = readSource('app/layout/DashboardLayout.tsx')
 
   assert.match(routesSource, /contents: '\/admin\/contents'/)
   assert.match(routesSource, /parents: '\/admin\/parents'/)
@@ -246,19 +237,11 @@ test('admin user approvals normalize backend users into parent queue items', () 
 })
 
 test('parent approvals use only real admin user endpoints', () => {
-  const repositorySource = readFileSync(
-    new URL(
-      '../../../../modules/admin/parent/services/parent/repository.ts',
-      import.meta.url
-    ),
-    'utf8'
+  const repositorySource = readSource(
+    'modules/admin/parent/services/parent/repository.ts'
   )
-  const mapperSource = readFileSync(
-    new URL(
-      '../../../../modules/admin/parent/services/parent/mapper.ts',
-      import.meta.url
-    ),
-    'utf8'
+  const mapperSource = readSource(
+    'modules/admin/parent/services/parent/mapper.ts'
   )
 
   assert.match(
@@ -278,30 +261,17 @@ test('parent approvals use only real admin user endpoints', () => {
 })
 
 test('content correction sessions use a route-level workflow', async () => {
-  const adminContentPageSource = readFileSync(
-    new URL('../../../../modules/admin/content/page/Page.tsx', import.meta.url),
-    'utf8'
+  const adminContentPageSource = readSource(
+    'modules/admin/content/page/Page.tsx'
   )
-  const correctionPageSource = readFileSync(
-    new URL(
-      '../../../../modules/admin/content-correction/page/Page.tsx',
-      import.meta.url
-    ),
-    'utf8'
+  const correctionPageSource = readSource(
+    'modules/admin/content-correction/page/Page.tsx'
   )
-  const repositorySource = readFileSync(
-    new URL(
-      '../../../../modules/admin/content/services/content/repository.ts',
-      import.meta.url
-    ),
-    'utf8'
+  const repositorySource = readSource(
+    'modules/admin/content/services/content/repository.ts'
   )
-  const modalSource = readFileSync(
-    new URL(
-      '../../../../modules/admin/shared/components/ApprovalActionModal.tsx',
-      import.meta.url
-    ),
-    'utf8'
+  const modalSource = readSource(
+    'modules/admin/shared/components/ApprovalActionModal.tsx'
   )
 
   assert.match(adminContentPageSource, /buildAdminCorrectionRoute\(item\.id\)/)
@@ -347,17 +317,10 @@ test('content correction status is normalized and exposed in admin queues', () =
 })
 
 test('theme selector and approvals filter reuse AppDropdown with the ghost trigger', () => {
-  const themeModeSource = readFileSync(
-    new URL('../../../../shared/ui/ThemeMode.tsx', import.meta.url),
-    'utf8'
-  )
-  const appDropdownSource = readFileSync(
-    new URL('../../../../shared/ui/AppDropdown.tsx', import.meta.url),
-    'utf8'
-  )
-  const searchBarAndFilterSource = readFileSync(
-    new URL('../../../../shared/ui/SearchBarAndFilter.tsx', import.meta.url),
-    'utf8'
+  const themeModeSource = readSource('shared/ui/ThemeMode.tsx')
+  const appDropdownSource = readSource('shared/ui/AppDropdown.tsx')
+  const searchBarAndFilterSource = readSource(
+    'shared/ui/SearchBarAndFilter.tsx'
   )
 
   assert.match(themeModeSource, /AppDropdown/)
@@ -375,21 +338,13 @@ test('theme selector and approvals filter reuse AppDropdown with the ghost trigg
 })
 
 test('approval queue panel reuses shared toolbar and pagination components', () => {
-  const approvalComponentSource = readFileSync(
-    new URL(
-      '../../../../modules/admin/shared/components/ApprovalComponent.tsx',
-      import.meta.url
-    ),
-    'utf8'
+  const approvalComponentSource = readSource(
+    'modules/admin/shared/components/ApprovalComponent.tsx'
   )
-  const searchBarAndFilterSource = readFileSync(
-    new URL('../../../../shared/ui/SearchBarAndFilter.tsx', import.meta.url),
-    'utf8'
+  const searchBarAndFilterSource = readSource(
+    'shared/ui/SearchBarAndFilter.tsx'
   )
-  const paginationSource = readFileSync(
-    new URL('../../../../shared/ui/Pagination.tsx', import.meta.url),
-    'utf8'
-  )
+  const paginationSource = readSource('shared/ui/Pagination.tsx')
 
   assert.match(approvalComponentSource, /SearchBarAndFilter/)
   assert.match(approvalComponentSource, /Pagination/)
@@ -409,9 +364,8 @@ test('approval queue panel reuses shared toolbar and pagination components', () 
 })
 
 test('admin approvals page uses a responsive grid and a bounded page size for queues', () => {
-  const adminContentPageSource = readFileSync(
-    new URL('../../../../modules/admin/content/page/Page.tsx', import.meta.url),
-    'utf8'
+  const adminContentPageSource = readSource(
+    'modules/admin/content/page/Page.tsx'
   )
 
   assert.match(adminContentPageSource, /pageSize: 10/)
@@ -422,16 +376,11 @@ test('admin approvals page uses a responsive grid and a bounded page size for qu
 })
 
 test('approval list cards preserve the compact visual proportions from the reference', () => {
-  const approvalCardSource = readFileSync(
-    new URL(
-      '../../../../modules/admin/shared/components/ApprovalCard.tsx',
-      import.meta.url
-    ),
-    'utf8'
+  const approvalCardSource = readSource(
+    'modules/admin/shared/components/ApprovalCard.tsx'
   )
-  const searchBarAndFilterSource = readFileSync(
-    new URL('../../../../shared/ui/SearchBarAndFilter.tsx', import.meta.url),
-    'utf8'
+  const searchBarAndFilterSource = readSource(
+    'shared/ui/SearchBarAndFilter.tsx'
   )
 
   assert.match(approvalCardSource, /fontSize: \{ md: 20, xs: 16 \}/)
@@ -443,26 +392,14 @@ test('approval list cards preserve the compact visual proportions from the refer
 })
 
 test('admin surfaces rely on theme-aware styling instead of fixed slate utility colors', () => {
-  const adminDashboardSource = readFileSync(
-    new URL(
-      '../../../../modules/admin/dashboard/page/Page.tsx',
-      import.meta.url
-    ),
-    'utf8'
+  const adminDashboardSource = readSource(
+    'modules/admin/dashboard/page/Page.tsx'
   )
-  const approvalCardSource = readFileSync(
-    new URL(
-      '../../../../modules/admin/shared/components/ApprovalCard.tsx',
-      import.meta.url
-    ),
-    'utf8'
+  const approvalCardSource = readSource(
+    'modules/admin/shared/components/ApprovalCard.tsx'
   )
-  const approvalComponentSource = readFileSync(
-    new URL(
-      '../../../../modules/admin/shared/components/ApprovalComponent.tsx',
-      import.meta.url
-    ),
-    'utf8'
+  const approvalComponentSource = readSource(
+    'modules/admin/shared/components/ApprovalComponent.tsx'
   )
 
   assert.match(adminDashboardSource, /useTheme/)
@@ -473,25 +410,14 @@ test('admin surfaces rely on theme-aware styling instead of fixed slate utility 
 })
 
 test('admin approvals page renders cards directly and provides visible actions', () => {
-  const adminContentPageSource = readFileSync(
-    new URL('../../../../modules/admin/content/page/Page.tsx', import.meta.url),
-    'utf8'
+  const adminContentPageSource = readSource(
+    'modules/admin/content/page/Page.tsx'
   )
-  const approvalCardSource = readFileSync(
-    new URL(
-      '../../../../modules/admin/shared/components/ApprovalCard.tsx',
-      import.meta.url
-    ),
-    'utf8'
+  const approvalCardSource = readSource(
+    'modules/admin/shared/components/ApprovalCard.tsx'
   )
-  const adminParentPageSource = readFileSync(
-    new URL('../../../../modules/admin/parent/page/Page.tsx', import.meta.url),
-    'utf8'
-  )
-  const adminTypesSource = readFileSync(
-    new URL('../../../../modules/admin/shared/types/types.ts', import.meta.url),
-    'utf8'
-  )
+  const adminParentPageSource = readSource('modules/admin/parent/page/Page.tsx')
+  const adminTypesSource = readSource('modules/admin/shared/types/types.ts')
 
   assert.match(adminTypesSource, /export interface ApprovalCardAction/)
   assert.match(adminTypesSource, /export interface ApprovalCardStatus/)
@@ -517,26 +443,10 @@ test('admin approvals page renders cards directly and provides visible actions',
 })
 
 test('admin approval service separates repository and mapper concerns for future API integration', () => {
-  const serviceSource = readFileSync(
-    new URL(
-      '../../../../modules/admin/content/services/service.ts',
-      import.meta.url
-    ),
-    'utf8'
-  )
-  const runtimeSource = readFileSync(
-    new URL(
-      '../../../../modules/admin/content/services/runtime.ts',
-      import.meta.url
-    ),
-    'utf8'
-  )
-  const contentServiceSource = readFileSync(
-    new URL(
-      '../../../../modules/admin/content/services/content/service.ts',
-      import.meta.url
-    ),
-    'utf8'
+  const serviceSource = readSource('modules/admin/content/services/service.ts')
+  const runtimeSource = readSource('modules/admin/content/services/runtime.ts')
+  const contentServiceSource = readSource(
+    'modules/admin/content/services/content/service.ts'
   )
 
   assert.doesNotMatch(serviceSource, /runtime/)
@@ -554,41 +464,21 @@ test('admin approval service separates repository and mapper concerns for future
   )
 
   assert.doesNotThrow(() =>
-    readFileSync(
-      new URL(
-        '../../../../modules/admin/content/services/content/repository.ts',
-        import.meta.url
-      ),
-      'utf8'
-    )
+    readSource('modules/admin/content/services/content/repository.ts')
   )
   assert.doesNotThrow(() =>
-    readFileSync(
-      new URL(
-        '../../../../modules/admin/content/services/content/mapper.ts',
-        import.meta.url
-      ),
-      'utf8'
-    )
+    readSource('modules/admin/content/services/content/mapper.ts')
   )
 })
 
 test('admin approvals page routes create edit and correction through a reusable modal flow', () => {
-  const adminContentPageSource = readFileSync(
-    new URL('../../../../modules/admin/content/page/Page.tsx', import.meta.url),
-    'utf8'
+  const adminContentPageSource = readSource(
+    'modules/admin/content/page/Page.tsx'
   )
-  const modalSource = readFileSync(
-    new URL(
-      '../../../../modules/admin/shared/components/ApprovalActionModal.tsx',
-      import.meta.url
-    ),
-    'utf8'
+  const modalSource = readSource(
+    'modules/admin/shared/components/ApprovalActionModal.tsx'
   )
-  const adminParentPageSource = readFileSync(
-    new URL('../../../../modules/admin/parent/page/Page.tsx', import.meta.url),
-    'utf8'
-  )
+  const adminParentPageSource = readSource('modules/admin/parent/page/Page.tsx')
 
   assert.match(adminContentPageSource, /ApprovalActionModal/)
   assert.match(adminContentPageSource, /modalState/)
@@ -606,7 +496,7 @@ test('admin approvals page routes create edit and correction through a reusable 
   assert.match(adminParentPageSource, /updateParentStatus/)
   assert.match(adminParentPageSource, /label: 'Validar cadastro'/)
   assert.match(adminParentPageSource, /label: 'Rejeitar cadastro'/)
-  assert.match(adminParentPageSource, /dismissParentRequest/)
+  assert.match(adminParentPageSource, /removeParentRegistration/)
   assert.doesNotMatch(adminParentPageSource, /label: 'Limpar requisição'/)
   assert.match(adminParentPageSource, /createParentRegistration/)
   assert.match(adminParentPageSource, /action: 'create', type: 'parent'/)

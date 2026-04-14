@@ -1,12 +1,9 @@
-import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
-import test from 'node:test'
+import { assert } from '@/tests/helpers/assert'
+import { test } from '@jest/globals'
+import { readSource } from '@/tests/helpers/source'
 
 test('shared formatters module exists', () => {
-  const source = readFileSync(
-    new URL('../../../../shared/utils/formatters.ts', import.meta.url),
-    'utf8'
-  )
+  const source = readSource('shared/utils/formatters.ts')
 
   assert.ok(source.length > 0)
 })

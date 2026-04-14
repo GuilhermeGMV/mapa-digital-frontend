@@ -1,5 +1,5 @@
-import assert from 'node:assert/strict'
-import test from 'node:test'
+import { assert } from '@/tests/helpers/assert'
+import { test } from '@jest/globals'
 import { APP_ROUTES, DEFAULT_ROUTE_BY_ROLE } from '../../../app/router/paths'
 
 test('APP_ROUTES exposes auth, student, parent, admin, school and company paths', () => {

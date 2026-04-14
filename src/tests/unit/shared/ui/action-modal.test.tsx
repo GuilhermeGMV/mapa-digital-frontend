@@ -1,16 +1,13 @@
-import assert from 'node:assert/strict'
-import { existsSync, readFileSync } from 'node:fs'
-import test from 'node:test'
+import { test } from '@jest/globals'
+import { assert } from '@/tests/helpers/assert'
+import { readSource, sourceExists } from '@/tests/helpers/source'
 
 test('app action modal exists as a reusable common component', () => {
-  const modalPath = new URL(
-    '../../../../shared/ui/AppActionModal.tsx',
-    import.meta.url
-  )
+  const modalSourcePath = 'shared/ui/AppActionModal.tsx'
 
-  assert.equal(existsSync(modalPath), true)
+  assert.equal(sourceExists(modalSourcePath), true)
 
-  const modalSource = readFileSync(modalPath, 'utf8')
+  const modalSource = readSource(modalSourcePath)
 
   assert.match(modalSource, /variant\?: 'form' \| 'confirm'/)
   assert.match(modalSource, /onConfirm/)

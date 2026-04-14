@@ -1,12 +1,9 @@
-import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
-import test from 'node:test'
+import { assert } from '@/tests/helpers/assert'
+import { test } from '@jest/globals'
+import { readSource } from '@/tests/helpers/source'
 
 test('EmotionalContainer uses theme tokens and no empty JSX expressions', () => {
-  const source = readFileSync(
-    new URL('../../../../shared/ui/EmotionalContainer.tsx', import.meta.url),
-    'utf8'
-  )
+  const source = readSource('shared/ui/EmotionalContainer.tsx')
 
   assert.match(source, /alpha/)
   assert.doesNotMatch(source, /\{\}/)

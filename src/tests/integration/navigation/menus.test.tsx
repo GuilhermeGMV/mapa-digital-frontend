@@ -1,12 +1,9 @@
-import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
-import test from 'node:test'
+import { assert } from '@/tests/helpers/assert'
+import { test } from '@jest/globals'
+import { readSource } from '@/tests/helpers/source'
 
 test('navigation index composes menus for all roles', () => {
-  const source = readFileSync(
-    new URL('../../../app/navigation/index.tsx', import.meta.url),
-    'utf8'
-  )
+  const source = readSource('app/navigation/index.tsx')
 
   assert.match(source, /NAVIGATION_BY_ROLE/)
   assert.match(source, /studentNavigation/)

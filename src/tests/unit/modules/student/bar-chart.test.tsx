@@ -1,6 +1,6 @@
-import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
-import test from 'node:test'
+import { assert } from '@/tests/helpers/assert'
+import { test } from '@jest/globals'
+import { readSource } from '@/tests/helpers/source'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import BarChart from '../../../../modules/student/shared/components/BarChart'
@@ -18,13 +18,7 @@ test('BarChart keeps each bar column full height and exposes accessible bar labe
   const html = renderToStaticMarkup(
     <BarChart data={[{ label: 'Seg', value: 2 }]} maxValue={4} />
   )
-  const source = readFileSync(
-    new URL(
-      '../../../../modules/student/shared/components/BarChart.tsx',
-      import.meta.url
-    ),
-    'utf8'
-  )
+  const source = readSource('modules/student/shared/components/BarChart.tsx')
 
   assert.match(html, /aria-label="Seg: 2"/)
   assert.match(source, /gridTemplateRows/)

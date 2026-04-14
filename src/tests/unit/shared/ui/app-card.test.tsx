@@ -1,12 +1,9 @@
-import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
-import test from 'node:test'
+import { assert } from '@/tests/helpers/assert'
+import { test } from '@jest/globals'
+import { readSource } from '@/tests/helpers/source'
 
 test('app card merges consumer sx with its default card styles', () => {
-  const cardSource = readFileSync(
-    new URL('../../../../shared/ui/AppCard.tsx', import.meta.url),
-    'utf8'
-  )
+  const cardSource = readSource('shared/ui/AppCard.tsx')
 
   assert.match(cardSource, /sx,/)
   assert.match(

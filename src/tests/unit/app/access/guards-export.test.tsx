@@ -1,12 +1,9 @@
-import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
-import test from 'node:test'
+import { assert } from '@/tests/helpers/assert'
+import { test } from '@jest/globals'
+import { readSource } from '@/tests/helpers/source'
 
 test('router guards re-export access guards', () => {
-  const source = readFileSync(
-    new URL('../../../../app/router/guards.tsx', import.meta.url),
-    'utf8'
-  )
+  const source = readSource('app/router/guards.tsx')
 
   assert.match(source, /ProtectedRoute/)
   assert.match(source, /RoleRoute/)

@@ -1,6 +1,6 @@
-import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
-import test from 'node:test'
+import { assert } from '@/tests/helpers/assert'
+import { test } from '@jest/globals'
+import { readSource } from '@/tests/helpers/source'
 import { ThemeProvider } from '@mui/material/styles'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -115,19 +115,11 @@ test('OnboardingQuestionCard renders the onboarding copy and answer options from
 })
 
 test('student components page renders the onboarding and chart mocks directly', () => {
-  const studentComponentsPageSource = readFileSync(
-    new URL(
-      '../../../../modules/student/components/page/Page.tsx',
-      import.meta.url
-    ),
-    'utf8'
+  const studentComponentsPageSource = readSource(
+    'modules/student/components/page/Page.tsx'
   )
-  const studentDashboardPageSource = readFileSync(
-    new URL(
-      '../../../../modules/student/dashboard/page/Page.tsx',
-      import.meta.url
-    ),
-    'utf8'
+  const studentDashboardPageSource = readSource(
+    'modules/student/dashboard/page/Page.tsx'
   )
 
   assert.match(
@@ -139,12 +131,8 @@ test('student components page renders the onboarding and chart mocks directly', 
 })
 
 test('SubjectBaseCard uses AppCard as the reusable card shell', () => {
-  const source = readFileSync(
-    new URL(
-      '../../../../modules/student/shared/components/SubjectBaseCard.tsx',
-      import.meta.url
-    ),
-    'utf8'
+  const source = readSource(
+    'modules/student/shared/components/SubjectBaseCard.tsx'
   )
 
   assert.match(source, /AppCard/)

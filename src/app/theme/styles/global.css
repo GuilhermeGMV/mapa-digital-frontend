@@ -98,6 +98,15 @@
     var(--app-role-school-company-primary) 0%,
     var(--app-role-school-company-secondary) 100%
   );
+  --app-role-current-primary: var(--app-role-student-primary);
+  --app-role-current-secondary: var(--app-role-student-secondary);
+  --app-role-current-soft: var(--app-role-student-soft);
+  --app-role-current-contrast: var(--app-role-student-contrast);
+  --app-role-current-hover-solid: var(--app-role-student-secondary);
+  --app-role-action-hover-bg: rgba(29, 78, 216, 0.12);
+  --app-role-action-hover-border: rgba(29, 78, 216, 0.24);
+  --app-role-action-selected-bg: rgba(29, 78, 216, 0.12);
+  --app-role-action-selected-border: rgba(29, 78, 216, 0.28);
   --app-body-gradient:
     radial-gradient(
       circle at top left,

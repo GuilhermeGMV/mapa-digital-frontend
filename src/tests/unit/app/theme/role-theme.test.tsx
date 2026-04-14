@@ -1,6 +1,6 @@
-import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
-import test from 'node:test'
+import { assert } from '@/tests/helpers/assert'
+import { test } from '@jest/globals'
+import { readSource } from '@/tests/helpers/source'
 import { createAppTheme } from '../../../../app/theme/core/theme'
 import {
   getRoleActionTone,
@@ -25,18 +25,9 @@ test('role colors are exposed by the app theme and reusable helpers', () => {
 })
 
 test('role variables are applied globally so MUI portals inherit dropdown and modal colors', () => {
-  const dashboardLayoutSource = readFileSync(
-    new URL('../../../../app/layout/DashboardLayout.tsx', import.meta.url),
-    'utf8'
-  )
-  const appButtonSource = readFileSync(
-    new URL('../../../../shared/ui/AppButton.tsx', import.meta.url),
-    'utf8'
-  )
-  const globalCssSource = readFileSync(
-    new URL('../../../../app/theme/styles/global.css', import.meta.url),
-    'utf8'
-  )
+  const dashboardLayoutSource = readSource('app/layout/DashboardLayout.tsx')
+  const appButtonSource = readSource('shared/ui/AppButton.tsx')
+  const globalCssSource = readSource('app/theme/styles/global.css')
 
   assert.match(dashboardLayoutSource, /document\.documentElement/)
   assert.match(dashboardLayoutSource, /--app-role-current-hover-solid/)
@@ -45,16 +36,9 @@ test('role variables are applied globally so MUI portals inherit dropdown and mo
 })
 
 test('PageHeader derives the user greeting when an explicit eyebrow is not provided', () => {
-  const headerSource = readFileSync(
-    new URL('../../../../shared/ui/PageHeader.tsx', import.meta.url),
-    'utf8'
-  )
-  const studentDashboardPageSource = readFileSync(
-    new URL(
-      '../../../../modules/student/dashboard/page/Page.tsx',
-      import.meta.url
-    ),
-    'utf8'
+  const headerSource = readSource('shared/ui/PageHeader.tsx')
+  const studentDashboardPageSource = readSource(
+    'modules/student/dashboard/page/Page.tsx'
   )
 
   assert.match(headerSource, /useAuth/)
@@ -64,26 +48,23 @@ test('PageHeader derives the user greeting when an explicit eyebrow is not provi
 
 test('role themed components do not resolve AppColors role tokens directly', () => {
   const files = [
-    '../../../../app/layout/DashboardLayout.tsx',
-    '../../../../modules/admin/shared/components/ApprovalActionModal.tsx',
-    '../../../../modules/admin/shared/components/ApprovalComponent.tsx',
-    '../../../../modules/admin/content-correction/page/Page.tsx',
-    '../../../../shared/ui/AppSidebar.tsx',
-    '../../../../shared/ui/PageHeader.tsx',
-    '../../../../shared/ui/Pagination.tsx',
+    'app/layout/DashboardLayout.tsx',
+    'modules/admin/shared/components/ApprovalActionModal.tsx',
+    'modules/admin/shared/components/ApprovalComponent.tsx',
+    'modules/admin/content-correction/page/Page.tsx',
+    'shared/ui/AppSidebar.tsx',
+    'shared/ui/PageHeader.tsx',
+    'shared/ui/Pagination.tsx',
   ]
 
   for (const file of files) {
-    const source = readFileSync(new URL(file, import.meta.url), 'utf8')
+    const source = readSource(file)
 
     assert.doesNotMatch(source, /AppColors\.role/)
     assert.doesNotMatch(source, /roleGradient/)
   }
 
-  const headerSource = readFileSync(
-    new URL('../../../../shared/ui/PageHeader.tsx', import.meta.url),
-    'utf8'
-  )
+  const headerSource = readSource('shared/ui/PageHeader.tsx')
 
   assert.doesNotMatch(headerSource, /bg-\[#/)
   assert.doesNotMatch(headerSource, /from-\[#/)
@@ -91,14 +72,8 @@ test('role themed components do not resolve AppColors role tokens directly', () 
 })
 
 test('global css exposes semantic tokens for app surfaces and role colors', () => {
-  const globalCssSource = readFileSync(
-    new URL('../../../../app/theme/styles/global.css', import.meta.url),
-    'utf8'
-  )
-  const themeSource = readFileSync(
-    new URL('../../../../app/theme/core/theme.ts', import.meta.url),
-    'utf8'
-  )
+  const globalCssSource = readSource('app/theme/styles/global.css')
+  const themeSource = readSource('app/theme/core/theme.ts')
 
   assert.match(globalCssSource, /--app-surface-elevated:/)
   assert.match(globalCssSource, /--app-card-border:/)

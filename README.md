@@ -112,6 +112,15 @@ npm run typecheck
 
 Executa a validação de tipos com TypeScript
 
+### Testes
+
+```bash
+npm test
+npm run coverage
+```
+
+Executa os testes automatizados com Jest. O script `npm test` roda todos os arquivos `src/tests/**/*.test.tsx`.
+
 ### Preview da Build
 
 ```bash
@@ -215,8 +224,9 @@ Usado para **código compartilhado entre features do mesmo módulo** (tipos de a
 
 ## 🧪 Testes
 
-- Arquivos em **`tests/`** na raiz do `frontend/` (padrão do script `npm test`).
-- Imports relativos devem alcançar o código em **`src/`** (ex.: `../../../src/...` a partir de `tests/integration/...`).
+- Arquivos em **`src/tests/`** com sufixo **`.test.tsx`**.
+- Execução via **Jest** com `npm test`.
+- Use os helpers em **`src/tests/helpers/`** para leitura de arquivos e asserções comuns.
 
 ---
 
@@ -229,7 +239,7 @@ frontend/
 │   ├── app/               # Router, layouts, navigation, auth/theme/access
 │   ├── modules/           # Domínios: auth, student, parent, admin, school, company, common
 │   ├── shared/            # UI, lib, utils, types, constants
-│   └── tests/             # Testes (Node test runner + tsx)
+│   └── tests/             # Testes (Jest)
 │   ├── App.tsx
 │   └── main.tsx
 ├── dist/                  # Build (gerado)

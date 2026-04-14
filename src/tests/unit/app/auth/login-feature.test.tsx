@@ -1,19 +1,10 @@
-import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
-import test from 'node:test'
+import { assert } from '@/tests/helpers/assert'
+import { test } from '@jest/globals'
+import { readSource } from '@/tests/helpers/source'
 
 test('login feature exposes Page, service and wraps authService', () => {
-  const pageSource = readFileSync(
-    new URL('../../../../modules/auth/login/page/Page.tsx', import.meta.url),
-    'utf8'
-  )
-  const serviceSource = readFileSync(
-    new URL(
-      '../../../../modules/auth/login/services/service.ts',
-      import.meta.url
-    ),
-    'utf8'
-  )
+  const pageSource = readSource('modules/auth/login/page/Page.tsx')
+  const serviceSource = readSource('modules/auth/login/services/service.ts')
 
   assert.match(pageSource, /export default function Page/)
   assert.match(serviceSource, /loginService/)

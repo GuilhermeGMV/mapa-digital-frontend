@@ -1,5 +1,5 @@
-import assert from 'node:assert/strict'
-import test from 'node:test'
+import { assert } from '@/tests/helpers/assert'
+import { test } from '@jest/globals'
 import {
   getParentStatusModalCopy,
   shouldOpenParentStatusModal,

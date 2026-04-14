@@ -397,7 +397,7 @@ export default function Page() {
           alignItems: 'stretch',
           display: 'grid',
           gap: 2,
-          gridTemplateColumns: '1fr 1fr',
+          gridTemplateColumns: { md: 'minmax(0, 1fr)', xs: '1fr' },
         }}
       >
         <ApprovalComponent

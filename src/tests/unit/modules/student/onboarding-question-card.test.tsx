@@ -1,6 +1,6 @@
-import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
-import test from 'node:test'
+import { assert } from '@/tests/helpers/assert'
+import { test } from '@jest/globals'
+import { readSource } from '@/tests/helpers/source'
 import { ThemeProvider } from '@mui/material/styles'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -39,12 +39,8 @@ test('OnboardingQuestionCard renders from a questions mock without controlled fl
 })
 
 test('OnboardingQuestionCard uses AppCard as the reusable card shell', () => {
-  const source = readFileSync(
-    new URL(
-      '../../../../modules/student/shared/components/OnboardingQuestionCard.tsx',
-      import.meta.url
-    ),
-    'utf8'
+  const source = readSource(
+    'modules/student/shared/components/OnboardingQuestionCard.tsx'
   )
 
   assert.match(source, /AppCard/)
