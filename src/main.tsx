@@ -1,8 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
-import { STORAGE_KEYS } from '@/constants/storage'
-import './styles/global.css'
+import { STORAGE_KEYS } from '@/shared/constants/storage'
+import './app/theme/styles/global.css'
 
 const rootElement = document.getElementById('root')
 

@@ -1,0 +1,23 @@
+import AutoStoriesIcon from '@mui/icons-material/AutoStories'
+import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded'
+import ClassRoundedIcon from '@mui/icons-material/ClassRounded'
+import type { SidebarItem } from '@/shared/types/common'
+import { APP_ROUTES } from '@/app/router/paths'
+
+export const schoolNavigation: SidebarItem[] = [
+  {
+    label: 'Dashboard',
+    path: APP_ROUTES.school.dashboard,
+    icon: <AutoStoriesIcon fontSize="medium" />,
+  },
+  {
+    label: 'Alunos',
+    path: APP_ROUTES.school.students,
+    icon: <GroupsRoundedIcon fontSize="medium" />,
+  },
+  {
+    label: 'Turmas',
+    path: APP_ROUTES.school.classes,
+    icon: <ClassRoundedIcon fontSize="medium" />,
+  },
+]
