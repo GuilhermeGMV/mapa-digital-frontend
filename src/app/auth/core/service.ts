@@ -61,7 +61,7 @@ export const authService = {
 
   async register(credentials: RegisterCredentials): Promise<void> {
     await httpClient.post(
-      'register',
+      'register/responsavel',
       {
         name: credentials.name,
         email: credentials.email,
