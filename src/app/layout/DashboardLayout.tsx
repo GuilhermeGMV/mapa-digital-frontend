@@ -89,10 +89,10 @@ function DashboardLayout() {
 
   const contentMarginLeft = (() => {
     if (isMobile) return 0
-    if (isTablet && collapsed) return 80 // mini fixa no canto
-    if (isTablet && !collapsed) return 0 // overlay, sem empurrar conteúdo
-    if (isDesktop && collapsed) return 80 // desktop mini
-    return APP_CONFIG.drawerWidth // desktop expandido
+    if (isTablet && collapsed) return 80
+    if (isTablet && !collapsed) return 0
+    if (isDesktop && collapsed) return 80
+    return APP_CONFIG.drawerWidth
   })()
 
   return (
