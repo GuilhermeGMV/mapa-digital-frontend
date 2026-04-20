@@ -4,9 +4,16 @@ import { alpha } from '@mui/material/styles'
 import { Outlet } from 'react-router-dom'
 import siteLogo from '@/shared/assets/logos/white_logo.svg'
 import { APP_CONFIG } from '@/shared/constants/app'
-import type { AuthMode } from '@/modules/auth/login/components/AuthModeSelect'
 import { useState } from 'react'
 import { useTheme } from '@mui/material/styles'
+
+export type LayoutMode =
+  | 'login'
+  | 'register'
+  | 'forgot_password_email'
+  | 'forgot_password_code'
+  | 'forgot_password_new'
+
 
 function SiteLogo() {
   return (
@@ -51,6 +58,39 @@ function AuthLayout() {
   const badgeTextColor = isDark ? theme.palette.common.white : panelTextColor
   const badgeIconColor = isDark ? theme.palette.primary.main : panelTextColor
   const [mode, setMode] = useState<'login' | 'register'>('login')
+
+  const getLayoutContent = (currentMode: LayoutMode) => {
+    switch (currentMode) {
+      case 'register':
+        return {
+          title: 'Cadastre-se no Mapa Digital',
+          subtitle: 'Seja bem-vindo! Descubra um novo jeito de aprender, acompanhar e transformar a educação.',
+        }
+      case 'forgot_password_email':
+        return {
+          title: 'Esqueceu sua senha?',
+          subtitle: 'Você receberá um código no seu e-mail para recuperação de senha.',
+        }
+      case 'forgot_password_code':
+        return {
+          title: 'Enviamos um código para seu e-mail',
+          subtitle: 'Insira nos campos destinados o código de verificação de 6 dígitos enviado para seu e-mail.',
+        }
+      case 'forgot_password_new':
+        return {
+          title: 'Crie uma nova senha',
+          subtitle: 'Digite e confirme sua nova senha para ter acesso ao seu login.',
+        }
+      case 'login':
+      default:
+        return {
+          title: 'Entre no Mapa Digital',
+          subtitle: 'Bem-vindo de volta! Continue sua jornada de conquistas.',
+        }
+    }
+  }
+
+  const { title, subtitle } = getLayoutContent(mode)
   return (
     <Box
       className="flex items-center justify-center px-4 py-6"
@@ -106,9 +146,7 @@ function AuthLayout() {
                 fontWeight: 700,
               }}
             >
-              {mode === 'register'
-                ? 'Cadastre-se no Mapa Digital'
-                : 'Entre no Mapa Digital'}
+              {title}
             </Typography>
 
             <Typography
@@ -119,9 +157,7 @@ function AuthLayout() {
                 lineHeight: '21px',
               }}
             >
-              {mode === 'register'
-                ? 'Seja bem-vindo! Descubra um novo jeito de aprender, acompanhar e transformar a educação.'
-                : 'Bem-vindo de volta! Continue sua jornada de conquistas.'}
+              {subtitle}
             </Typography>
           </Stack>
           <SiteLogo />
