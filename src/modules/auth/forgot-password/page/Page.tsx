@@ -1,16 +1,19 @@
 import { Box, Stack, Typography, TextField } from '@mui/material'
 import AppButton from '@/shared/ui/AppButton'
 import AppInput from '@/shared/ui/AppInput'
+import AppLink from '@/shared/ui/AppLink'
 import { Link as RouterLink, useOutletContext } from 'react-router-dom'
 import { APP_ROUTES } from '@/app/router/paths'
 import React, { useState, useEffect } from 'react'
 import type { LayoutMode } from '@/app/layout/AuthLayout'
+import { isValidEmail } from '@/shared/utils/validators'
 
 export default function Page() {
   const { setMode } = useOutletContext<{ setMode: (mode: LayoutMode) => void }>()
   
   const [step, setStep] = useState<1 | 2 | 3>(1)
   const [email, setEmail] = useState('')
+  const [emailError, setEmailError] = useState('')
   const [code, setCode] = useState(['', '', '', '', '', ''])
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -38,6 +41,11 @@ export default function Page() {
 
   function handleSubmitEmail(e: React.FormEvent) {
     e.preventDefault()
+    if (!isValidEmail(email)) {
+      setEmailError('Informe um e-mail válido.')
+      return
+    }
+    setEmailError('')
     setStep(2)
   }
 
@@ -67,23 +75,74 @@ export default function Page() {
           <form className="flex flex-col gap-4" onSubmit={handleSubmitEmail}>
             <AppInput
               label="E-mail"
-              type="text"
+              type="email"
               icon={<></>}
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={e => {
+                setEmail(e.target.value)
+                setEmailError('')
+              }}
               required
               placeholder="voce@exemplo.com"
+              labelSx={{ color: '#334155', fontWeight: 600 }}
+              backgroundColor="#ffffff"
+              error={Boolean(emailError)}
+              helperText={emailError || ' '}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  height: 48,
+                },
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: emailError ? '#dc2626' : '#cbd5e1',
+                },
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor: emailError ? '#dc2626' : '#94a3b8',
+                },
+                '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: emailError ? '#dc2626' : '#359CDF',
+                },
+              }}
             />
-            <AppButton type="submit" variant="contained" disabled={!email} sx={{ mt: 2 }}>
+            <AppButton
+              type="submit"
+              disabled={!isValidEmail(email)}
+              borderRadius="8px"
+              textColor="#ffffff"
+              sx={{
+                mt: 2,
+                minHeight: 50,
+                fontSize: '1rem',
+                backgroundColor: '#359CDF',
+                color: '#ffffff',
+                '&:hover': {
+                  backgroundColor: '#218cc9',
+                  filter: 'none',
+                },
+                '&.Mui-disabled': {
+                  backgroundColor: '#9ccfe9',
+                  color: '#ffffff',
+                },
+              }}
+            >
               Enviar link
             </AppButton>
-            <AppButton
-              component={RouterLink}
-              to={APP_ROUTES.auth.login}
-              variant="text"
-            >
-              Voltar ao login &rarr;
-            </AppButton>
+            <Box className="flex justify-center">
+              <AppLink
+                to={APP_ROUTES.auth.login}
+                sx={{
+                  color: '#359CDF',
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  '&:hover': {
+                    color: '#218cc9',
+                    textDecoration: 'underline',
+                  },
+                }}
+              >
+                Voltar ao login &rarr;
+              </AppLink>
+            </Box>
           </form>
         )}
 
@@ -111,16 +170,46 @@ export default function Page() {
               </Typography>
             </Box>
 
-            <AppButton type="submit" variant="contained" disabled={code.some(d => !d)} sx={{ mt: 2 }}>
+            <AppButton
+              type="submit"
+              disabled={code.some(d => !d)}
+              borderRadius="8px"
+              textColor="#ffffff"
+              sx={{
+                mt: 2,
+                minHeight: 50,
+                fontSize: '1rem',
+                backgroundColor: '#359CDF',
+                color: '#ffffff',
+                '&:hover': {
+                  backgroundColor: '#218cc9',
+                  filter: 'none',
+                },
+                '&.Mui-disabled': {
+                  backgroundColor: '#9ccfe9',
+                  color: '#ffffff',
+                },
+              }}
+            >
               Enviar
             </AppButton>
-            <AppButton
-              component={RouterLink}
-              to={APP_ROUTES.auth.login}
-              variant="text"
-            >
-              Voltar ao login &rarr;
-            </AppButton>
+            <Box className="flex justify-center">
+              <AppLink
+                to={APP_ROUTES.auth.login}
+                sx={{
+                  color: '#359CDF',
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  '&:hover': {
+                    color: '#218cc9',
+                    textDecoration: 'underline',
+                  },
+                }}
+              >
+                Voltar ao login &rarr;
+              </AppLink>
+            </Box>
           </form>
         )}
 
@@ -142,16 +231,46 @@ export default function Page() {
               required
               placeholder="••••••••"
             />
-            <AppButton type="submit" variant="contained" disabled={!password || !confirmPassword || password !== confirmPassword} sx={{ mt: 2 }}>
+            <AppButton
+              type="submit"
+              disabled={!password || !confirmPassword || password !== confirmPassword}
+              borderRadius="8px"
+              textColor="#ffffff"
+              sx={{
+                mt: 2,
+                minHeight: 50,
+                fontSize: '1rem',
+                backgroundColor: '#359CDF',
+                color: '#ffffff',
+                '&:hover': {
+                  backgroundColor: '#218cc9',
+                  filter: 'none',
+                },
+                '&.Mui-disabled': {
+                  backgroundColor: '#9ccfe9',
+                  color: '#ffffff',
+                },
+              }}
+            >
               Salvar senha
             </AppButton>
-            <AppButton
-              component={RouterLink}
-              to={APP_ROUTES.auth.login}
-              variant="text"
-            >
-              Voltar ao login &rarr;
-            </AppButton>
+            <Box className="flex justify-center">
+              <AppLink
+                to={APP_ROUTES.auth.login}
+                sx={{
+                  color: '#359CDF',
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  '&:hover': {
+                    color: '#218cc9',
+                    textDecoration: 'underline',
+                  },
+                }}
+              >
+                Voltar ao login &rarr;
+              </AppLink>
+            </Box>
           </form>
         )}
       </Box>
