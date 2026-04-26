@@ -23,6 +23,7 @@ import dayjs from 'dayjs'
 import OnboardingQuestionCard from '@/modules/student/shared/components/OnboardingQuestionCard'
 import type { QuestionFlowPayload } from '@/modules/student/shared/types/types'
 import EmotionalContainer from '@/shared/ui/EmotionalContainer'
+import TaskList from '../../shared/components/TaskList'
 
 const mockChartData = [
   { label: 'Seg', value: 2 },
@@ -120,6 +121,33 @@ const dropdownOptions: DropdownOption[] = [
   { label: '9º Ano', value: '9' },
 ]
 
+const uploadTasks = [
+  {
+    id: '1',
+    title: 'Lista de Exercícios - Equações',
+    subject: SUBJECTS.matematica,
+    type: 'Exercício',
+  },
+  {
+    id: '2',
+    title: 'Redação Dissertativa',
+    subject: SUBJECTS.portugues,
+    type: 'Revisão',
+  },
+  {
+    id: '3',
+    title: 'Relatório de Experiência',
+    subject: SUBJECTS.ciencias,
+    type: 'Trabalho',
+  },
+  {
+    id: '4',
+    title: 'Redação',
+    subject: SUBJECTS.portugues,
+    type: 'Pré-prova',
+  },
+]
+
 export default function Page() {
   const [tasks, setTasks] = useState<Task[]>(initialTasks)
   const [singleValue, setSingleValue] = useState<string | number>('7')
@@ -148,6 +176,9 @@ export default function Page() {
         title="Painel Administrativo"
         subtitle="Visão consolidada da operação MAPA DIGITAL"
       />
+
+      <Typography variant="h6">Atividades de upload</Typography>
+      <TaskList tasks={uploadTasks} />
 
       <Box className="grid grid-cols-2 md:grid-cols-2 gap-5">
         <Box
