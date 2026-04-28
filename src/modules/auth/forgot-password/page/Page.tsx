@@ -9,14 +9,18 @@ import type { LayoutMode } from '@/app/layout/AuthLayout'
 import { isValidEmail } from '@/shared/utils/validators'
 
 export default function Page() {
-  const { setMode } = useOutletContext<{ setMode: (mode: LayoutMode) => void }>()
-  
+  const { setMode } = useOutletContext<{
+    setMode: (mode: LayoutMode) => void
+  }>()
+
   const [step, setStep] = useState<1 | 2 | 3>(1)
   const [email, setEmail] = useState('')
   const [emailError, setEmailError] = useState('')
   const [code, setCode] = useState(['', '', '', '', '', ''])
+  const [codeError, setCodeError] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [passwordError, setPasswordError] = useState('')
 
   useEffect(() => {
     if (step === 1) setMode('forgot_password_email')
@@ -31,7 +35,8 @@ export default function Page() {
     const newCode = [...code]
     newCode[index] = value
     setCode(newCode)
-    
+    setCodeError('')
+
     // auto focus next
     if (value && index < 5) {
       const nextInput = document.getElementById(`code-input-${index + 1}`)
@@ -51,11 +56,33 @@ export default function Page() {
 
   function handleSubmitCode(e: React.FormEvent) {
     e.preventDefault()
+    if (code.some(d => !d)) {
+      setCodeError('Informe o código completo de 6 dígitos.')
+      return
+    }
+    
+    // Mock de validação: só avança se o código for '123456'
+    const enteredCode = code.join('')
+    if (enteredCode !== '123456') {
+      setCodeError('Código inválido. Para testar, use: 123456')
+      return
+    }
+
+    setCodeError('')
     setStep(3)
   }
 
   function handleSubmitPassword(e: React.FormEvent) {
     e.preventDefault()
+    if (!password || !confirmPassword) {
+      setPasswordError('Preencha os dois campos de senha.')
+      return
+    }
+    if (password !== confirmPassword) {
+      setPasswordError('As senhas devem ser iguais.')
+      return
+    }
+    setPasswordError('')
     setPassword('')
     setConfirmPassword('')
   }
@@ -72,7 +99,7 @@ export default function Page() {
     >
       <Box className="min-h-0 flex-1 flex flex-col justify-center">
         {step === 1 && (
-          <form className="flex flex-col gap-4" onSubmit={handleSubmitEmail}>
+          <form className="flex flex-col gap-4" onSubmit={handleSubmitEmail} noValidate>
             <AppInput
               label="E-mail"
               type="email"
@@ -82,7 +109,6 @@ export default function Page() {
                 setEmail(e.target.value)
                 setEmailError('')
               }}
-              required
               placeholder="voce@exemplo.com"
               labelSx={{ color: '#334155', fontWeight: 600 }}
               backgroundColor="#ffffff"
@@ -98,14 +124,14 @@ export default function Page() {
                 '&:hover .MuiOutlinedInput-notchedOutline': {
                   borderColor: emailError ? '#dc2626' : '#94a3b8',
                 },
-                '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                  borderColor: emailError ? '#dc2626' : '#359CDF',
-                },
+                '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: emailError ? '#dc2626' : '#359CDF',
+                  },
               }}
             />
             <AppButton
               type="submit"
-              disabled={!isValidEmail(email)}
               borderRadius="8px"
               textColor="#ffffff"
               sx={{
@@ -148,31 +174,57 @@ export default function Page() {
 
         {step === 2 && (
           <form className="flex flex-col gap-4" onSubmit={handleSubmitCode}>
-            <Stack direction="row" spacing={1} justifyContent="space-between" sx={{ mb: 1 }}>
+            <Stack
+              direction="row"
+              spacing={1}
+              justifyContent="space-between"
+              sx={{ mb: 1 }}
+            >
               {code.map((digit, index) => (
                 <TextField
                   key={index}
                   id={`code-input-${index}`}
                   value={digit}
-                  onChange={(e) => handleCodeChange(index, e.target.value)}
+                  onChange={e => handleCodeChange(index, e.target.value)}
+                  error={Boolean(codeError)}
                   inputProps={{
                     maxLength: 1,
-                    style: { textAlign: 'center', fontSize: '1.25rem', padding: '12px' }
+                    style: {
+                      textAlign: 'center',
+                      fontSize: '1.25rem',
+                      padding: '12px',
+                    },
                   }}
-                  sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: '8px' } }}
+                  sx={{
+                    flex: 1,
+                    '& .MuiOutlinedInput-root': { borderRadius: '8px' },
+                  }}
                 />
               ))}
             </Stack>
-            
+
+            {codeError && (
+              <Typography sx={{ color: '#dc2626', fontSize: '0.85rem', mt: -1 }}>
+                {codeError}
+              </Typography>
+            )}
+
             <Box className="flex justify-start">
-              <Typography sx={{ color: '#359CDF', fontSize: '14px', cursor: 'pointer', fontWeight: 600, '&:hover': { textDecoration: 'underline' }}}>
+              <Typography
+                sx={{
+                  color: '#359CDF',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                  '&:hover': { textDecoration: 'underline' },
+                }}
+              >
                 Reenviar código
               </Typography>
             </Box>
 
             <AppButton
               type="submit"
-              disabled={code.some(d => !d)}
               borderRadius="8px"
               textColor="#ffffff"
               sx={{
@@ -214,26 +266,42 @@ export default function Page() {
         )}
 
         {step === 3 && (
-          <form className="flex flex-col gap-4" onSubmit={handleSubmitPassword}>
+          <form className="flex flex-col gap-4" onSubmit={handleSubmitPassword} noValidate>
             <AppInput
               label="Senha"
               type="password"
               value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
+              onChange={e => {
+                setPassword(e.target.value)
+                setPasswordError('')
+              }}
               placeholder="••••••••"
             />
             <AppInput
               label="Confirmar senha"
               type="password"
               value={confirmPassword}
-              onChange={e => setConfirmPassword(e.target.value)}
-              required
+              onChange={e => {
+                setConfirmPassword(e.target.value)
+                setPasswordError('')
+              }}
+              error={Boolean(passwordError)}
+              helperText={passwordError || ' '}
               placeholder="••••••••"
+              sx={{
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: passwordError ? '#dc2626' : '#cbd5e1',
+                },
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor: passwordError ? '#dc2626' : '#94a3b8',
+                },
+                '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: passwordError ? '#dc2626' : '#359CDF',
+                },
+              }}
             />
             <AppButton
               type="submit"
-              disabled={!password || !confirmPassword || password !== confirmPassword}
               borderRadius="8px"
               textColor="#ffffff"
               sx={{
