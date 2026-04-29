@@ -12,6 +12,9 @@ import isoWeek from 'dayjs/plugin/isoWeek'
 import 'dayjs/locale/pt-br'
 import type { WeeklyMoodEntry } from '@/shared/types/common'
 import AppTags from '@/shared/ui/AppTags'
+import { useTheme } from '@mui/material/styles'
+import { getRolePalette } from '@/app/theme/core/roles'
+import { useParentRole } from '@/modules/parent/shared/hooks/useParentRole'
 
 dayjs.locale('pt-br')
 dayjs.extend(isoWeek)
@@ -191,13 +194,17 @@ export default function ParentEmotionalSummary({
   const weekMap = groupByIsoWeek(wellBeing)
   const weekKeys = Array.from(weekMap.keys()).sort((a, b) => (a > b ? -1 : 1))
 
-  const currentWeekKey = weekKeys[weekIndex] ?? dayjs().format('GGGG - [W]WW')
+  const currentWeekKey = weekKeys[weekIndex] ?? dayjs().format('GGGG-[W]WW')
   const currentEntries = weekMap.get(currentWeekKey) ?? []
+  const theme = useTheme()
+  const role = useParentRole()
+  const rolePalette = getRolePalette(theme, role)
 
   const monday =
     weekKeys.length > 0
       ? isoWeekToMonday(currentWeekKey)
       : dayjs().startOf('isoWeek')
+
   const weekDays = Array.from({ length: 7 }).map((_, i) => {
     const date = monday.add(i, 'day')
     const entry = currentEntries.find(e => e.date === date.format('YYYY-MM-DD'))
@@ -225,7 +232,6 @@ export default function ParentEmotionalSummary({
         },
       }}
     >
-      {/* Header */}
       <Box
         sx={{
           display: 'flex',
@@ -246,13 +252,14 @@ export default function ParentEmotionalSummary({
             tags={[
               {
                 label: weekLabel,
+                color: rolePalette.primary,
+                contrastColor: rolePalette.primary,
               },
             ]}
           />
         )}
       </Box>
 
-      {/* Days row */}
       <Box sx={{ position: 'relative', mb: 2.5 }}>
         <IconButton
           className="week-nav-btn"
@@ -316,7 +323,6 @@ export default function ParentEmotionalSummary({
         </IconButton>
       </Box>
 
-      {/* Insight phrases */}
       {phrases.length === 0 ? (
         <Box
           sx={{

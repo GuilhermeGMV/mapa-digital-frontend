@@ -85,7 +85,7 @@ function PageHeader({
           {actions && <Box className="shrink-0">{actions}</Box>}
 
           {tag && !actions && (
-            <Box className="mr-4 flex items-center gap-2 rounded-xl bg-white/20 px-8 py-2 font-semibold whitespace-nowrap text-sm shrink-0">
+            <Box className="mr-4 flex items-center gap-2 rounded-xl px-8 py-2 font-semibold whitespace-nowrap text-sm shrink-0">
               <StarOutlineIcon fontSize="medium" className="opacity-90" />
               {tag}
             </Box>

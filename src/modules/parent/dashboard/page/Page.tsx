@@ -17,7 +17,8 @@ import { useCallback, useState } from 'react'
 import { parentService } from '../services/service'
 import type { RegisterChildRequest } from '@/modules/parent/dashboard/services/service'
 import { useTheme } from '@mui/material/styles'
-import { getHoverStyle, getRoleAccentColor } from '@/app/theme/core/roles'
+import { getRoleAccentColor, getRolePalette } from '@/app/theme/core/roles'
+import { useParentRole } from '@/modules/parent/shared/hooks/useParentRole'
 import ChildRegistrationModal from '@/modules/parent/shared/components/ChildRegistrationModal'
 import ChildSwitcher from '@/modules/parent/shared/components/ChildSwitcher'
 import ParentEmotionalSummary from '@/modules/parent/shared/components/ParentEmotionalSummary'
@@ -44,13 +45,13 @@ export default function Page() {
     selectChild,
   } = useParentDashboard()
   const theme = useTheme()
+  const role = useParentRole()
+  const rolePalette = getRolePalette(theme, role)
+  const accentColor = getRoleAccentColor(theme, role)
   const [modalOpen, setModalOpen] = useState(false)
   const [form, setForm] = useState<RegisterChildRequest>(emptyForm)
   const [submitting, setSubmitting] = useState(false)
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null)
-  const role = 'responsavel'
-  const accentColor = getRoleAccentColor(theme, role)
-  const accentHover = getHoverStyle(theme, accentColor)
 
   const updateField = useCallback(
     (field: keyof RegisterChildRequest, value: string) => {
@@ -121,14 +122,15 @@ export default function Page() {
           onClick={() => setModalOpen(true)}
           sx={{
             border: '1px solid',
+            borderColor: rolePalette.soft,
             borderRadius: 'var(--app-radius-control)',
-            color: 'text.primary',
+            color: rolePalette.contrast,
             flexShrink: 0,
             height: 32,
             width: 32,
             '&:hover': {
-              backgroundColor: accentHover.backgroundColor,
-              borderColor: accentHover.borderColor,
+              backgroundColor: accentColor,
+              borderColor: rolePalette.soft,
             },
           }}
         >
@@ -191,7 +193,6 @@ export default function Page() {
             const subject = getSubjectTagContextByLabel(item.subjectLabel) ??
               SUBJECTS[item.subjectId] ?? {
                 label: item.subjectLabel,
-                color: 'rgba(32,109,197,1)',
               }
             return (
               <Box

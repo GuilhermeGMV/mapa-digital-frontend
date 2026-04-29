@@ -1,5 +1,8 @@
 import { Box, IconButton, Typography } from '@mui/material'
 import type { ParentDashboardChild } from '@/modules/parent/dashboard/types/types'
+import { useTheme } from '@mui/material/styles'
+import { getRolePalette, getSelectedStyle } from '@/app/theme/core/roles'
+import { useParentRole } from '@/modules/parent/shared/hooks/useParentRole'
 
 interface ChildSwitcherProps {
   children: ParentDashboardChild[]
@@ -21,6 +24,10 @@ function ChildSwitcher({
   selectedChildId,
   onSelect,
 }: ChildSwitcherProps) {
+  const theme = useTheme()
+  const role = useParentRole()
+  const rolePalette = getRolePalette(theme, role)
+  const selectColor = getSelectedStyle(theme, rolePalette.contrast)
   if (children.length === 0) return null
 
   return (
@@ -28,13 +35,13 @@ function ChildSwitcher({
       role="group"
       aria-label="Selecionar filho"
       sx={{
+        height: 32,
         display: 'flex',
         alignItems: 'center',
-        backgroundColor: 'rgba(255,255,255,0.1)',
-        border: '1px solid rgba(255,255,255,0.2)',
-        borderRadius: '999px',
-        p: 0.375,
-        gap: 0.25,
+        border: '1px solid',
+        borderColor: rolePalette.contrast,
+        borderRadius: 'var(--app-radius-pill)',
+        gap: 1,
       }}
     >
       {children.map(child => {
@@ -52,19 +59,15 @@ function ChildSwitcher({
               display: 'flex',
               alignItems: 'center',
               gap: 0.75,
-              px: 1,
+              px: isSelected ? 1 : 0.5,
               py: 0.5,
-              border: 'none',
-              borderRadius: '999px',
+              borderRadius: 'var(--app-radius-pill)',
               cursor: 'pointer',
-              transition: 'background-color 0.15s ease',
-              backgroundColor: isSelected
-                ? 'rgba(255,255,255,0.5)'
-                : 'transparent',
+              transition:
+                'background-color 0.15s ease, border-color 0.15s ease',
+              backgroundColor: isSelected ? selectColor : 'transparent',
               '&:hover': {
-                backgroundColor: isSelected
-                  ? 'rgba(255,255,255,0.95)'
-                  : 'rgba(255,255,255,0.15)',
+                backgroundColor: isSelected ? selectColor : selectColor,
               },
             }}
           >
@@ -73,10 +76,9 @@ function ChildSwitcher({
                 width: 20,
                 height: 20,
                 borderRadius: '50%',
-                backgroundColor: isSelected
-                  ? 'var(--app-role-current-primary, #3b3b3b)'
-                  : 'rgba(255,255,255,0.3)',
-                color: '#fff',
+                border: '1px solid',
+                backgroundColor: rolePalette.secondary,
+                color: rolePalette.contrast,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -93,11 +95,10 @@ function ChildSwitcher({
                 sx={{
                   fontSize: '13px',
                   fontWeight: 600,
-                  color: isSelected
-                    ? 'var(--app-role-current-primary, #1a1a1a)'
-                    : 'rgba(255,255,255,0.92)',
+                  color: rolePalette.contrast,
                   lineHeight: 1,
                   whiteSpace: 'nowrap',
+                  pr: 0.25,
                 }}
               >
                 {firstName}

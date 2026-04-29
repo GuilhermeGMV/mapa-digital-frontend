@@ -3,7 +3,7 @@ import type {
   ParentDashboardChild,
   ParentDashboardData,
   StudentDisciplineProgress,
-} from '../types/types'
+} from '@/modules/parent/dashboard/types/types'
 import type { SummaryMetric, WeeklyMoodEntry } from '@/shared/types/common'
 import type { Task } from '@/modules/student/shared/components/Planner'
 
@@ -126,7 +126,7 @@ export const CHILD_MOCK_DATA: Record<string, ChildMockData> = {
 }
 
 export const PARENT_DASHBOARD_MOCK: ParentDashboardData = {
+  ...CHILD_MOCK_DATA['mock-student-1'],
   child: MOCK_CHILDREN[0],
   children: MOCK_CHILDREN,
-  ...CHILD_MOCK_DATA['mock-student-1'],
 }

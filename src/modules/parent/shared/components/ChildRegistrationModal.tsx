@@ -113,10 +113,9 @@ function ChildRegistrationModal({
 
         <AppInput
           label="Data de nascimento"
-          type="date"
           onChange={e => onUpdateField('birth_date', e.target.value)}
+          placeholder="DD/MM/AAAA"
           value={form.birth_date}
-          InputLabelProps={{ shrink: true }}
         />
         <AppDropdown
           fullWidth

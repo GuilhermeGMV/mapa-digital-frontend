@@ -71,7 +71,7 @@ function mockState(): DashboardState {
   return mockStateForChild('mock-student-1', MOCK_CHILDREN)
 }
 
-export function useParentDashboard(): UseParentDashboardResult {
+export function useParentSettings(): UseParentDashboardResult {
   const [state, setState] = useState<DashboardState>(LOADING_STATE)
 
   const selectChild = useCallback((id: string) => {
