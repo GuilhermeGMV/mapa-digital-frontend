@@ -17,6 +17,7 @@ export const APP_ROUTES = {
   },
   parent: {
     dashboard: '/parent/dashboard',
+    settings: '/parent/settings',
   },
   admin: {
     dashboard: '/admin/dashboard',

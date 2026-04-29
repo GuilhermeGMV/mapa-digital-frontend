@@ -19,17 +19,12 @@ import dayjs from 'dayjs'
 import isoWeek from 'dayjs/plugin/isoWeek'
 import 'dayjs/locale/pt-br'
 import type { WeeklyMoodEntry } from '@/shared/types/common'
-import ParentEmotionalSummary from '@/shared/ui/ParentEmotionalSummary'
+import ParentEmotionalSummary from '@/modules/parent/shared/components/ParentEmotionalSummary'
 
 dayjs.locale('pt-br')
 dayjs.extend(isoWeek)
 
 type EmotionButtonColor = 'success' | 'warning' | 'error'
-
-interface EmotionalContainerProps {
-  mode?: 'checkin' | 'summary'
-  wellBeing?: WeeklyMoodEntry[]
-}
 
 interface EmotionButtonProps {
   icon: ReactNode
@@ -98,10 +93,7 @@ function EmotionButton({
   )
 }
 
-export default function EmotionalContainer({
-  mode = 'checkin',
-  wellBeing = [],
-}: EmotionalContainerProps) {
+export default function EmotionalContainer() {
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedEmotion, setSelectedEmotion] = useState('')
   const startOfWeek = dayjs().startOf('isoWeek')
@@ -110,10 +102,6 @@ export default function EmotionalContainer({
     return { date, mood: null as string | null }
   })
   const [weeklyMood, setWeeklyMood] = useState(initialWeek)
-
-  if (mode === 'summary') {
-    return <ParentEmotionalSummary wellBeing={wellBeing} />
-  }
 
   function handleEmotionSelect(emotionLabel: string) {
     const moodMap: Record<string, string> = {

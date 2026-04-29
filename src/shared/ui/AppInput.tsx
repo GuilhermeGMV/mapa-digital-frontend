@@ -13,7 +13,7 @@ import type { SxProps, Theme } from '@mui/material/styles'
 
 type InputSize = 'small' | 'medium' | 'large'
 
-type InputType = 'text' | 'password' | 'email' | 'search' | 'name'
+type InputType = 'text' | 'password' | 'email' | 'search' | 'name' | 'date'
 
 type BackgroundColor = 'background.paper' | 'background.default' | string
 

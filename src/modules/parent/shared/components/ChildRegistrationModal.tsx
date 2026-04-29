@@ -1,0 +1,153 @@
+import { Box, Typography } from '@mui/material'
+import AppActionModal from '@/shared/ui/AppActionModal'
+import AppDropdown, { type DropdownOption } from '@/shared/ui/AppDropdown'
+import AppInput from '@/shared/ui/AppInput'
+import type { RegisterChildRequest } from '@/modules/parent/dashboard/services/service'
+
+const CLASS_OPTIONS: DropdownOption[] = [
+  { value: '1', label: '1º Ano (Fund.)' },
+  { value: '2', label: '2º Ano (Fund.)' },
+  { value: '3', label: '3º Ano (Fund.)' },
+  { value: '4', label: '4º Ano (Fund.)' },
+  { value: '5', label: '5º Ano (Fund.)' },
+  { value: '6', label: '6º Ano (Fund.)' },
+  { value: '7', label: '7º Ano (Fund.)' },
+  { value: '8', label: '8º Ano (Fund.)' },
+  { value: '9', label: '9º Ano (Fund.)' },
+  { value: '10', label: '1º Ano (Médio)' },
+  { value: '11', label: '2º Ano (Médio)' },
+  { value: '12', label: '3º Ano (Médio)' },
+]
+
+type FeedbackTone = 'warning' | 'error'
+
+const feedbackTokens: Record<
+  FeedbackTone,
+  { container: object; text: object }
+> = {
+  warning: {
+    container: {
+      backgroundColor: 'rgba(234,179,8,0.08)',
+      border: '1px solid rgba(234,179,8,0.35)',
+    },
+    text: { color: '#eab308' },
+  },
+  error: {
+    container: {
+      backgroundColor: 'rgba(239,68,68,0.08)',
+      border: '1px solid rgba(239,68,68,0.35)',
+    },
+    text: { color: '#ef4444' },
+  },
+}
+
+function resolveFeedbackTone(message: string): FeedbackTone {
+  return message.includes('aprovação') ? 'warning' : 'error'
+}
+
+export interface ChildRegistrationModalProps {
+  feedbackMessage: string | null
+  form: RegisterChildRequest
+  isFormValid: boolean
+  onClose: () => void
+  onConfirm: () => void
+  onUpdateField: (field: keyof RegisterChildRequest, value: string) => void
+  open: boolean
+  submitting: boolean
+}
+
+function ChildRegistrationModal({
+  feedbackMessage,
+  form,
+  isFormValid,
+  onClose,
+  onConfirm,
+  onUpdateField,
+  open,
+  submitting,
+}: ChildRegistrationModalProps) {
+  const feedbackTone = feedbackMessage
+    ? resolveFeedbackTone(feedbackMessage)
+    : null
+
+  return (
+    <AppActionModal
+      confirmLabel="Cadastrar"
+      description="Preencha os dados do aluno. O cadastro requer aprovação do administrador."
+      disableConfirm={!isFormValid || submitting}
+      loading={submitting}
+      onClose={onClose}
+      onConfirm={onConfirm}
+      open={open}
+      title="Cadastrar filho"
+    >
+      <Box className="grid gap-3">
+        <Box className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <AppInput
+            label="Nome"
+            onChange={e => onUpdateField('first_name', e.target.value)}
+            placeholder="Ex.: Lucas"
+            value={form.first_name}
+          />
+          <AppInput
+            label="Sobrenome"
+            onChange={e => onUpdateField('last_name', e.target.value)}
+            placeholder="Ex.: Silva"
+            value={form.last_name}
+          />
+        </Box>
+        <AppInput
+          label="E-mail do aluno"
+          type="email"
+          onChange={e => onUpdateField('email', e.target.value)}
+          placeholder="aluno@escola.com"
+          value={form.email}
+        />
+        <AppInput
+          label="Senha de acesso (mín. 8 caracteres)"
+          type="password"
+          onChange={e => onUpdateField('password', e.target.value)}
+          placeholder="••••••••"
+          value={form.password}
+        />
+
+        <AppInput
+          label="Data de nascimento"
+          type="date"
+          onChange={e => onUpdateField('birth_date', e.target.value)}
+          value={form.birth_date}
+          InputLabelProps={{ shrink: true }}
+        />
+        <AppDropdown
+          fullWidth
+          label="Ano escolar"
+          options={CLASS_OPTIONS}
+          onChange={e => onUpdateField('student_class', String(e.target.value))}
+          placeholder="Selecione o ano"
+          value={form.student_class}
+          neutralOutline
+        />
+
+        {feedbackTone ? (
+          <Box
+            sx={{
+              ...feedbackTokens[feedbackTone].container,
+              borderRadius: '10px',
+              px: 2,
+              py: 1,
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{ ...feedbackTokens[feedbackTone].text, fontWeight: 500 }}
+            >
+              {feedbackMessage}
+            </Typography>
+          </Box>
+        ) : null}
+      </Box>
+    </AppActionModal>
+  )
+}
+
+export default ChildRegistrationModal

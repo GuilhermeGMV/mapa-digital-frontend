@@ -18,6 +18,10 @@ export const parentRoutes: RouteObject[] = [
                 path: APP_ROUTES.parent.dashboard,
                 element: <ParentDashboardPage />,
               },
+              {
+                path: APP_ROUTES.parent.settings,
+                element: <ParentDashboardPage />,
+              },
             ],
           },
         ],

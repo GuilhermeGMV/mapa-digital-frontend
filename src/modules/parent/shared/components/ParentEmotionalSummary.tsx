@@ -3,7 +3,7 @@ import { Box, IconButton, Stack, Typography } from '@mui/material'
 import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied'
 import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied'
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied'
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
+import NotInterestedIcon from '@mui/icons-material/NotInterested'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import { useState } from 'react'
@@ -104,7 +104,7 @@ function MoodDayCell({ mood, dayLabel }: { mood: Mood; dayLabel: string }) {
         {config ? (
           config.icon(22)
         ) : (
-          <HelpOutlineIcon
+          <NotInterestedIcon
             sx={{ fontSize: 20, color: 'text.disabled', opacity: 0.35 }}
           />
         )}
@@ -112,8 +112,8 @@ function MoodDayCell({ mood, dayLabel }: { mood: Mood; dayLabel: string }) {
       <Typography
         sx={{
           fontSize: '10px',
-          fontWeight: 600,
-          color: config ? config.color : 'text.disabled',
+          fontWeight: 500,
+          color: 'text.disabled',
           letterSpacing: '0.02em',
           lineHeight: 1,
         }}

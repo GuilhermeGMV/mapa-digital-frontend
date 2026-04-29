@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { parentService } from '../services/service'
-import { PARENT_DASHBOARD_MOCK } from '../__mocks__/parentDashboard.mock'
+import {
+  CHILD_MOCK_DATA,
+  MOCK_CHILDREN,
+} from '../__mocks__/parentDashboard.mock'
 import type {
   ParentDashboardChild,
   ParentDashboardData,
@@ -46,19 +49,26 @@ const LOADING_STATE: DashboardState = {
   selectedChildId: null,
 }
 
-function mockState(): DashboardState {
-  const mock: ParentDashboardData = PARENT_DASHBOARD_MOCK
+function mockStateForChild(
+  childId: string,
+  children: ParentDashboardChild[]
+): DashboardState {
+  const data = CHILD_MOCK_DATA[childId] ?? CHILD_MOCK_DATA['mock-student-1']
   return {
-    child: mock.child,
-    children: mock.children,
-    disciplines: mock.disciplines,
+    child: data.child,
+    children,
+    disciplines: data.disciplines,
     error: false,
     isLoading: false,
-    metrics: mock.metrics,
-    tasks: mock.tasks,
-    wellBeing: mock.wellBeing,
-    selectedChildId: mock.child?.id ?? null,
+    metrics: data.metrics,
+    tasks: data.tasks,
+    wellBeing: data.wellBeing,
+    selectedChildId: childId,
   }
+}
+
+function mockState(): DashboardState {
+  return mockStateForChild('mock-student-1', MOCK_CHILDREN)
 }
 
 export function useParentDashboard(): UseParentDashboardResult {
@@ -91,12 +101,7 @@ export function useParentDashboard(): UseParentDashboardResult {
           wellBeing,
         }))
       } catch {
-        setState(prev => ({
-          ...mockState(),
-          children,
-          child: children.find(c => c.id === childId) ?? prev.child,
-          selectedChildId: childId,
-        }))
+        setState(mockStateForChild(childId, children))
       }
     },
     []
@@ -141,7 +146,6 @@ export function useParentDashboard(): UseParentDashboardResult {
     }
   }, [loadStudentData])
 
-  // Re-fetch when child selection changes after initial load
   const { selectedChildId, children, isLoading } = state
   useEffect(() => {
     if (!selectedChildId || isLoading || children.length === 0) return
