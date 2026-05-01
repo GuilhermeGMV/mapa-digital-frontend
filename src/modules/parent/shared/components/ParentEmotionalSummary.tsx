@@ -158,7 +158,8 @@ function groupByIsoWeek(
 ): Map<string, WeeklyMoodEntry[]> {
   const map = new Map<string, WeeklyMoodEntry[]>()
   for (const entry of entries) {
-    const key = dayjs(entry.date).format('GGGG-[W]WW')
+    const date = dayjs(entry.date)
+    const key = `${date.isoWeekYear()}-W${String(date.isoWeek()).padStart(2, '0')}`
     if (!map.has(key)) map.set(key, [])
     map.get(key)!.push(entry)
   }
@@ -194,7 +195,10 @@ export default function ParentEmotionalSummary({
   const weekMap = groupByIsoWeek(wellBeing)
   const weekKeys = Array.from(weekMap.keys()).sort((a, b) => (a > b ? -1 : 1))
 
-  const currentWeekKey = weekKeys[weekIndex] ?? dayjs().format('GGGG-[W]WW')
+  const today = dayjs()
+  const currentWeekKey =
+    weekKeys[weekIndex] ??
+    `${today.isoWeekYear()}-W${String(today.isoWeek()).padStart(2, '0')}`
   const currentEntries = weekMap.get(currentWeekKey) ?? []
   const theme = useTheme()
   const role = useParentRole()
@@ -251,6 +255,7 @@ export default function ParentEmotionalSummary({
             size="sm"
             tags={[
               {
+                id: currentWeekKey,
                 label: weekLabel,
                 color: rolePalette.primary,
                 contrastColor: rolePalette.primary,

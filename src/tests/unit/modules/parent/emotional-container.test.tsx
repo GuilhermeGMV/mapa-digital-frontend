@@ -1,6 +1,9 @@
 import { assert } from '@/tests/helpers/assert'
-import { test } from '@jest/globals'
+import { expect, test } from '@jest/globals'
+import { screen } from '@testing-library/react'
 import { readSource } from '@/tests/helpers/source'
+import EmotionalContainer from '@/shared/ui/EmotionalContainer'
+import { renderWithProviders } from '@/tests/helpers/render'
 
 test('EmotionalContainer uses theme tokens and no empty JSX expressions', () => {
   const source = readSource('shared/ui/EmotionalContainer.tsx')
@@ -11,9 +14,13 @@ test('EmotionalContainer uses theme tokens and no empty JSX expressions', () => 
   assert.doesNotMatch(source, /color: 'black'/)
 })
 
-test('EmotionalContainer summary mode delegates to ParentEmotionalSummary', () => {
-  const source = readSource('shared/ui/EmotionalContainer.tsx')
+test('EmotionalContainer renders the parent check-in controls and weekly summary shell', () => {
+  renderWithProviders(<EmotionalContainer />)
 
-  assert.match(source, /ParentEmotionalSummary/)
-  assert.match(source, /mode.*checkin.*summary|mode.*summary.*checkin/)
+  expect(screen.getByText(/Check-in emocional/i)).toBeInTheDocument()
+  expect(screen.getByTestId('card-checkin-emocional')).toBeInTheDocument()
+  expect(screen.getByTestId('emotion-button-good')).toBeInTheDocument()
+  expect(screen.getByTestId('emotion-button-regular')).toBeInTheDocument()
+  expect(screen.getByTestId('emotion-button-bad')).toBeInTheDocument()
+  expect(screen.getByText(/Humor da Semana/i)).toBeInTheDocument()
 })

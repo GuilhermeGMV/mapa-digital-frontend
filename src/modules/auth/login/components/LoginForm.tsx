@@ -173,6 +173,7 @@ function LoginForm({ isSubmitting = false, mode, onSubmit }: LoginFormProps) {
     <Box
       className="relative h-full"
       component="form"
+      noValidate
       onSubmit={handleSubmit}
       sx={{
         boxSizing: 'border-box',

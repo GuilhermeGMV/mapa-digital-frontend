@@ -6,8 +6,13 @@ import type {
   ContentApprovalItem,
   ParentApprovalItem,
 } from '../../../../modules/admin/shared/types/types'
+import { buildApprovalQueueQuery } from '../../../../modules/admin/content/services/content/mapper'
 import { mapContentApprovalQueueResponse } from '../../../../modules/admin/content/services/content/service'
-import { mapParentApprovalUserToParentApprovalItem } from '../../../../modules/admin/parent/services/parent/service'
+import {
+  buildParentApprovalQuery,
+  mapParentApprovalUserToParentApprovalItem,
+  mapParentStatusToParentApprovalUserStatus,
+} from '../../../../modules/admin/parent/services/parent/service'
 import {
   filterApprovalItems,
   getParentApprovalEligibility,
@@ -236,6 +241,63 @@ test('admin user approvals normalize backend users into parent queue items', () 
   )
 })
 
+test('admin approval query builders translate UI filters to API parameters', () => {
+  const contentQuery = buildApprovalQueueQuery({
+    page: 3,
+    pageSize: 25,
+    query: ' matemática ',
+    status: 'inReview',
+  })
+  const parentPendingQuery = buildParentApprovalQuery({
+    page: 1,
+    pageSize: 10,
+    query: '',
+    status: 'pendingValidation',
+  })
+  const parentAllQuery = buildParentApprovalQuery({
+    page: 1,
+    pageSize: 10,
+    query: 'ignored locally',
+    status: 'all',
+  })
+
+  assert.deepEqual(contentQuery, {
+    page: 3,
+    page_size: 25,
+    query: 'matemática',
+    status: 'in_review',
+  })
+  assert.deepEqual(parentPendingQuery, {
+    role: 'responsavel',
+    user_status: 'aguardando',
+  })
+  assert.deepEqual(parentAllQuery, {
+    role: 'responsavel',
+    user_status: undefined,
+  })
+})
+
+test('admin parent status updates only send final approval states to the backend', () => {
+  assert.equal(
+    mapParentStatusToParentApprovalUserStatus('approved'),
+    'aprovado'
+  )
+  assert.equal(mapParentStatusToParentApprovalUserStatus('rejected'), 'negado')
+  assert.doesNotThrow(() =>
+    mapParentStatusToParentApprovalUserStatus('approved')
+  )
+
+  try {
+    mapParentStatusToParentApprovalUserStatus('pendingValidation')
+    throw new Error('Expected pendingValidation to be rejected')
+  } catch (error) {
+    assert.match(
+      error instanceof Error ? error.message : String(error),
+      /aguardando/
+    )
+  }
+})
+
 test('parent approvals use only real admin user endpoints', () => {
   const repositorySource = readSource(
     'modules/admin/parent/services/parent/repository.ts'
@@ -287,10 +349,10 @@ test('content correction sessions use a route-level workflow', async () => {
   assert.match(correctionPageSource, /height: correctionCardHeight/)
   assert.match(correctionPageSource, /'&:last-child': \{ pb: 0 \}/)
   assert.match(correctionPageSource, /flex: '1 1 auto'/)
-  assert.match(
-    correctionPageSource,
-    /gridTemplateColumns: 'repeat\(3, minmax\(0, 1fr\)\)'/
-  )
+  assert.match(correctionPageSource, /quickActions/)
+  assert.match(correctionPageSource, /Pedir mais detalhes/)
+  assert.match(correctionPageSource, /Explicar com exemplo/)
+  assert.match(correctionPageSource, /flexWrap: \{ md: 'nowrap', xs: 'wrap' \}/)
   assert.match(correctionPageSource, /alignSelf: 'end'/)
   assert.doesNotMatch(correctionPageSource, /overflowX: 'auto'/)
   assert.doesNotMatch(correctionPageSource, /marginTop: 'auto'/)

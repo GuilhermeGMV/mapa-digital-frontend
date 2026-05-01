@@ -9,7 +9,8 @@ test('useParentDashboard exists and exports the hook', () => {
 
   assert.match(source, /useParentDashboard/)
   assert.match(source, /isLoading/)
-  assert.match(source, /CHILD_MOCK_DATA/)
   assert.match(source, /getChildren/)
   assert.match(source, /getStudentSummary/)
+  assert.doesNotMatch(source, /CHILD_MOCK_DATA/)
+  assert.doesNotMatch(source, /MOCK_CHILDREN/)
 })

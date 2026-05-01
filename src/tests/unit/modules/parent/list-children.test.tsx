@@ -1,49 +1,94 @@
-import { assert } from '@/tests/helpers/assert'
-import { test } from '@jest/globals'
-import { readSource } from '@/tests/helpers/source'
+import { expect, jest, test } from '@jest/globals'
+import { render } from '@testing-library/react'
+import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { ThemeProvider } from '@mui/material/styles'
+import React from 'react'
+import { MemoryRouter } from 'react-router-dom'
+import { AuthContext } from '@/app/auth/context'
+import type { AuthContextValue } from '@/app/auth/core/types'
+import { createAppTheme } from '@/app/theme/core/theme'
+import ListChildren from '@/modules/parent/settings/components/ListChildren'
+import type { ParentDashboardChild } from '@/modules/parent/settings/types/types'
 
-test('ListChildren renders selectable child cards with parent theme context', () => {
-  const source = readSource(
-    'modules/parent/settings/components/ListChildren.tsx'
+const authValue: AuthContextValue = {
+  isAuthenticated: true,
+  login: async () => {},
+  logout: () => {},
+  status: 'authenticated',
+  token: 'test-token',
+  user: { email: 'parent@test.com', name: 'Parent', role: 'responsavel' },
+}
+
+function renderListChildren(
+  props: Partial<React.ComponentProps<typeof ListChildren>> = {}
+) {
+  const defaultProps: React.ComponentProps<typeof ListChildren> = {
+    children: [],
+    currentPage: 1,
+    emptyStateDescription: 'Nenhum filho cadastrado.',
+    emptyStateTitle: 'Sem filhos',
+    onPageChange: jest.fn(),
+    onQueryChange: jest.fn(),
+    onSelect: jest.fn(),
+    query: '',
+    resultsSummary: { count: 0, pluralLabel: 'filhos', singularLabel: 'filho' },
+    searchPlaceholder: 'Buscar filho',
+    selectedChildId: null,
+    totalPages: 1,
+    ...props,
+  }
+
+  return render(
+    <ThemeProvider theme={createAppTheme('light')}>
+      <MemoryRouter>
+        <AuthContext.Provider value={authValue}>
+          <ListChildren {...defaultProps} />
+        </AuthContext.Provider>
+      </MemoryRouter>
+    </ThemeProvider>
   )
+}
 
-  assert.match(source, /ListChildrenCard/)
-  assert.match(source, /selectedChildId/)
-  assert.match(source, /onSelect/)
-  assert.match(source, /onCreate/)
-  assert.match(source, /onEdit/)
-  assert.match(source, /onDelete/)
-  assert.match(source, /role="list"/)
-  assert.match(source, /SearchBarAndFilter/)
-  assert.doesNotMatch(source, /filterOptions=/)
-  assert.match(source, /children\.map\(child =>/)
+const MOCK_CHILDREN: ParentDashboardChild[] = [
+  { id: 'child-1', name: 'Lucas Silva', grade: '7º Ano' },
+  { id: 'child-2', name: 'Ana Costa', grade: '5º Ano' },
+]
+
+test('ListChildren shows empty state when children list is empty', () => {
+  renderListChildren({ children: [] })
+
+  expect(screen.getByText('Sem filhos')).toBeInTheDocument()
+  expect(screen.getByText('Nenhum filho cadastrado.')).toBeInTheDocument()
 })
 
-test('ListChildrenCard uses planner-like rows with initials and selected state', () => {
-  const source = readSource(
-    'modules/parent/settings/components/ListChildrenCard.tsx'
-  )
+test('ListChildren renders a card for each child', () => {
+  renderListChildren({ children: MOCK_CHILDREN })
 
-  assert.match(source, /role="listitem"/)
-  assert.match(source, /ListItemButton/)
-  assert.match(source, /Avatar/)
-  assert.match(source, /aria-pressed/)
-  assert.match(source, /getInitials/)
-  assert.match(source, /child\.grade/)
-  assert.match(source, /handleMenuOpen/)
-  assert.match(source, /Editar/)
-  assert.match(source, /Excluir/)
-  assert.match(source, /getRoleSelectedStyle/)
+  expect(screen.getByText('Lucas Silva')).toBeInTheDocument()
+  expect(screen.getByText('Ana Costa')).toBeInTheDocument()
 })
 
-test('ChildSettingsModal handles create, edit and delete child actions', () => {
-  const source = readSource(
-    'modules/parent/settings/components/ChildSettingsModal.tsx'
+test('ListChildren calls onSelect with child id when card is clicked', async () => {
+  const user = userEvent.setup()
+  const onSelect = jest.fn()
+
+  renderListChildren({ children: MOCK_CHILDREN, onSelect })
+
+  await user.click(
+    screen.getByRole('button', { name: /Selecionar Lucas Silva/i })
   )
 
-  assert.match(source, /ChildSettingsModalMode/)
-  assert.match(source, /Cadastrar filho/)
-  assert.match(source, /Editar filho/)
-  assert.match(source, /Excluir filho/)
-  assert.match(source, /AppActionModal/)
+  expect(onSelect).toHaveBeenCalledWith('child-1')
+})
+
+test('ListChildren calls onCreate when add button is clicked', async () => {
+  const user = userEvent.setup()
+  const onCreate = jest.fn()
+
+  renderListChildren({ children: MOCK_CHILDREN, onCreate })
+
+  await user.click(screen.getByRole('button', { name: /adicionar filho/i }))
+
+  expect(onCreate).toHaveBeenCalledTimes(1)
 })

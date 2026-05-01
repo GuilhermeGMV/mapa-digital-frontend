@@ -1,12 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { parentService } from '../services/service'
-import {
-  CHILD_MOCK_DATA,
-  MOCK_CHILDREN,
-} from '@/modules/parent/__mocks__/parentDashboard.mock'
 import type {
   ParentDashboardChild,
-  ParentDashboardData,
   StudentDisciplineProgress,
 } from '../types/types'
 import type { SummaryMetric, WeeklyMoodEntry } from '@/shared/types/common'
@@ -49,26 +44,15 @@ const LOADING_STATE: DashboardState = {
   selectedChildId: null,
 }
 
-function mockStateForChild(
-  childId: string,
-  children: ParentDashboardChild[]
-): DashboardState {
-  const data = CHILD_MOCK_DATA[childId] ?? CHILD_MOCK_DATA['mock-student-1']
-  return {
-    child: data.child,
-    children,
-    disciplines: data.disciplines,
-    error: false,
-    isLoading: false,
-    metrics: data.metrics,
-    tasks: data.tasks,
-    wellBeing: data.wellBeing,
-    selectedChildId: childId,
-  }
+const EMPTY_STATE: DashboardState = {
+  ...LOADING_STATE,
+  isLoading: false,
 }
 
-function mockState(): DashboardState {
-  return mockStateForChild('mock-student-1', MOCK_CHILDREN)
+const ERROR_STATE: DashboardState = {
+  ...LOADING_STATE,
+  isLoading: false,
+  error: true,
 }
 
 export function useParentDashboard(): UseParentDashboardResult {
@@ -101,7 +85,7 @@ export function useParentDashboard(): UseParentDashboardResult {
           wellBeing,
         }))
       } catch {
-        setState(mockStateForChild(childId, children))
+        setState(prev => ({ ...prev, isLoading: false, error: true }))
       }
     },
     []
@@ -117,7 +101,7 @@ export function useParentDashboard(): UseParentDashboardResult {
         if (!active) return
 
         if (fetched.length === 0) {
-          setState(mockState())
+          setState(EMPTY_STATE)
           return
         }
 
@@ -136,7 +120,7 @@ export function useParentDashboard(): UseParentDashboardResult {
         }))
         await loadStudentData(firstId, children)
       } catch {
-        if (active) setState(mockState())
+        if (active) setState(ERROR_STATE)
       }
     }
 
