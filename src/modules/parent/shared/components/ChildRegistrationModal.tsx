@@ -1,8 +1,10 @@
 import { Alert, Box } from '@mui/material'
+import { useMemo } from 'react'
 import AppActionModal from '@/shared/ui/AppActionModal'
 import AppDropdown, { type DropdownOption } from '@/shared/ui/AppDropdown'
 import AppInput from '@/shared/ui/AppInput'
 import type { RegisterChildRequest } from '@/modules/parent/dashboard/services/service'
+import { useSchoolOptions } from '@/modules/parent/shared/hooks/useSchoolOptions'
 
 const CLASS_OPTIONS: DropdownOption[] = [
   { value: '1', label: '1º Ano (Fund.)' },
@@ -66,10 +68,17 @@ function ChildRegistrationModal({
     ? resolveFeedbackTone(feedbackMessage)
     : null
 
+  const { schools, isLoading: loadingSchools } = useSchoolOptions(open)
+
+  const schoolOptions = useMemo<DropdownOption[]>(
+    () => schools.map(school => ({ value: school.id, label: school.name })),
+    [schools]
+  )
+
   return (
     <AppActionModal
       confirmLabel="Cadastrar"
-      description="Preencha os dados do aluno. O cadastro requer aprovação do administrador."
+      description="Preencha os dados do aluno. O acesso será criado e vinculado ao responsável."
       disableConfirm={!isFormValid || submitting}
       loading={submitting}
       onClose={onClose}
@@ -106,11 +115,16 @@ function ChildRegistrationModal({
           placeholder="••••••••"
           value={form.password}
         />
-
+        <AppInput
+          label="Telefone (opcional)"
+          onChange={e => onUpdateField('phone_number', e.target.value)}
+          placeholder="(00) 00000-0000"
+          value={form.phone_number ?? ''}
+        />
         <AppInput
           label="Data de nascimento"
           onChange={e => onUpdateField('birth_date', e.target.value)}
-          placeholder="DD/MM/AAAA"
+          placeholder="AAAA-MM-DD"
           value={form.birth_date}
         />
         <AppDropdown
@@ -120,6 +134,17 @@ function ChildRegistrationModal({
           onChange={e => onUpdateField('student_class', String(e.target.value))}
           placeholder="Selecione o ano"
           value={form.student_class}
+          neutralOutline
+        />
+        <AppDropdown
+          fullWidth
+          label="Escola (opcional)"
+          options={schoolOptions}
+          onChange={e => onUpdateField('school_id', String(e.target.value))}
+          placeholder={
+            loadingSchools ? 'Carregando escolas...' : 'Selecione a escola'
+          }
+          value={form.school_id ?? ''}
           neutralOutline
         />
 

@@ -28,14 +28,44 @@ test('parent dashboard has child selector in PageHeader actions', () => {
 
 test('parent dashboard delegates child registration to ChildRegistrationModal', () => {
   const source = readSource('modules/parent/dashboard/page/Page.tsx')
+  const serviceSource = readSource(
+    'modules/parent/dashboard/services/service.ts'
+  )
 
   assert.match(source, /ChildRegistrationModal/)
   assert.match(source, /registerChild/)
+  assert.match(source, /setModalOpen\(true\)/)
   assert.match(source, /first_name/)
   assert.match(source, /last_name/)
   assert.match(source, /birth_date/)
   assert.match(source, /student_class/)
+  assert.match(serviceSource, /post<RegisterStudentApiResponse>\(\s*'student'/)
+  assert.match(serviceSource, /`student\/\$\{studentId\}\/summary`/)
+  assert.match(serviceSource, /`student\/\$\{studentId\}\/disciplines`/)
+  assert.match(serviceSource, /`student\/\$\{studentId\}\/tasks`/)
+  assert.match(serviceSource, /`student\/\$\{studentId\}\/well-being`/)
+  assert.doesNotMatch(serviceSource, /register\/student/)
+  assert.doesNotMatch(serviceSource, /parent\/student/)
   assert.doesNotMatch(source, /ApprovalActionModal/)
+})
+
+test('parent settings uses real student endpoints and no local mock fallback', () => {
+  const serviceSource = readSource(
+    'modules/parent/settings/services/service.ts'
+  )
+  const hookSource = readSource(
+    'modules/parent/settings/hooks/useParentSettings.ts'
+  )
+
+  assert.match(serviceSource, /post<RegisterStudentApiResponse>\(\s*'student'/)
+  assert.match(serviceSource, /`student\/\$\{studentId\}\/summary`/)
+  assert.match(serviceSource, /`student\/\$\{studentId\}\/disciplines`/)
+  assert.match(serviceSource, /`student\/\$\{studentId\}\/tasks`/)
+  assert.match(serviceSource, /`student\/\$\{studentId\}\/well-being`/)
+  assert.doesNotMatch(serviceSource, /register\/student/)
+  assert.doesNotMatch(serviceSource, /parent\/student/)
+  assert.doesNotMatch(hookSource, /mockState/)
+  assert.doesNotMatch(hookSource, /localChildFrom/)
 })
 
 test('ChildRegistrationModal handles feedback and uses system components', () => {

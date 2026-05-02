@@ -65,6 +65,10 @@ const parentItems: ParentApprovalItem[] = [
       },
     ],
     childName: 'Luiza Souza',
+    name: {
+      firstName: 'Mariana',
+      lastName: 'Souza',
+    },
     validation: {
       hasDocument: false,
       relationshipConfirmed: true,
@@ -85,6 +89,10 @@ const parentItems: ParentApprovalItem[] = [
       },
     ],
     childName: 'Rafael Santos',
+    name: {
+      firstName: 'Carlos',
+      lastName: 'Santos',
+    },
     validation: {
       hasDocument: true,
       relationshipConfirmed: true,
@@ -222,15 +230,19 @@ test('admin user approvals normalize backend users into parent queue items', () 
   const item = mapParentApprovalUserToParentApprovalItem({
     created_at: '2026-04-08T10:15:00+00:00',
     email: 'responsavel@test.com',
-    id: 42,
+    id: '47f2a20f-77cb-4d0b-89ef-b64d160fce48',
     is_superadmin: false,
     name: 'Mariana Souza',
-    role: 'responsavel',
-    status: 'aguardando',
+    role: 'guardian',
+    status: 'waiting',
   })
 
-  assert.equal(item.id, 'responsavel@test.com')
+  assert.equal(item.id, '47f2a20f-77cb-4d0b-89ef-b64d160fce48')
   assert.equal(item.title, 'Mariana Souza')
+  assert.deepEqual(item.name, {
+    firstName: 'Mariana',
+    lastName: 'Souza',
+  })
   assert.equal(item.status, 'pendingValidation')
   assert.equal(item.requestedAt, '08/04/2026')
   assert.equal(item.roleLabel, 'Responsável')
@@ -268,11 +280,11 @@ test('admin approval query builders translate UI filters to API parameters', () 
     status: 'in_review',
   })
   assert.deepEqual(parentPendingQuery, {
-    role: 'responsavel',
-    user_status: 'aguardando',
+    role: 'guardian',
+    user_status: 'waiting',
   })
   assert.deepEqual(parentAllQuery, {
-    role: 'responsavel',
+    role: 'guardian',
     user_status: undefined,
   })
 })
@@ -280,9 +292,12 @@ test('admin approval query builders translate UI filters to API parameters', () 
 test('admin parent status updates only send final approval states to the backend', () => {
   assert.equal(
     mapParentStatusToParentApprovalUserStatus('approved'),
-    'aprovado'
+    'approved'
   )
-  assert.equal(mapParentStatusToParentApprovalUserStatus('rejected'), 'negado')
+  assert.equal(
+    mapParentStatusToParentApprovalUserStatus('rejected'),
+    'rejected'
+  )
   assert.doesNotThrow(() =>
     mapParentStatusToParentApprovalUserStatus('approved')
   )
@@ -313,10 +328,10 @@ test('parent approvals use only real admin user endpoints', () => {
   assert.match(repositorySource, /client\.patch<ParentApprovalUserDto>/)
   assert.match(
     repositorySource,
-    /admin\/users\/\$\{encodeURIComponent\(email\)\}\/status/
+    /admin\/users\/\$\{encodeURIComponent\(userId\)\}\/status/
   )
-  assert.match(repositorySource, /post<unknown>\(\s*'register'/)
-  assert.match(mapperSource, /role: 'responsavel'/)
+  assert.match(repositorySource, /post<unknown>\(\s*'register\/guardian'/)
+  assert.match(mapperSource, /role: 'guardian'/)
   assert.doesNotMatch(repositorySource, /mock/i)
   assert.doesNotMatch(repositorySource, /fallback/i)
   assert.doesNotMatch(repositorySource, /LocalParent/)
@@ -556,9 +571,12 @@ test('admin approvals page routes create edit and correction through a reusable 
   assert.match(adminContentPageSource, /label: 'Rejeitar conteúdo'/)
   assert.match(adminParentPageSource, /parentApprovalService/)
   assert.match(adminParentPageSource, /updateParentStatus/)
+  assert.match(adminParentPageSource, /updateParentRegistration/)
+  assert.match(adminParentPageSource, /removeParentRegistration/)
   assert.match(adminParentPageSource, /label: 'Validar cadastro'/)
   assert.match(adminParentPageSource, /label: 'Rejeitar cadastro'/)
-  assert.match(adminParentPageSource, /removeParentRegistration/)
+  assert.match(adminParentPageSource, /label: 'Editar responsável'/)
+  assert.match(adminParentPageSource, /label: 'Excluir responsável'/)
   assert.doesNotMatch(adminParentPageSource, /label: 'Limpar requisição'/)
   assert.match(adminParentPageSource, /createParentRegistration/)
   assert.match(adminParentPageSource, /action: 'create', type: 'parent'/)

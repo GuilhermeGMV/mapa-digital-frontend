@@ -6,6 +6,12 @@ import type {
   WeeklyMoodEntry,
 } from '@/shared/types/common'
 import { getCookie, setCookie } from '@/shared/lib/storage/cookies'
+import {
+  addLinkedChildId,
+  getLinkedChildIds,
+  removeLinkedChildId,
+} from '@/modules/parent/shared/storage/linkedChildren'
+import type { ApiResponse } from '@/shared/types/api'
 import type {
   ParentDashboardChild,
   StudentDisciplineProgress,
@@ -17,12 +23,15 @@ export interface RegisterChildRequest {
   last_name: string
   email: string
   password: string
+  phone_number?: string
   birth_date: string
   student_class: string
+  school_id?: string
 }
 
 export interface RegisterChildResult {
   success: boolean
+  studentId?: string
   error?: 'forbidden' | 'conflict' | 'unknown'
   message?: string
 }
@@ -37,15 +46,43 @@ export interface UpdateChildRequest {
   birth_date?: string
   first_name: string
   last_name: string
+  phone_number?: string
   student_class: string
+  school_id?: string
 }
 
 interface StudentApiResponse {
-  id: string
+  id?: string
   user_id?: string
   first_name: string
   last_name: string
   student_class: string
+}
+
+interface RegisterStudentApiResponse {
+  id?: string
+  detail?: string
+  user_id?: string
+}
+
+interface GuardianMeStudent {
+  user_id: string
+  first_name: string
+  last_name: string
+  email: string
+  birth_date: string
+  student_class: string
+}
+
+interface GuardianMeResponse {
+  user_id: string
+  first_name: string
+  last_name: string
+  email: string
+  phone_number: string | null
+  guardian_status: string
+  is_active: boolean
+  students: GuardianMeStudent[]
 }
 
 export const parentSettingsService = {
@@ -59,18 +96,82 @@ function persistAccountSettings(settings: ParentAccountSettings) {
   setCookie(COOKIE_KEYS.authEmail, settings.email)
 }
 
+function mapGuardianMeToAccountSettings(
+  guardian: GuardianMeResponse
+): ParentAccountSettings {
+  return {
+    email: guardian.email,
+    name: `${guardian.first_name} ${guardian.last_name}`.trim(),
+    phone: guardian.phone_number ?? '',
+  }
+}
+
 function formatClassLabel(studentClass: string) {
-  return studentClass ? `${studentClass}º Ano` : 'Ano não informado'
+  if (!studentClass) return 'Ano não informado'
+  const match = studentClass.match(/(\d+)/)
+  return match ? `${match[1]}º Ano` : `${studentClass}º Ano`
 }
 
 function mapStudentResponseToChild(
   student: StudentApiResponse
 ): ParentDashboardChild {
   return {
-    id: student.id ?? student.user_id ?? crypto.randomUUID(),
+    id: student.id ?? student.user_id ?? '',
     name: `${student.first_name} ${student.last_name}`.trim(),
     grade: formatClassLabel(student.student_class),
   }
+}
+
+function mapStudentToParentChild(student: StudentApiResponse): ParentChild {
+  return {
+    id: student.id ?? student.user_id ?? '',
+    name: `${student.first_name} ${student.last_name}`.trim(),
+    grade: formatClassLabel(student.student_class),
+    status: 'approved',
+  }
+}
+
+function mapGuardianStudentToChild(
+  student: GuardianMeStudent,
+  status: string
+): ParentChild {
+  return {
+    id: student.user_id,
+    name: `${student.first_name} ${student.last_name}`.trim(),
+    grade: formatClassLabel(student.student_class),
+    status,
+  }
+}
+
+async function fetchChildrenFromGuardianMe(): Promise<ParentChild[]> {
+  try {
+    const response = await httpClient.get<GuardianMeResponse>('guardian/me')
+    const students = response.data.students ?? []
+    return students.map(s =>
+      mapGuardianStudentToChild(s, response.data.guardian_status)
+    )
+  } catch {
+    return []
+  }
+}
+
+async function fetchChildrenFromLinkedIds(
+  guardianEmail: string | null
+): Promise<ParentChild[]> {
+  const ids = getLinkedChildIds(guardianEmail)
+  if (ids.length === 0) return []
+
+  const results = await Promise.allSettled(
+    ids.map(id => httpClient.get<StudentApiResponse>(`student/${id}`))
+  )
+
+  return results
+    .filter(
+      (r): r is PromiseFulfilledResult<ApiResponse<StudentApiResponse>> =>
+        r.status === 'fulfilled'
+    )
+    .map(r => mapStudentToParentChild(r.value.data))
+    .filter(child => child.id !== '')
 }
 
 export const parentService = {
@@ -93,46 +194,66 @@ export const parentService = {
   async updateAccountSettings(
     settings: ParentAccountSettings
   ): Promise<ParentAccountSettings> {
-    const response = await httpClient.patch<ParentAccountSettings>(
-      'parent/account',
-      {
-        email: settings.email,
-        name: settings.name,
-        phone: settings.phone,
-      }
-    )
-    persistAccountSettings(response.data)
-    return response.data
+    const [first_name, ...lastNameParts] = settings.name.trim().split(/\s+/)
+    const response = await httpClient.patch<GuardianMeResponse>('guardian/me', {
+      email: settings.email,
+      first_name,
+      last_name: lastNameParts.join(' '),
+      phone_number: settings.phone || undefined,
+    })
+    const nextSettings = mapGuardianMeToAccountSettings(response.data)
+    persistAccountSettings(nextSettings)
+    return nextSettings
   },
 
   async disableAccount(): Promise<void> {
-    await httpClient.patch('parent/account/disable')
+    await httpClient.patch('guardian/me/disable')
   },
 
   async deleteAccount(): Promise<void> {
-    await httpClient.delete('parent/account')
+    await httpClient.delete('guardian/me')
   },
 
   async getSummary() {
-    const response = await httpClient.get<SummaryMetric[]>('parent/summary')
-    return response.data
+    return []
   },
 
-  async getChildren() {
-    const response = await httpClient.get<ParentChild[]>('parent/children')
-    return response.data
+  async getChildren(): Promise<ParentChild[]> {
+    const fromGuardianMe = await fetchChildrenFromGuardianMe()
+    if (fromGuardianMe.length > 0) return fromGuardianMe
+
+    const guardianEmail = getCookie(COOKIE_KEYS.authEmail)
+    return fetchChildrenFromLinkedIds(guardianEmail)
   },
 
   async createChild(data: RegisterChildRequest): Promise<ParentDashboardChild> {
-    const response = await httpClient.post<StudentApiResponse>('student', {
-      first_name: data.first_name,
-      last_name: data.last_name,
-      email: data.email,
-      password: data.password,
-      birth_date: data.birth_date,
-      student_class: data.student_class,
-    })
-    return mapStudentResponseToChild(response.data)
+    const guardianEmail = getCookie(COOKIE_KEYS.authEmail)
+    const response = await httpClient.post<RegisterStudentApiResponse>(
+      'student',
+      {
+        first_name: data.first_name,
+        last_name: data.last_name,
+        email: data.email,
+        password: data.password,
+        phone_number: data.phone_number || undefined,
+        birth_date: data.birth_date,
+        student_class: data.student_class,
+        school_id: data.school_id || undefined,
+      }
+    )
+
+    const studentId = response.data.user_id ?? response.data.id
+    if (!studentId) {
+      throw new Error('Student creation response did not include an id.')
+    }
+
+    addLinkedChildId(guardianEmail, studentId)
+
+    return {
+      id: studentId,
+      name: `${data.first_name} ${data.last_name}`.trim(),
+      grade: formatClassLabel(data.student_class),
+    }
   },
 
   async updateChild(
@@ -142,43 +263,45 @@ export const parentService = {
     const response = await httpClient.put<StudentApiResponse>(
       `student/${childId}`,
       {
-        birth_date: data.birth_date || undefined,
         first_name: data.first_name,
         last_name: data.last_name,
+        phone_number: data.phone_number || undefined,
+        birth_date: data.birth_date || undefined,
         student_class: data.student_class,
+        school_id: data.school_id || undefined,
       }
     )
     return mapStudentResponseToChild(response.data)
   },
 
   async deleteChild(childId: string): Promise<void> {
+    const guardianEmail = getCookie(COOKIE_KEYS.authEmail)
     await httpClient.delete(`student/${childId}`)
+    removeLinkedChildId(guardianEmail, childId)
   },
 
   async getStudentSummary(studentId: string) {
     const response = await httpClient.get<SummaryMetric[]>(
-      `parent/student/${studentId}/summary`
+      `student/${studentId}/summary`
     )
     return response.data
   },
 
   async getStudentDisciplines(studentId: string) {
     const response = await httpClient.get<StudentDisciplineProgress[]>(
-      `parent/student/${studentId}/disciplines`
+      `student/${studentId}/disciplines`
     )
     return response.data
   },
 
   async getStudentTasks(studentId: string) {
-    const response = await httpClient.get<Task[]>(
-      `parent/student/${studentId}/tasks`
-    )
+    const response = await httpClient.get<Task[]>(`student/${studentId}/tasks`)
     return response.data
   },
 
   async getStudentWellBeing(studentId: string) {
     const response = await httpClient.get<WeeklyMoodEntry[]>(
-      `parent/student/${studentId}/well-being`
+      `student/${studentId}/well-being`
     )
     return response.data
   },
@@ -186,30 +309,40 @@ export const parentService = {
   async registerChild(
     data: RegisterChildRequest
   ): Promise<RegisterChildResult> {
+    const guardianEmail = getCookie(COOKIE_KEYS.authEmail)
     try {
-      await httpClient.post('student', {
-        first_name: data.first_name,
-        last_name: data.last_name,
-        email: data.email,
-        password: data.password,
-        birth_date: data.birth_date,
-        student_class: data.student_class,
-      })
-      return { success: true }
+      const response = await httpClient.post<RegisterStudentApiResponse>(
+        'student',
+        {
+          first_name: data.first_name,
+          last_name: data.last_name,
+          email: data.email,
+          password: data.password,
+          phone_number: data.phone_number || undefined,
+          birth_date: data.birth_date,
+          student_class: data.student_class,
+          school_id: data.school_id || undefined,
+        }
+      )
+
+      const studentId = response.data.user_id ?? response.data.id
+      if (studentId) addLinkedChildId(guardianEmail, studentId)
+
+      return { success: true, studentId }
     } catch (err: unknown) {
       const status = (err as { response?: { status?: number } })?.response
         ?.status
-      if (status === 403)
-        return {
-          success: false,
-          error: 'forbidden',
-          message: 'Cadastro recebido. Aguardando aprovação do administrador.',
-        }
       if (status === 409)
         return {
           success: false,
           error: 'conflict',
           message: 'Este e-mail já está cadastrado.',
+        }
+      if (status === 403)
+        return {
+          success: false,
+          error: 'forbidden',
+          message: 'Cadastro recebido. Aguardando aprovação do administrador.',
         }
       return {
         success: false,

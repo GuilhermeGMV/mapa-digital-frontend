@@ -22,6 +22,8 @@ const EMPTY_CHILD_FORM: ChildSettingsForm = {
   first_name: '',
   last_name: '',
   password: '',
+  phone_number: '',
+  school_id: '',
   student_class: '',
 }
 
@@ -174,6 +176,8 @@ export default function Page() {
           birth_date: childForm.birth_date,
           first_name: childForm.first_name,
           last_name: childForm.last_name,
+          phone_number: childForm.phone_number,
+          school_id: childForm.school_id,
           student_class: childForm.student_class,
         })
       } else if (childAction.mode === 'delete' && childAction.child) {

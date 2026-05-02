@@ -16,9 +16,6 @@ import { SUBJECTS, getSubjectTagContextByLabel } from '@/shared/utils/themes'
 import { useCallback, useState } from 'react'
 import { parentService } from '../services/service'
 import type { RegisterChildRequest } from '@/modules/parent/dashboard/services/service'
-import { useTheme } from '@mui/material/styles'
-import { getRoleAccentColor, getRolePalette } from '@/app/theme/core/roles'
-import { useParentRole } from '@/modules/parent/shared/hooks/useParentRole'
 import ChildRegistrationModal from '@/modules/parent/shared/components/ChildRegistrationModal'
 import ChildSwitcher from '@/modules/parent/shared/components/ChildSwitcher'
 import ParentEmotionalSummary from '@/modules/parent/shared/components/ParentEmotionalSummary'
@@ -28,8 +25,10 @@ const emptyForm: RegisterChildRequest = {
   last_name: '',
   email: '',
   password: '',
+  phone_number: '',
   birth_date: '',
   student_class: '7',
+  school_id: '',
 }
 
 export default function Page() {
@@ -44,10 +43,6 @@ export default function Page() {
     selectedChildId,
     selectChild,
   } = useParentDashboard()
-  const theme = useTheme()
-  const role = useParentRole()
-  const rolePalette = getRolePalette(theme, role)
-  const accentColor = getRoleAccentColor(theme, role)
   const [modalOpen, setModalOpen] = useState(false)
   const [form, setForm] = useState<RegisterChildRequest>(emptyForm)
   const [submitting, setSubmitting] = useState(false)
@@ -117,26 +112,6 @@ export default function Page() {
         selectedChildId={selectedChildId}
         onSelect={selectChild}
       />
-      <Tooltip title="Cadastrar filho" placement="bottom">
-        <IconButton
-          onClick={() => setModalOpen(true)}
-          sx={{
-            border: '1px solid',
-            borderColor: rolePalette.soft,
-            borderRadius: 'var(--app-radius-control)',
-            color: rolePalette.contrast,
-            flexShrink: 0,
-            height: 32,
-            width: 32,
-            '&:hover': {
-              backgroundColor: accentColor,
-              borderColor: rolePalette.soft,
-            },
-          }}
-        >
-          <AddRoundedIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
     </Box>
   )
 

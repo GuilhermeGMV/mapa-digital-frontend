@@ -1,8 +1,10 @@
 import { Alert, Box, Typography } from '@mui/material'
+import { useMemo } from 'react'
 import AppActionModal from '@/shared/ui/AppActionModal'
 import AppDropdown, { type DropdownOption } from '@/shared/ui/AppDropdown'
 import AppInput from '@/shared/ui/AppInput'
 import type { ParentDashboardChild } from '@/modules/parent/settings/types/types'
+import { useSchoolOptions } from '@/modules/parent/shared/hooks/useSchoolOptions'
 
 export type ChildSettingsModalMode = 'create' | 'edit' | 'delete'
 
@@ -12,6 +14,8 @@ export interface ChildSettingsForm {
   first_name: string
   last_name: string
   password: string
+  phone_number: string
+  school_id: string
   student_class: string
 }
 
@@ -84,7 +88,7 @@ function resolveModalCopy(mode: ChildSettingsModalMode | null) {
   return {
     confirmLabel: 'Cadastrar filho',
     description:
-      'Preencha os dados do aluno. O cadastro pode depender de aprovação administrativa.',
+      'Preencha os dados do aluno. O acesso será criado e vinculado ao responsável.',
     title: 'Cadastrar filho',
   }
 }
@@ -104,6 +108,15 @@ function ChildSettingsModal({
   const copy = resolveModalCopy(mode)
   const isDelete = mode === 'delete'
   const isCreate = mode === 'create'
+
+  const shouldFetchSchools = open && !isDelete
+  const { schools, isLoading: loadingSchools } =
+    useSchoolOptions(shouldFetchSchools)
+
+  const schoolOptions = useMemo<DropdownOption[]>(
+    () => schools.map(school => ({ value: school.id, label: school.name })),
+    [schools]
+  )
 
   return (
     <AppActionModal
@@ -162,6 +175,13 @@ function ChildSettingsModal({
             </>
           ) : null}
           <AppInput
+            label="Telefone (opcional)"
+            onChange={event => onChange('phone_number', event.target.value)}
+            placeholder="(00) 00000-0000"
+            sx={inputSx}
+            value={form.phone_number}
+          />
+          <AppInput
             label="Data de nascimento"
             onChange={event => onChange('birth_date', event.target.value)}
             placeholder="AAAA-MM-DD"
@@ -179,6 +199,20 @@ function ChildSettingsModal({
             placeholder="Selecione o ano"
             sx={selectSx}
             value={form.student_class}
+          />
+          <AppDropdown
+            fullWidth
+            label="Escola (opcional)"
+            neutralOutline
+            onChange={event =>
+              onChange('school_id', String(event.target.value))
+            }
+            options={schoolOptions}
+            placeholder={
+              loadingSchools ? 'Carregando escolas...' : 'Selecione a escola'
+            }
+            sx={selectSx}
+            value={form.school_id}
           />
           {feedbackMessage ? (
             <Alert

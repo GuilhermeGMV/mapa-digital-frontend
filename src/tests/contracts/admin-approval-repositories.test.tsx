@@ -28,11 +28,11 @@ function parentUser(
   return {
     created_at: '2026-04-08T10:15:00+00:00',
     email: 'responsavel+qa@test.com',
-    id: 42,
+    id: '47f2a20f-77cb-4d0b-89ef-b64d160fce48',
     is_superadmin: false,
     name: 'Mariana Souza',
-    role: 'responsavel',
-    status: 'aguardando',
+    role: 'guardian',
+    status: 'waiting',
     ...overrides,
   }
 }
@@ -155,15 +155,13 @@ test('parent approval repository calls admin user endpoints with encoded ids', a
     path: string
   }> = []
   const patchCalls: Array<{ body?: unknown; path: string }> = []
+  const deleteCalls: string[] = []
   const postCalls: Array<{
     body?: unknown
     options?: Omit<HttpRequestOptions, 'body' | 'method'>
     path: string
   }> = []
   const client: ParentApprovalApiClient = {
-    async delete() {
-      throw new Error('Unexpected delete call')
-    },
     async get<T>(
       path: string,
       options?: { query?: HttpRequestOptions['query'] }
@@ -175,7 +173,12 @@ test('parent approval repository calls admin user endpoints with encoded ids', a
     async patch<T>(path: string, body?: unknown) {
       patchCalls.push({ path, body })
 
-      return apiResponse(parentUser({ status: 'aprovado' })) as ApiResponse<T>
+      return apiResponse(parentUser({ status: 'approved' })) as ApiResponse<T>
+    },
+    async delete<T>(path: string) {
+      deleteCalls.push(path)
+
+      return apiResponse(null) as ApiResponse<T>
     },
     async post<T>(
       path: string,
@@ -196,46 +199,70 @@ test('parent approval repository calls admin user endpoints with encoded ids', a
     status: 'pendingValidation',
   })
   const updated = await repository.updateParentStatus(
-    'responsavel+qa@test.com',
+    '47f2a20f-77cb-4d0b-89ef-b64d160fce48',
     'approved'
   )
   await repository.createParentRegistration({
     email: 'novo@test.com',
+    first_name: 'Novo',
+    last_name: 'Responsável',
     password: '12345678',
-    title: 'Novo Responsável',
   })
+  await repository.updateParentRegistration(
+    '47f2a20f-77cb-4d0b-89ef-b64d160fce48',
+    {
+      first_name: 'Mariana',
+      last_name: 'Atualizada',
+    }
+  )
+  await repository.removeParentRegistration(
+    '47f2a20f-77cb-4d0b-89ef-b64d160fce48'
+  )
 
   expect(getCalls).toEqual([
     {
       path: 'admin/users',
       options: {
         query: {
-          role: 'responsavel',
-          user_status: 'aguardando',
+          role: 'guardian',
+          user_status: 'waiting',
         },
       },
     },
   ])
   expect(queue.items[0]).toMatchObject({
-    id: 'responsavel+qa@test.com',
+    id: '47f2a20f-77cb-4d0b-89ef-b64d160fce48',
     requestedAt: '08/04/2026',
     roleLabel: 'Responsável',
     status: 'pendingValidation',
     title: 'Mariana Souza',
+    name: {
+      firstName: 'Mariana',
+      lastName: 'Souza',
+    },
   })
   expect(patchCalls).toEqual([
     {
-      path: 'admin/users/responsavel%2Bqa%40test.com/status',
-      body: { status: 'aprovado' },
+      path: 'admin/users/47f2a20f-77cb-4d0b-89ef-b64d160fce48/status',
+      body: { status: 'approved' },
+    },
+    {
+      path: 'guardian/47f2a20f-77cb-4d0b-89ef-b64d160fce48',
+      body: {
+        first_name: 'Mariana',
+        last_name: 'Atualizada',
+      },
     },
   ])
   expect(updated.status).toBe('approved')
+  expect(deleteCalls).toEqual(['guardian/47f2a20f-77cb-4d0b-89ef-b64d160fce48'])
   expect(postCalls).toEqual([
     {
-      path: 'register',
+      path: 'register/guardian',
       body: {
         email: 'novo@test.com',
-        name: 'Novo Responsável',
+        first_name: 'Novo',
+        last_name: 'Responsável',
         password: '12345678',
       },
       options: { skipAuth: true },

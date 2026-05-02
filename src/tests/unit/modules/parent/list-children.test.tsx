@@ -84,7 +84,7 @@ test('ListChildren calls onSelect with child id when card is clicked', async () 
 
 test('ListChildren calls onCreate when add button is clicked', async () => {
   const user = userEvent.setup()
-  const onCreate = jest.fn()
+  const onCreate = jest.fn<() => void>()
 
   renderListChildren({ children: MOCK_CHILDREN, onCreate })
 

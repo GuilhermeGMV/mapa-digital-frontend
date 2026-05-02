@@ -2,6 +2,7 @@ import { expect, jest, test } from '@jest/globals'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import AccountSettings from '@/modules/parent/settings/components/AccountSettings'
+import type { ParentAccountSettings } from '@/modules/parent/settings/services/service'
 import { renderWithProviders } from '@/tests/helpers/render'
 
 const DEFAULT_VALUES = {
@@ -42,7 +43,7 @@ test('AccountSettings save button enables after editing a field', async () => {
 test('AccountSettings calls onSave with trimmed values when form is valid', async () => {
   const user = userEvent.setup()
   const onSave = jest
-    .fn<(s: typeof DEFAULT_VALUES) => Promise<void>>()
+    .fn<(s: ParentAccountSettings) => Promise<void>>()
     .mockResolvedValue(undefined)
 
   renderWithProviders(

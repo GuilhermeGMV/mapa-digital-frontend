@@ -53,6 +53,31 @@ function persistAuthSession(
   setCookie(COOKIE_KEYS.authEmail, result.email)
 }
 
+const BACKEND_ROLE_MAP: Record<string, UserRole> = {
+  guardian: 'responsavel',
+  student: 'aluno',
+  admin: 'admin',
+  school: 'escola',
+  company: 'empresa',
+  school_company: 'escola_empresa',
+}
+
+function mapBackendRole(rawRole: string): UserRole {
+  return BACKEND_ROLE_MAP[rawRole.toLowerCase()] ?? (rawRole as UserRole)
+}
+
+function splitName(fullName: string): {
+  first_name: string
+  last_name: string
+} {
+  const trimmed = fullName.trim().replace(/\s+/g, ' ')
+  const [first, ...rest] = trimmed.split(' ')
+  return {
+    first_name: first ?? '',
+    last_name: rest.join(' '),
+  }
+}
+
 function resolveLocalLogin(
   credentials: AuthCredentials
 ): LoginApiResponse | null {
@@ -90,17 +115,11 @@ export const authService = {
         password: credentials.password,
       })
 
-      const result = {
+      const result: LoginApiResponse = {
         token: response.data.token,
-        role: response.data.role as UserRole,
+        role: mapBackendRole(response.data.role),
         name: response.data.name,
         email: response.data.email,
-        status:
-          response.data.status?.toUpperCase() as LoginApiResponse['status'],
-      }
-
-      if (result.status === 'AGUARDANDO' || result.status === 'NEGADO') {
-        throw new ParentStatusError(result.status)
       }
 
       persistAuthSession(result)
@@ -112,13 +131,12 @@ export const authService = {
           detail?: string
           details?: string
         } | null
-        const detail = (body?.detail ?? body?.details ?? '').toLowerCase()
+        const detail = (body?.detail ?? body?.details ?? '').toUpperCase()
 
-        if (detail.includes('aguardando'))
+        if (detail.includes('WAITING') || detail.includes('AGUARDANDO'))
           throw new ParentStatusError('AGUARDANDO')
-        if (detail.includes('negado')) throw new ParentStatusError('NEGADO')
-
-        throw new ParentStatusError('NEGADO')
+        if (detail.includes('REJECTED') || detail.includes('NEGADO'))
+          throw new ParentStatusError('NEGADO')
       }
 
       throw error
@@ -126,10 +144,12 @@ export const authService = {
   },
 
   async register(credentials: RegisterCredentials): Promise<void> {
+    const { first_name, last_name } = splitName(credentials.name)
     await httpClient.post(
-      'register/responsavel',
+      'register/guardian',
       {
-        name: credentials.name,
+        first_name,
+        last_name,
         email: credentials.email,
         password: credentials.password,
       },

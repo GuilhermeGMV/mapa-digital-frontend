@@ -4,19 +4,14 @@ import {
   type RegisterChildRequest,
   type UpdateChildRequest,
 } from '../services/service'
-import {
-  CHILD_MOCK_DATA,
-  MOCK_CHILDREN,
-} from '@/modules/parent/__mocks__/parentDashboard.mock'
 import type {
   ParentDashboardChild,
-  ParentDashboardData,
   StudentDisciplineProgress,
 } from '../types/types'
 import type { SummaryMetric, WeeklyMoodEntry } from '@/shared/types/common'
 import type { Task } from '@/modules/student/shared/components/Planner'
 
-interface UseParentDashboardResult {
+interface UseParentSettingsResult {
   child: ParentDashboardChild | null
   children: ParentDashboardChild[]
   disciplines: StudentDisciplineProgress[]
@@ -56,58 +51,25 @@ const LOADING_STATE: DashboardState = {
   selectedChildId: null,
 }
 
-function mockStateForChild(
-  childId: string,
-  children: ParentDashboardChild[]
-): DashboardState {
-  const data = CHILD_MOCK_DATA[childId] ?? CHILD_MOCK_DATA['mock-student-1']
-  return {
-    child: data.child,
-    children,
-    disciplines: data.disciplines,
-    error: false,
-    isLoading: false,
-    metrics: data.metrics,
-    tasks: data.tasks,
-    wellBeing: data.wellBeing,
-    selectedChildId: childId,
-  }
+const EMPTY_STATE: DashboardState = {
+  ...LOADING_STATE,
+  isLoading: false,
 }
 
-function mockState(): DashboardState {
-  return mockStateForChild('mock-student-1', MOCK_CHILDREN)
+const ERROR_STATE: DashboardState = {
+  ...EMPTY_STATE,
+  error: true,
 }
 
-function generateLocalChildId() {
-  return globalThis.crypto?.randomUUID?.() ?? `local-child-${Date.now()}`
+function childrenFromParents(children: ParentDashboardChild[]) {
+  return children.map(child => ({
+    grade: child.grade,
+    id: child.id,
+    name: child.name,
+  }))
 }
 
-function formatClassLabel(studentClass: string) {
-  return studentClass ? `${studentClass}º Ano` : 'Ano não informado'
-}
-
-function localChildFromCreate(
-  data: RegisterChildRequest
-): ParentDashboardChild {
-  return {
-    id: generateLocalChildId(),
-    name: `${data.first_name} ${data.last_name}`.trim(),
-    grade: formatClassLabel(data.student_class),
-  }
-}
-
-function localChildFromUpdate(
-  childId: string,
-  data: UpdateChildRequest
-): ParentDashboardChild {
-  return {
-    id: childId,
-    name: `${data.first_name} ${data.last_name}`.trim(),
-    grade: formatClassLabel(data.student_class),
-  }
-}
-
-export function useParentSettings(): UseParentDashboardResult {
+export function useParentSettings(): UseParentSettingsResult {
   const [state, setState] = useState<DashboardState>(LOADING_STATE)
 
   const selectChild = useCallback((id: string) => {
@@ -117,30 +79,53 @@ export function useParentSettings(): UseParentDashboardResult {
     })
   }, [])
 
+  const loadStudentData = useCallback(
+    async (childId: string, children: ParentDashboardChild[]) => {
+      try {
+        const [metrics, disciplines, tasks, wellBeing] = await Promise.all([
+          parentService.getStudentSummary(childId),
+          parentService.getStudentDisciplines(childId),
+          parentService.getStudentTasks(childId),
+          parentService.getStudentWellBeing(childId),
+        ])
+
+        setState(prev => ({
+          ...prev,
+          child: children.find(c => c.id === childId) ?? prev.child,
+          disciplines,
+          error: false,
+          isLoading: false,
+          metrics,
+          tasks,
+          wellBeing,
+        }))
+      } catch {
+        setState(prev => ({ ...prev, error: true, isLoading: false }))
+      }
+    },
+    []
+  )
+
   const createChild = useCallback(async (data: RegisterChildRequest) => {
-    let child: ParentDashboardChild
-    try {
-      child = await parentService.createChild(data)
-    } catch {
-      child = localChildFromCreate(data)
-    }
+    const child = await parentService.createChild(data)
 
     setState(prev => ({
       ...prev,
-      child: prev.child ?? child,
+      child,
       children: [...prev.children, child],
-      selectedChildId: prev.selectedChildId ?? child.id,
+      disciplines: [],
+      error: false,
+      isLoading: false,
+      metrics: [],
+      selectedChildId: child.id,
+      tasks: [],
+      wellBeing: [],
     }))
   }, [])
 
   const updateChild = useCallback(
     async (childId: string, data: UpdateChildRequest) => {
-      let updatedChild: ParentDashboardChild
-      try {
-        updatedChild = await parentService.updateChild(childId, data)
-      } catch {
-        updatedChild = localChildFromUpdate(childId, data)
-      }
+      const updatedChild = await parentService.updateChild(childId, data)
 
       setState(prev => ({
         ...prev,
@@ -148,17 +133,14 @@ export function useParentSettings(): UseParentDashboardResult {
         children: prev.children.map(child =>
           child.id === childId ? updatedChild : child
         ),
+        error: false,
       }))
     },
     []
   )
 
   const deleteChild = useCallback(async (childId: string) => {
-    try {
-      await parentService.deleteChild(childId)
-    } catch {
-      // Keep the settings page usable with the existing local mock fallback.
-    }
+    await parentService.deleteChild(childId)
 
     setState(prev => {
       const children = prev.children.filter(child => child.id !== childId)
@@ -175,36 +157,15 @@ export function useParentSettings(): UseParentDashboardResult {
         ...prev,
         child,
         children,
+        disciplines: child ? prev.disciplines : [],
+        error: false,
+        metrics: child ? prev.metrics : [],
         selectedChildId: nextSelectedChildId,
+        tasks: child ? prev.tasks : [],
+        wellBeing: child ? prev.wellBeing : [],
       }
     })
   }, [])
-
-  const loadStudentData = useCallback(
-    async (childId: string, children: ParentDashboardChild[]) => {
-      try {
-        const [metrics, disciplines, tasks, wellBeing] = await Promise.all([
-          parentService.getStudentSummary(childId),
-          parentService.getStudentDisciplines(childId),
-          parentService.getStudentTasks(childId),
-          parentService.getStudentWellBeing(childId),
-        ])
-        setState(prev => ({
-          ...prev,
-          child: children.find(c => c.id === childId) ?? prev.child,
-          disciplines,
-          error: false,
-          isLoading: false,
-          metrics,
-          tasks,
-          wellBeing,
-        }))
-      } catch {
-        setState(mockStateForChild(childId, children))
-      }
-    },
-    []
-  )
 
   useEffect(() => {
     let active = true
@@ -216,26 +177,22 @@ export function useParentSettings(): UseParentDashboardResult {
         if (!active) return
 
         if (fetched.length === 0) {
-          setState(mockState())
+          setState(EMPTY_STATE)
           return
         }
 
-        const children: ParentDashboardChild[] = fetched.map(c => ({
-          id: c.id,
-          name: c.name,
-          grade: c.grade,
-        }))
-
+        const children = childrenFromParents(fetched)
         const firstId = children[0].id
+
         setState(prev => ({
           ...prev,
           children,
-          selectedChildId: firstId,
           isLoading: true,
+          selectedChildId: firstId,
         }))
         await loadStudentData(firstId, children)
       } catch {
-        if (active) setState(mockState())
+        if (active) setState(ERROR_STATE)
       }
     }
 
