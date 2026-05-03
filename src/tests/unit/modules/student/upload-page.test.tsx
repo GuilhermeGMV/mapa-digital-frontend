@@ -40,6 +40,7 @@ test('StudentUploadPage exposes the subject filter by accessible name and filter
   await user.click(screen.getByRole('option', { name: 'Matemática' }))
 
   expect(screen.getByText('Lista de Exercícios - Equações')).toBeInTheDocument()
+  expect(screen.getByTestId('task-card-1')).toBeInTheDocument()
   expect(screen.queryByText('Redação Dissertativa')).not.toBeInTheDocument()
 })
 
@@ -50,11 +51,10 @@ test('StudentUploadPage filters tasks by search text and selected subject togeth
 
   await user.type(
     screen.getByPlaceholderText('Pesquisar tarefas...'),
-    'redação'
+    'trabalho'
   )
 
-  expect(screen.getByText('Redação Dissertativa')).toBeInTheDocument()
-  expect(screen.getByText('Redação em Inglês')).toBeInTheDocument()
+  expect(screen.getByText('Relatório de Experiência')).toBeInTheDocument()
   expect(
     screen.queryByText('Lista de Exercícios - Equações')
   ).not.toBeInTheDocument()
@@ -64,8 +64,8 @@ test('StudentUploadPage filters tasks by search text and selected subject togeth
       name: /filtrar tarefas por disciplina/i,
     })
   )
-  await user.click(screen.getByRole('option', { name: 'Português' }))
+  await user.click(screen.getByRole('option', { name: 'Ciências' }))
 
-  expect(screen.getByText('Redação Dissertativa')).toBeInTheDocument()
-  expect(screen.queryByText('Redação em Inglês')).not.toBeInTheDocument()
+  expect(screen.getByText('Relatório de Experiência')).toBeInTheDocument()
+  expect(screen.queryByText('Redação Dissertativa')).not.toBeInTheDocument()
 })
