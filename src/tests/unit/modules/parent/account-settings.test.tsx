@@ -4,7 +4,6 @@ import userEvent from '@testing-library/user-event'
 import AccountSettings from '@/modules/parent/settings/components/AccountSettings'
 import type { ParentAccountSettings } from '@/modules/parent/settings/services/service'
 import { renderWithProviders } from '@/tests/helpers/render'
-import assert from 'assert'
 
 const DEFAULT_VALUES = {
   email: 'parent@example.com',

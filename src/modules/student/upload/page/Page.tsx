@@ -76,6 +76,7 @@ export default function Page() {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
   const [tasks, setTasks] = useState<UploadedTask[]>(INITIAL_TASKS)
   const [subjectFilter, setSubjectFilter] = useState<SubjectFilterValue>('all')
+  const [searchQuery, setSearchQuery] = useState('')
 
   function handleAddTask(task: UploadTaskPayload) {
     const newTask: UploadedTask = {
@@ -87,13 +88,20 @@ export default function Page() {
     setIsUploadModalOpen(false)
   }
 
-  const filteredTasks = useMemo(
-    () =>
-      subjectFilter === 'all'
-        ? tasks
-        : tasks.filter(task => task.subject === subjectFilter),
-    [tasks, subjectFilter]
-  )
+  const filteredTasks = useMemo(() => {
+    const normalizedQuery = searchQuery.trim().toLocaleLowerCase('pt-BR')
+
+    return tasks.filter(task => {
+      const matchesSubject =
+        subjectFilter === 'all' || task.subject === subjectFilter
+      const matchesSearch =
+        normalizedQuery === '' ||
+        task.title.toLocaleLowerCase('pt-BR').includes(normalizedQuery) ||
+        task.type.toLocaleLowerCase('pt-BR').includes(normalizedQuery)
+
+      return matchesSubject && matchesSearch
+    })
+  }, [tasks, subjectFilter, searchQuery])
 
   return (
     <AppPageContainer className="gap-4 md:gap-5">
@@ -112,6 +120,8 @@ export default function Page() {
           <AppInput
             placeholder="Pesquisar tarefas..."
             backgroundColor="background.default"
+            value={searchQuery}
+            onChange={event => setSearchQuery(event.target.value)}
             InputProps={{
               startAdornment: (
                 <SearchRoundedIcon sx={{ mr: 1, color: 'text.secondary' }} />

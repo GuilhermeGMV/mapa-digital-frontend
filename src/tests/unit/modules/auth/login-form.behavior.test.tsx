@@ -78,7 +78,8 @@ test('register form requires matching password confirmation before submit', asyn
 
   renderWithProviders(<LoginForm mode="register" onSubmit={onSubmit} />)
 
-  await user.type(screen.getByLabelText(/nome completo/i), 'Maria Responsável')
+  await user.type(screen.getByLabelText(/^nome$/i), 'Maria')
+  await user.type(screen.getByLabelText(/sobrenome/i), 'Responsável')
   await user.type(screen.getByLabelText(/e-mail/i), 'maria@example.com')
   await user.type(screen.getByLabelText(/^senha$/i), '12345678')
   await user.type(screen.getByLabelText(/confirmar senha/i), '87654321')

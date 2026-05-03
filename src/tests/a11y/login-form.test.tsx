@@ -21,11 +21,12 @@ test('login form exposes accessible labels for its required fields', () => {
   ).toBeInTheDocument()
 })
 
-test('register form exposes accessible labels for name and password confirmation', () => {
+test('register form exposes accessible labels for name, surname and password confirmation', () => {
   const onSubmit = jest.fn<(values: LoginSubmitValues) => Promise<void>>()
 
   renderWithProviders(<LoginForm mode="register" onSubmit={onSubmit} />)
 
-  expect(screen.getByLabelText(/nome completo/i)).toBeInTheDocument()
+  expect(screen.getByLabelText(/^nome$/i)).toBeInTheDocument()
+  expect(screen.getByLabelText(/sobrenome/i)).toBeInTheDocument()
   expect(screen.getByLabelText(/confirmar senha/i)).toBeInTheDocument()
 })

@@ -111,6 +111,16 @@ export default function Page() {
         selectedChildId={selectedChildId}
         onSelect={selectChild}
       />
+      <Tooltip title="Cadastrar filho">
+        <IconButton
+          aria-label="Cadastrar filho"
+          color="inherit"
+          onClick={() => setModalOpen(true)}
+          size="small"
+        >
+          <AddRoundedIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
     </Box>
   )
 

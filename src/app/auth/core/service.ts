@@ -3,6 +3,7 @@ import { HttpRequestError, httpClient } from '@/shared/lib/http/client'
 import type {
   AuthCredentials,
   LoginApiResponse,
+  ParentStatus,
   RegisterCredentials,
 } from './types'
 import { ParentStatusError } from './types'
@@ -66,6 +67,38 @@ function mapBackendRole(rawRole: string): UserRole {
   return BACKEND_ROLE_MAP[rawRole.toLowerCase()] ?? (rawRole as UserRole)
 }
 
+function normalizeParentStatus(status?: string): ParentStatus | undefined {
+  if (!status) {
+    return undefined
+  }
+
+  const normalizedStatus = status.toUpperCase()
+
+  if (normalizedStatus === 'WAITING' || normalizedStatus === 'AGUARDANDO') {
+    return 'AGUARDANDO'
+  }
+
+  if (normalizedStatus === 'REJECTED' || normalizedStatus === 'NEGADO') {
+    return 'NEGADO'
+  }
+
+  if (normalizedStatus === 'APPROVED' || normalizedStatus === 'APROVADO') {
+    return 'APROVADO'
+  }
+
+  return undefined
+}
+
+function assertParentCanLogin(result: LoginApiResponse) {
+  if (result.role !== 'responsavel') {
+    return
+  }
+
+  if (result.status === 'AGUARDANDO' || result.status === 'NEGADO') {
+    throw new ParentStatusError(result.status)
+  }
+}
+
 function resolveLocalLogin(
   credentials: AuthCredentials
 ): LoginApiResponse | null {
@@ -108,8 +141,10 @@ export const authService = {
         role: mapBackendRole(response.data.role),
         name: response.data.name,
         email: response.data.email,
+        status: normalizeParentStatus(response.data.status),
       }
 
+      assertParentCanLogin(result)
       persistAuthSession(result)
 
       return result
