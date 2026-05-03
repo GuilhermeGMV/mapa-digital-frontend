@@ -1,14 +1,13 @@
-import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
 import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded'
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded'
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import { useState } from 'react'
+import TaskList from '@/modules/student/shared/components/TaskList'
 import UploadActivityModal from '@/modules/student/shared/components/UploadActivityModal'
 import AppButton from '@/shared/ui/AppButton'
 import AppCard from '@/shared/ui/AppCard'
 import AppInput from '@/shared/ui/AppInput'
 import AppPageContainer from '@/shared/ui/AppPageContainer'
-import { AppSubjectTag } from '@/shared/ui/AppSubjectsTags'
 import PageHeader from '@/shared/ui/PageHeader'
 import { SUBJECTS } from '@/shared/utils/themes'
 
@@ -30,36 +29,36 @@ type UploadedTask = {
 
 type UploadTaskPayload = Omit<UploadedTask, 'id'>
 
-const INITIAL_TASKS: UploadedTask[] = [
+const uploadTasks: UploadedTask[] = [
   {
     id: '1',
     title: 'Lista de Exercícios - Equações',
-    type: 'Exercício',
     subject: 'matematica',
+    type: 'Exercício',
   },
   {
     id: '2',
     title: 'Redação Dissertativa',
-    type: 'Redação',
     subject: 'portugues',
+    type: 'Revisão',
   },
   {
     id: '3',
     title: 'Relatório de Experiência',
-    type: 'Relatório',
     subject: 'ciencias',
+    type: 'Trabalho',
   },
   {
     id: '4',
-    title: 'Redação em Inglês',
-    type: 'Redação',
-    subject: 'ingles',
+    title: 'Redação',
+    subject: 'portugues',
+    type: 'Pré-prova',
   },
 ]
 
 export default function Page() {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
-  const [tasks, setTasks] = useState<UploadedTask[]>(INITIAL_TASKS)
+  const [tasks, setTasks] = useState<UploadedTask[]>(uploadTasks)
 
   function handleAddTask(task: UploadTaskPayload) {
     const newTask: UploadedTask = {
@@ -70,6 +69,13 @@ export default function Page() {
     setTasks(currentTasks => [newTask, ...currentTasks])
     setIsUploadModalOpen(false)
   }
+
+  const taskListItems = tasks.map(task => ({
+    id: task.id,
+    title: task.title,
+    type: task.type,
+    subject: SUBJECTS[task.subject],
+  }))
 
   return (
     <AppPageContainer className="gap-4 md:gap-5">
@@ -111,41 +117,7 @@ export default function Page() {
           />
         </Box>
 
-        <Box className="grid gap-3">
-          {tasks.map(task => (
-            <Box
-              key={task.id}
-              className="flex flex-col gap-4 rounded-2xl border border-slate-200 p-4 sm:flex-row sm:items-center"
-              sx={{
-                backgroundColor: 'var(--app-surface-muted)',
-              }}
-            >
-              <Box className="grid size-11 place-items-center rounded-2xl bg-blue-50 text-blue-500">
-                <DescriptionOutlinedIcon fontSize="small" />
-              </Box>
-
-              <Box>
-                <Typography
-                  className="text-base font-semibold"
-                  sx={{ color: 'text.primary' }}
-                >
-                  {task.title}
-                </Typography>
-
-                <Box className="mt-1 flex items-center gap-2">
-                  <AppSubjectTag size="sm" subject={SUBJECTS[task.subject]} />
-
-                  <Typography
-                    className="text-sm"
-                    sx={{ color: 'text.secondary' }}
-                  >
-                    {task.type}
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-          ))}
-        </Box>
+        <TaskList tasks={taskListItems} />
       </AppCard>
 
       <UploadActivityModal
