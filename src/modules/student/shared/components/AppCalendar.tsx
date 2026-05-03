@@ -23,7 +23,7 @@ function CustomDay(props: PickersDayProps) {
     <PickersDay
       {...props}
       sx={{
-        margin: '2px',
+        margin: { xs: '0.5px', sm: '1px', md: '2px' },
         borderRadius: '8px',
         border: theme =>
           `2.5px solid ${
@@ -118,41 +118,59 @@ export default function AppCalendar({
           sx={{
             width: '100%',
             maxWidth: '100%',
+            minWidth: 0,
+            px: { xs: 0, sm: 0.5, md: 0 },
             height: 'auto',
-            minHeight: '34rem',
+            minHeight: { xs: '21rem', sm: '27rem', md: '34rem' },
+            '& .MuiPickersLayout-root': {
+              width: '100%',
+            },
             '& .MuiDayCalendar-slideTransition': {
-              minHeight: '30rem',
+              minHeight: { xs: '18rem', sm: '24rem', md: '30rem' },
             },
             '& .MuiDayCalendar-monthContainer': {
               overflow: 'visible',
+              width: '100%',
             },
             '& .MuiDayCalendar-header, & .MuiDayCalendar-weekContainer': {
-              justifyContent: 'space-around',
+              justifyContent: 'space-between',
+              width: '100%',
+              maxWidth: '100%',
+              mx: 0,
+              px: { xs: 0, sm: 0 },
             },
             '& .MuiPickersDay-root': {
-              width: 92,
-              height: 62,
-              fontSize: '1.2rem',
+              width: { xs: '14%', sm: 92, md: 92 },
+              height: { xs: 32, sm: 50, md: 62 },
+              fontSize: { xs: '0.85rem', sm: '1rem', md: '1.2rem' },
+              margin: { xs: 0, sm: '2px' },
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              minWidth: 0,
+              maxWidth: { xs: '14%', sm: 92, md: 92 },
             },
             '& .MuiDayCalendar-weekDayLabel': {
-              width: 80,
-              height: 56,
-              fontSize: '0.85rem',
+              width: { xs: '14%', sm: 44, md: 80 },
+              height: { xs: 24, sm: 36, md: 56 },
+              fontSize: { xs: '0.72rem', sm: '0.8rem', md: '0.85rem' },
+              mx: 0,
             },
             '& .MuiYearCalendar-root': {
               height: 'auto',
-              minHeight: '26rem',
+              minHeight: { xs: '19rem', sm: '22rem', md: '26rem' },
             },
             '& .MuiPickersYear-yearButton': {
-              width: 84,
-              height: 60,
-              fontSize: '0.95rem',
+              width: { xs: 64, sm: 72, md: 84 },
+              height: { xs: 44, sm: 52, md: 60 },
+              fontSize: { xs: '0.8rem', sm: '0.9rem', md: '0.95rem' },
             },
             '& .MuiPickersCalendarHeader-label': {
               textTransform: 'capitalize',
+              fontSize: { xs: '1rem', sm: '1.05rem', md: '1.15rem' },
+            },
+            '& .MuiPickersCalendarHeader-root': {
+              px: 1,
             },
           }}
         />

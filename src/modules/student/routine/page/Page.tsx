@@ -67,19 +67,24 @@ export default function Page() {
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr', lg: '1fr 1fr' },
-          gap: 3,
+          gridTemplateColumns: {
+            xs: '1fr',
+            lg: 'minmax(0, 1fr) minmax(0, 1fr)',
+          },
+          gap: { xs: 2, sm: 3 },
           alignItems: 'start',
+          minWidth: 0,
         }}
       >
         <Box
           sx={{
             border: '1px solid',
             borderColor: 'divider',
-            borderRadius: '16px',
-            p: 3,
+            borderRadius: { xs: '12px', sm: '16px' },
+            p: { xs: 1, sm: 2, md: 3 },
             backgroundColor: 'background.paper',
-            overflowX: 'auto',
+            overflow: 'hidden',
+            minWidth: 0,
           }}
         >
           <AppCalendar tasks={tasks} onTasksChange={setTasks} />
