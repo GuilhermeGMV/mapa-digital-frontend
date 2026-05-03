@@ -1,14 +1,12 @@
-import { Box, Typography } from '@mui/material'
 import AppPageContainer from '@/shared/ui/AppPageContainer'
-import PageHeader from '@/shared/ui/PageHeader'
+import OrdinaryHeader from '@/shared/ui/OrdinaryHeader'
 
 export default function Page() {
   return (
     <AppPageContainer className="gap-4 md:gap-5">
-      <PageHeader
+      <OrdinaryHeader
         title="Escolas e Empresas"
         subtitle="Cadastro, status e desempenho das escolas"
-        variant="admin"
       />
     </AppPageContainer>
   )

@@ -10,8 +10,8 @@ import AppDropdown, { type DropdownOption } from '@/shared/ui/AppDropdown'
 import AppInput from '@/shared/ui/AppInput'
 import AppPageContainer from '@/shared/ui/AppPageContainer'
 import EmptyState from '@/shared/ui/EmptyState'
-import PageHeader from '@/shared/ui/PageHeader'
 import { SUBJECTS } from '@/shared/utils/themes'
+import OrdinaryHeader from '@/shared/ui/OrdinaryHeader'
 
 type SubjectKey =
   | 'matematica'
@@ -111,10 +111,9 @@ export default function Page() {
 
   return (
     <AppPageContainer className="gap-4 md:gap-5">
-      <PageHeader
-        title="Upload de Tarefas"
-        subtitle="Visualize e envie suas tarefas"
-        variant="aluno"
+      <OrdinaryHeader
+        title="Tarefas Enviadas"
+        subtitle="Visualize e envie suas tarefas."
       />
 
       <AppCard

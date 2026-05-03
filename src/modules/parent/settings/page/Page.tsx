@@ -12,6 +12,7 @@ import ListChildren from '../components/ListChildren'
 import { useParentSettings } from '../hooks/useParentSettings'
 import type { ParentDashboardChild, ResultsSummary } from '../types/types'
 import { Box } from '@mui/material'
+import OrdinaryHeader from '@/shared/ui/OrdinaryHeader'
 
 const DEFAULT_PAGE_INDEX = 1
 const PAGE_SIZE = 10
@@ -195,10 +196,9 @@ export default function Page() {
 
   return (
     <AppPageContainer className="gap-4">
-      <PageHeader
+      <OrdinaryHeader
         title={parentSettingsService.getTitle()}
         subtitle="Configure sua conta"
-        variant="responsavel"
       />
       <Box
         className="grid grid-cols-2 md:grid-cols-2 gap-5"

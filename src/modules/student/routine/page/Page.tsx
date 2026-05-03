@@ -7,6 +7,7 @@ import dayjs from 'dayjs'
 import { SUBJECTS } from '@/shared/utils/themes'
 import { useState } from 'react'
 import type { Task } from '@/modules/student/shared/components/Planner'
+import OrdinaryHeader from '@/shared/ui/OrdinaryHeader'
 
 const initialTasks: Task[] = [
   {
@@ -58,10 +59,9 @@ export default function Page() {
 
   return (
     <AppPageContainer className="gap-4 md:gap-5">
-      <PageHeader
+      <OrdinaryHeader
         title="Rotina, Foco e Bem-estar"
         subtitle="Organize sua rotina e acompanhe sinais emocionais em uma única tela"
-        variant="aluno"
       />
 
       <Box
