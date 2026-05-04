@@ -2,7 +2,11 @@ import AppPageContainer from '@/shared/ui/AppPageContainer'
 import PageHeader from '@/shared/ui/PageHeader'
 import { useMemo, useState } from 'react'
 import { useAuth } from '@/app/auth/hook'
-import { parentService, parentSettingsService, type StudentDetail } from '../services/service'
+import {
+  parentService,
+  parentSettingsService,
+  type StudentDetail,
+} from '../services/service'
 import AccountSettings from '../components/AccountSettings'
 import ChildSettingsModal, {
   type ChildSettingsForm,
