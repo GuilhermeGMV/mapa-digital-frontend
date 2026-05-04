@@ -1,7 +1,7 @@
 import { Box, Typography, Stack, Button } from '@mui/material'
 import { useState } from 'react'
 import AppPageContainer from '@/shared/ui/AppPageContainer'
-import PageHeader from '@/shared/ui/PageHeader'
+import OrdinaryHeader from '@/shared/ui/OrdinaryHeader'
 import { SearchBarAndFilter } from '@/shared/ui/SearchBarAndFilter'
 import AppCard from '@/shared/ui/AppCard'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
@@ -42,11 +42,10 @@ export default function Page() {
   }
 
   return (
-    <AppPageContainer className="gap-0">
-      <PageHeader
-        title="Continue sua trilha adaptativa na Mapa!"
-        subtitle="Comece pelo primeiro nível e desbloqueie os próximos à medida que avança."
-        variant="aluno"
+    <AppPageContainer className="gap-4 md:gap-5">
+      <OrdinaryHeader
+        title="Trilhas adaptativas"
+        subtitle="Misture descoberta de conteúdos com jornadas por matéria: o aluno pode manter várias trilhas ativas ao mesmo tempo cada uma com progresso próprio."
       />
 
       <Box

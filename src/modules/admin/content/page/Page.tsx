@@ -41,6 +41,7 @@ import ApprovalCard from '@/modules/admin/shared/components/ApprovalCard'
 import ApprovalComponent, {
   type ApprovalStatusOption,
 } from '@/modules/admin/shared/components/ApprovalComponent'
+import OrdinaryHeader from '@/shared/ui/OrdinaryHeader'
 
 const DEFAULT_PAGE_INDEX = 1
 
@@ -392,8 +393,7 @@ export default function Page() {
 
   return (
     <AppPageContainer className="gap-4 md:gap-5">
-      <PageHeader
-        variant="admin"
+      <OrdinaryHeader
         title="Conteúdos"
         subtitle="Revise conteúdos enviados e valide materiais antes de liberar o acesso na plataforma."
       />

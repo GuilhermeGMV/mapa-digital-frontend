@@ -34,8 +34,8 @@ import ApprovalComponent, {
 } from '../../shared/components/ApprovalComponent'
 import AppPageContainer from '@/shared/ui/AppPageContainer'
 import LoadingScreen from '@/shared/ui/LoadingScreen'
-import PageHeader from '@/shared/ui/PageHeader'
 import { PARENT_APPROVAL_CARD_STATUS } from '@/shared/utils/themes'
+import OrdinaryHeader from '@/shared/ui/OrdinaryHeader'
 
 const DEFAULT_PAGE_INDEX = 1
 
@@ -368,8 +368,7 @@ export default function Page() {
 
   return (
     <AppPageContainer className="gap-4 md:gap-5">
-      <PageHeader
-        variant="admin"
+      <OrdinaryHeader
         title="Centro de Responsáveis"
         subtitle="Revise e valide responsáveis antes de liberar o acesso na plataforma."
       />
